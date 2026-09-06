@@ -31,7 +31,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', 'Poppins', sans-serif; }
         body { background-color: var(--bg); color: var(--text-main); padding-bottom: 50px; }
 
-        /* Header UI */
         header {
             background: linear-gradient(135deg, #4C1D95, #2E1065);
             color: white; padding: 1rem 1.5rem;
@@ -47,31 +46,20 @@
         .brand h1 { font-size: 1.25rem; font-weight: 800; }
         .brand p { font-size: 0.8rem; opacity: 0.8; }
 
-        /* Cloud Status Badge */
         .cloud-badge {
             font-size: 0.75rem; background: rgba(255,255,255,0.15); padding: 4px 10px;
             border-radius: 20px; display: flex; align-items: center; gap: 6px;
         }
         .cloud-dot { width: 8px; height: 8px; background-color: #22c55e; border-radius: 50%; display: inline-block; }
 
-        /* Language Toggle Button */
         .lang-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            background: rgba(255, 255, 255, 0.2); color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 12px;
+            border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 0.85rem;
+            transition: all 0.2s; display: flex; align-items: center; gap: 6px;
         }
         .lang-btn:hover { background: rgba(255, 255, 255, 0.35); }
 
-        /* Navigation */
         nav {
             display: flex; gap: 10px; background: var(--surface); padding: 10px 1.5rem;
             border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); flex-wrap: wrap;
@@ -83,23 +71,16 @@
         }
         .nav-btn.active, .nav-btn:hover { background: #F3E8FF; color: var(--primary); }
 
-        /* Layout & Cards */
         .container { max-width: 1400px; margin: 1rem auto; padding: 0 1rem; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Split View Layout */
         .pos-split-container {
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 1.25rem;
-            align-items: start;
+            display: grid; grid-template-columns: 1fr 400px; gap: 1.25rem; align-items: start;
         }
 
         @media (max-width: 992px) {
-            .pos-split-container {
-                grid-template-columns: 1fr;
-            }
+            .pos-split-container { grid-template-columns: 1fr; }
         }
 
         .card {
@@ -109,7 +90,6 @@
         .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; flex-wrap: wrap; gap: 8px; }
         .card-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
 
-        /* Form Controls */
         .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
         .form-group { display: flex; flex-direction: column; gap: 6px; }
         .form-group label { font-size: 0.85rem; font-weight: 700; color: #334155; }
@@ -119,7 +99,6 @@
         }
         .form-group input:focus, .form-group select:focus { border-color: var(--primary); background: #FFF; }
 
-        /* Quick Presets Buttons */
         .presets { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
         .chip {
             padding: 3px 8px; font-size: 0.75rem; background: #E2E8F0; border-radius: 20px;
@@ -127,7 +106,6 @@
         }
         .chip:hover { background: var(--primary); color: white; }
 
-        /* Buttons */
         .btn {
             padding: 9px 16px; border: none; border-radius: 8px; cursor: pointer;
             font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
@@ -143,7 +121,6 @@
         .btn-danger:hover { background: #DC2626; }
         .btn-sm { padding: 4px 8px; font-size: 0.8rem; }
 
-        /* Metrics Display */
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 1rem 0; }
         .metric-card {
             padding: 1rem; border-radius: 10px; border: 1px solid var(--border);
@@ -155,7 +132,6 @@
         .metric-card.purple { background: #F3E8FF; border-color: #DDD6FE; color: #5B21B6; }
         .metric-value { font-size: 1.3rem; font-weight: 800; margin-top: 4px; }
 
-        /* Tables */
         .table-responsive { overflow-x: auto; margin-top: 1rem; border-radius: 8px; border: 1px solid var(--border); }
         table { width: 100%; border-collapse: collapse; background: var(--surface); }
         [dir="rtl"] table { text-align: right; }
@@ -164,13 +140,11 @@
         th { background: #F8FAFC; color: #475569; font-weight: 700; }
         tr:hover { background: #F8FAFC; }
 
-        /* Vertical Thermal Receipt Layout */
         .thermal-wrapper { display: flex; justify-content: center; width: 100%; }
         .thermal-box {
             width: 100%; max-width: 78mm; padding: 14px 12px; background: #FFF;
-            font-size: 12px; line-height: 1.4;
-            color: #000; border: 1px dashed #CBD5E1; border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px;
+            font-size: 12px; line-height: 1.4; color: #000; border: 1px dashed #CBD5E1;
+            border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px;
         }
         [dir="rtl"] .thermal-box { text-align: right; }
         [dir="ltr"] .thermal-box { text-align: left; }
@@ -182,7 +156,6 @@
         .thermal-divider { border-top: 1px dashed #000; margin: 4px 0; }
         .thermal-total { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 6px 0; font-weight: 800; font-size: 13px; }
 
-        /* Modal */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
@@ -191,60 +164,21 @@
         .modal.active { display: flex !important; }
         .modal-content { background: white; width: 100%; max-width: 500px; padding: 1.5rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
 
-        /* ENHANCED PRINT MEDIA & POS RECEIPT STYLES */
         @media print {
-            @page {
-                margin: 0;
-            }
+            @page { margin: 0; }
             body * { visibility: hidden !important; }
-            
-            .printable-target, .printable-target * { 
-                visibility: visible !important; 
-            }
-            
-            .printable-target {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-                color: black !important;
-            }
-
-            .thermal-box.printable-target {
-                max-width: 78mm !important;
-                width: 78mm !important;
-                border: none !important;
-                box-shadow: none !important;
-                margin: 0 auto !important;
-                padding: 8px !important;
-            }
-
-            .report-print-target.printable-target {
-                width: 100% !important;
-                padding: 10mm !important;
-            }
-
-            .report-print-target table {
-                width: 100% !important;
-                border-collapse: collapse !important;
-            }
-
-            .report-print-target th, .report-print-target td {
-                border: 1px solid #000 !important;
-                padding: 6px 8px !important;
-                font-size: 10pt !important;
-            }
-
+            .printable-target, .printable-target * { visibility: visible !important; }
+            .printable-target { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; margin: 0 !important; padding: 0 !important; background: white !important; color: black !important; }
+            .thermal-box.printable-target { max-width: 78mm !important; width: 78mm !important; border: none !important; box-shadow: none !important; margin: 0 auto !important; padding: 8px !important; }
+            .report-print-target.printable-target { width: 100% !important; padding: 10mm !important; }
+            .report-print-target table { width: 100% !important; border-collapse: collapse !important; }
+            .report-print-target th, .report-print-target td { border: 1px solid #000 !important; padding: 6px 8px !important; font-size: 10pt !important; }
             .no-print { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header>
         <div class="brand">
             <div class="brand-icon"><i class="fa-solid fa-spa"></i></div>
@@ -260,18 +194,15 @@
         </div>
     </header>
 
-    <!-- Navigation -->
     <nav class="no-print">
         <button class="nav-btn active" id="btn-tab-pos" onclick="switchTab('pos')"><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="nav_pos">إصدار فاتورة</span></button>
         <button class="nav-btn" id="btn-tab-reports" onclick="switchTab('reports')"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="nav_reports">التقارير والحسابات والشفتات</span></button>
     </nav>
 
     <div class="container">
-        <!-- TAB 1: POS / INVOICE CREATION -->
+        <!-- TAB 1: POS -->
         <div id="pos" class="tab-content active">
             <div class="pos-split-container">
-                
-                <!-- RIGHT SECTION: INVOICE FORM -->
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title"><i class="fa-solid fa-receipt"></i> <span data-i18n="create_invoice_title">إنشاء فاتورة جديدة</span></div>
@@ -307,20 +238,20 @@
                             <div class="form-group">
                                 <label data-i18n="label_payment">طريقة الدفع</label>
                                 <select id="paymentMethod" onchange="updateLivePreview()">
-                                    <option value="كاش" data-i18n-opt="pay_cash">كاش</option>
-                                    <option value="صرافة (شبكة)" data-i18n-opt="pay_card">صرافة (شبكة)</option>
-                                    <option value="تحويل بنكي" data-i18n-opt="pay_transfer">تحويل بنكي</option>
+                                    <option value="كاش">كاش</option>
+                                    <option value="صرافة (شبكة)">صرافة (شبكة)</option>
+                                    <option value="تحويل بنكي">تحويل بنكي</option>
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label data-i18n="label_location">مكان تقديم الخدمة</label>
                                 <select id="serviceLocation" onchange="updateLivePreview()">
-                                    <option value="حضور بالمركز" data-i18n-opt="loc_center">حضور بالمركز</option>
-                                    <option value="زيارة منزلية" data-i18n-opt="loc_home">زيارة منزلية</option>
+                                    <option value="حضور بالمركز">حضور بالمركز</option>
+                                    <option value="زيارة منزلية">زيارة منزلية</option>
                                 </select>
                             </div>
                         </div>
-                        <div style="margin-top: 1.25rem; display: flex; gap: 10px;">
+                        <div style="margin-top: 1.25rem;">
                             <button type="submit" id="saveBtn" class="btn btn-primary" style="width:100%; font-size:1rem;">
                                 <i class="fa-solid fa-cloud-arrow-up"></i> <span data-i18n="btn_save_invoice">حفظ سحابياً وإصدار الفاتورة</span>
                             </button>
@@ -328,7 +259,6 @@
                     </form>
                 </div>
 
-                <!-- LEFT SECTION: LIVE VERTICAL RECEIPT PREVIEW -->
                 <div class="card" style="position: sticky; top: 1rem;">
                     <div class="card-header">
                         <div class="card-title"><i class="fa-solid fa-eye"></i> <span data-i18n="live_preview_title">معاينة الفاتورة مباشر</span></div>
@@ -342,22 +272,22 @@
                                 <p id="r-date" style="margin-top:4px; font-size:10px; font-weight:bold;"></p>
                             </div>
                             
-                            <div class="thermal-row"><span id="lbl-r-serial">رقم الفاتورة:</span><strong id="r-serial">HS-000000</strong></div>
-                            <div class="thermal-row"><span id="lbl-r-time">الوقت والتاريخ:</span><span id="r-time">--:--</span></div>
-                            <div class="thermal-row"><span id="lbl-r-staff">الموظف/ة:</span><span id="r-staff">--</span></div>
+                            <div class="thermal-row"><span>رقم الفاتورة:</span><strong id="r-serial">HS-000000</strong></div>
+                            <div class="thermal-row"><span>الوقت والتاريخ:</span><span id="r-time">--:--</span></div>
+                            <div class="thermal-row"><span>الموظف/ة:</span><span id="r-staff">--</span></div>
                             <div class="thermal-divider"></div>
                             
-                            <div class="thermal-row"><span id="lbl-r-service">الخدمة:</span><strong id="r-service">--</strong></div>
-                            <div class="thermal-row"><span id="lbl-r-duration">المدة:</span><span id="r-duration">--</span></div>
-                            <div class="thermal-row"><span id="lbl-r-type">الموقع:</span><span id="r-type">--</span></div>
-                            <div class="thermal-row"><span id="lbl-r-pay">طريقة الدفع:</span><span id="r-pay">--</span></div>
+                            <div class="thermal-row"><span>الخدمة:</span><strong id="r-service">--</strong></div>
+                            <div class="thermal-row"><span>المدة:</span><span id="r-duration">--</span></div>
+                            <div class="thermal-row"><span>الموقع:</span><span id="r-type">--</span></div>
+                            <div class="thermal-row"><span>طريقة الدفع:</span><span id="r-pay">--</span></div>
                             
                             <div class="thermal-row thermal-total">
-                                <span id="lbl-r-price">المبلغ الإجمالي:</span>
+                                <span>المبلغ الإجمالي:</span>
                                 <span id="r-price">0.00 ر.س</span>
                             </div>
                             
-                            <div style="text-align:center; margin-top:8px; font-size:10px;" id="rec-foot-msg">
+                            <div style="text-align:center; margin-top:8px; font-size:10px;">
                                 <p>أهلاً بكم - نتمنى لكم تجربة ممتعة</p>
                                 <p style="margin-top:2px;">يرجى الاحتفاظ بالفاتورة</p>
                             </div>
@@ -369,11 +299,10 @@
                         <button class="btn btn-accent" onclick="exportPDF('thermal-receipt', 'Invoice')"><i class="fa-solid fa-file-pdf"></i> <span data-i18n="btn_download_pdf">تنزيل الفاتورة PDF</span></button>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <!-- TAB 2: REPORTS & SHIFTS ANALYTICS -->
+        <!-- TAB 2: REPORTS -->
         <div id="reports" class="tab-content">
             <div class="card" id="report-main-card">
                 <div class="card-header">
@@ -384,7 +313,6 @@
                     </div>
                 </div>
 
-                <!-- Shift & Date Filtering -->
                 <div class="grid-form no-print">
                     <div class="form-group">
                         <label data-i18n="filter_date">التاريخ</label>
@@ -401,12 +329,11 @@
                     <div class="form-group">
                         <label data-i18n="filter_staff">تصفية حسب العامل/ة</label>
                         <select id="filterStaff" onchange="loadReports()">
-                            <option value="ALL" data-i18n="opt_all_staff">جميع العاملين</option>
+                            <option value="ALL">جميع العاملين</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Advanced Metrics Grid -->
                 <div class="metrics-grid">
                     <div class="metric-card green">
                         <div>
@@ -449,14 +376,14 @@
                     <table>
                         <thead>
                             <tr>
-                                <th data-i18n="th_serial">رقم الفاتورة</th>
-                                <th data-i18n="th_time">الوقت</th>
-                                <th data-i18n="th_date">التاريخ</th>
-                                <th data-i18n="th_staff">العامل/ة</th>
-                                <th data-i18n="th_service">الخدمة / العرض</th>
-                                <th data-i18n="th_pay">طريقة الدفع</th>
-                                <th data-i18n="th_price">المبلغ</th>
-                                <th class="no-print" data-i18n="th_action">إجراء</th>
+                                <th>رقم الفاتورة</th>
+                                <th>الوقت</th>
+                                <th>التاريخ</th>
+                                <th>العامل/ة</th>
+                                <th>الخدمة / العرض</th>
+                                <th>طريقة الدفع</th>
+                                <th>المبلغ</th>
+                                <th class="no-print">إجراء</th>
                             </tr>
                         </thead>
                         <tbody id="reportsTableBody"></tbody>
@@ -470,34 +397,34 @@
     <div id="invoiceModal" class="modal">
         <div class="modal-content">
             <div class="card-header">
-                <div class="card-title"><i class="fa-solid fa-receipt"></i> <span data-i18n="modal_view_invoice">معاينة الفاتورة المحددة</span></div>
+                <div class="card-title"><i class="fa-solid fa-receipt"></i> <span>معاينة الفاتورة المحددة</span></div>
                 <button onclick="closeModal('invoiceModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="thermal-wrapper">
                 <div class="thermal-box" id="modal-thermal-receipt">
                     <div class="thermal-header">
-                        <h3 id="m-rec-head-title">مركز هيبة الاسترخاء</h3>
-                        <p style="font-size:11px;" id="m-rec-head-sub">جدة - المساج والحمام المغربي</p>
+                        <h3>مركز هيبة الاسترخاء</h3>
+                        <p style="font-size:11px;">جدة - المساج والحمام المغربي</p>
                         <p id="m-r-date" style="margin-top:4px; font-size:10px; font-weight:bold;"></p>
                     </div>
                     
-                    <div class="thermal-row"><span id="m-lbl-r-serial">رقم الفاتورة:</span><strong id="m-r-serial">--</strong></div>
-                    <div class="thermal-row"><span id="m-lbl-r-time">الوقت والتاريخ:</span><span id="m-r-time">--:--</span></div>
-                    <div class="thermal-row"><span id="m-lbl-r-staff">الموظف/ة:</span><span id="m-r-staff">--</span></div>
+                    <div class="thermal-row"><span>رقم الفاتورة:</span><strong id="m-r-serial">--</strong></div>
+                    <div class="thermal-row"><span>الوقت والتاريخ:</span><span id="m-r-time">--:--</span></div>
+                    <div class="thermal-row"><span>الموظف/ة:</span><span id="m-r-staff">--</span></div>
                     <div class="thermal-divider"></div>
                     
-                    <div class="thermal-row"><span id="m-lbl-r-service">الخدمة:</span><strong id="m-r-service">--</strong></div>
-                    <div class="thermal-row"><span id="m-lbl-r-duration">المدة:</span><span id="m-r-duration">--</span></div>
-                    <div class="thermal-row"><span id="m-lbl-r-type">الموقع:</span><span id="m-r-type">--</span></div>
-                    <div class="thermal-row"><span id="m-lbl-r-pay">طريقة الدفع:</span><span id="m-r-pay">--</span></div>
+                    <div class="thermal-row"><span>الخدمة:</span><strong id="m-r-service">--</strong></div>
+                    <div class="thermal-row"><span>المدة:</span><span id="m-r-duration">--</span></div>
+                    <div class="thermal-row"><span>الموقع:</span><span id="m-r-type">--</span></div>
+                    <div class="thermal-row"><span>طريقة الدفع:</span><span id="m-r-pay">--</span></div>
                     
                     <div class="thermal-row thermal-total">
-                        <span id="m-lbl-r-price">المبلغ الإجمالي:</span>
+                        <span>المبلغ الإجمالي:</span>
                         <span id="m-r-price">0.00 ر.س</span>
                     </div>
                     
-                    <div style="text-align:center; margin-top:8px; font-size:10px;" id="m-rec-foot-msg">
+                    <div style="text-align:center; margin-top:8px; font-size:10px;">
                         <p>أهلاً بكم - نتمنى لكم تجربة ممتعة</p>
                         <p style="margin-top:2px;">يرجى الاحتفاظ بالفاتورة</p>
                     </div>
@@ -505,58 +432,54 @@
             </div>
 
             <div style="display:flex; gap:8px; margin-top: 1.25rem;" class="no-print">
-                <button class="btn btn-print" style="flex:1;" onclick="printElement('modal-thermal-receipt')"><i class="fa-solid fa-print"></i> <span data-i18n="btn_print">طباعة الفاتورة</span></button>
-                <button class="btn btn-accent" style="flex:1;" onclick="exportPDF('modal-thermal-receipt', 'Invoice_View')"><i class="fa-solid fa-file-pdf"></i> <span data-i18n="btn_download">تنزيل PDF</span></button>
+                <button class="btn btn-print" style="flex:1;" onclick="printElement('modal-thermal-receipt')"><i class="fa-solid fa-print"></i> <span>طباعة الفاتورة</span></button>
+                <button class="btn btn-accent" style="flex:1;" onclick="exportPDF('modal-thermal-receipt', 'Invoice_View')"><i class="fa-solid fa-file-pdf"></i> <span>تنزيل PDF</span></button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL 2: ADMIN CONTROL PANEL -->
+    <!-- MODAL 2: ADMIN PANEL -->
     <div id="adminModal" class="modal">
         <div class="modal-content">
             <div class="card-header">
-                <div class="card-title"><i class="fa-solid fa-user-gear"></i> <span data-i18n="admin_panel_title">لوحة تحكم المدير الإدارية</span></div>
+                <div class="card-title"><i class="fa-solid fa-user-gear"></i> <span>لوحة تحكم المدير الإدارية</span></div>
                 <button onclick="closeModal('adminModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div id="loginSec" class="form-group">
-                <label data-i18n="admin_pass_label">أدخل رمز الدخول الخاص بالمدير</label>
+                <label>أدخل رمز الدخول الخاص بالمدير</label>
                 <input type="password" id="adminPass" placeholder="الرمز الافتراضي (1234)">
-                <button class="btn btn-primary" style="margin-top:10px;" onclick="checkAdmin()" data-i18n="btn_login">تسجيل الدخول</button>
+                <button class="btn btn-primary" style="margin-top:10px;" onclick="checkAdmin()">تسجيل الدخول</button>
             </div>
 
             <div id="adminControls" style="display:none;">
-                <!-- Staff Management Section -->
-                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-users"></i> <span data-i18n="manage_staff">إدارة كادر العمل:</span></h4>
+                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-users"></i> <span>إدارة كادر العمل (سحابياً):</span></h4>
                 <div class="form-group">
                     <input type="text" id="newStaffName" placeholder="اسم العامل / العاملة جديد">
-                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addStaff()" data-i18n="btn_add_staff">إضافة العامل</button>
+                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addStaff()">إضافة العامل سحابياً</button>
                 </div>
                 <ul id="staffListUI" style="list-style:none; margin: 10px 0; max-height:100px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
 
                 <hr style="margin: 1.25rem 0; border:0; border-top:1px solid var(--border);">
                 
-                <!-- Services Management Section -->
-                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-tags"></i> <span data-i18n="manage_services">إضافة عروض أو خدمات جديدة:</span></h4>
+                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-tags"></i> <span>إضافة عروض أو خدمات جديدة (سحابياً):</span></h4>
                 <div class="form-group" style="gap:8px;">
                     <input type="text" id="newServiceName" placeholder="اسم الخدمة أو العرض">
                     <input type="number" id="newServicePrice" placeholder="السعر الافتراضي">
-                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addService()" data-i18n="btn_add_service">إضافة الخدمة / العرض</button>
+                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addService()">إضافة الخدمة / العرض سحابياً</button>
                 </div>
                 
-                <h5 style="font-size:0.85rem; margin-top:10px; color:#475569;" data-i18n="current_services">الخدمات والعروض المتاحة حالياً:</h5>
+                <h5 style="font-size:0.85rem; margin-top:10px; color:#475569;">الخدمات والعروض المتاحة حالياً:</h5>
                 <ul id="serviceListUI" style="list-style:none; margin-top:6px; max-height:120px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
 
-                <button class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="closeModal('adminModal')" data-i18n="btn_close">إغلاق اللوحة</button>
+                <button class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="closeModal('adminModal')">إغلاق اللوحة</button>
             </div>
         </div>
     </div>
 
-    <!-- Hidden Container for Report Printing -->
     <div id="report-print-area" class="report-print-target"></div>
 
     <script>
-        /* إعدادات السحابة المحدثة بالكامل طبقاً لمشروعك وقيم الـ API الخاصة بك */
         const SUPABASE_URL = 'https://pkhgmcdfvvbtdouqnrom.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_ZdL3hyJ-ZLlqeEsl_EH3Uw_ezur9';
         
@@ -565,149 +488,48 @@
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
-        // Global State
         let currentLang = 'ar';
-        let staffList = JSON.parse(localStorage.getItem('haiba_staff')) || ['مساج سويدي', 'أخصائي حمام مغربي'];
-        let servicesList = JSON.parse(localStorage.getItem('haiba_services')) || [
-            { name: 'مساج استرخائي', price: 150 },
-            { name: 'حمام مغربي ملكي', price: 200 },
-            { name: 'جلسة بدي كير', price: 100 }
-        ];
+        let staffList = [];
+        let servicesList = [];
         let invoices = [];
 
-        // Translations Dictionary
-        const i18n = {
-            ar: {
-                brand_title: "مركز هيبة الاسترخاء",
-                brand_subtitle: "فرع جدة - المساج والحمام المغربي والبدي كير",
-                cloud_connected: "متصل بالسحابة",
-                admin_panel: "لوحة المدير",
-                nav_pos: "إصدار فاتورة",
-                nav_reports: "التقارير والحسابات والشفتات",
-                create_invoice_title: "إنشاء فاتورة جديدة",
-                label_serial: "رقم الفاتورة (تسلسلي)",
-                label_staff: "اسم العامل / العاملة",
-                label_service: "الخدمة / العرض المقدم",
-                label_duration: "المدة",
-                label_price: "السعر (ر.س)",
-                label_payment: "طريقة الدفع",
-                label_location: "مكان تقديم الخدمة",
-                btn_save_invoice: "حفظ سحابياً وإصدار الفاتورة",
-                live_preview_title: "معاينة الفاتورة مباشر",
-                btn_print_thermal: "طباعة الفاتورة الحرارية",
-                btn_download_pdf: "تنزيل الفاتورة PDF",
-                reports_title: "تقارير المبيعات والشفتات اليومية والسنوية",
-                btn_print_report: "طباعة التقرير / الشفت",
-                btn_export_report_pdf: "تصدير التقرير PDF",
-                filter_date: "التاريخ",
-                filter_time_from: "من الساعة (بداية الشفت)",
-                filter_time_to: "إلى الساعة (نهاية الشفت)",
-                filter_staff: "تصفية حسب العامل/ة",
-                opt_all_staff: "جميع العاملين",
-                m_total_revenue: "إجمالي إيراد الشفت",
-                m_total_ops: "عدد الفواتير",
-                m_cash_total: "إجمالي الكاش",
-                m_card_total: "شبكة وتحويل",
-                m_avg_order: "متوسط الفاتورة",
-                th_serial: "رقم الفاتورة",
-                th_time: "الوقت",
-                th_date: "التاريخ",
-                th_staff: "العامل/ة",
-                th_service: "الخدمة / العرض",
-                th_pay: "طريقة الدفع",
-                th_price: "المبلغ",
-                th_action: "إجراء",
-                modal_view_invoice: "معاينة الفاتورة المحددة",
-                btn_print: "طباعة الفاتورة",
-                btn_download: "تنزيل PDF",
-                admin_panel_title: "لوحة تحكم المدير الإدارية",
-                admin_pass_label: "أدخل رمز الدخول الخاص بالمدير",
-                btn_login: "تسجيل الدخول",
-                manage_staff: "إدارة كادر العمل:",
-                btn_add_staff: "إضافة العامل",
-                manage_services: "إضافة عروض أو خدمات جديدة:",
-                btn_add_service: "إضافة الخدمة / العرض",
-                current_services: "الخدمات والعروض المتاحة حالياً:",
-                btn_close: "إغلاق اللوحة"
-            },
-            en: {
-                brand_title: "Haiba Relaxation Center",
-                brand_subtitle: "Jeddah Branch - Massage, Moroccan Bath & Pedicure",
-                cloud_connected: "Cloud Connected",
-                admin_panel: "Admin Panel",
-                nav_pos: "Create Invoice",
-                nav_reports: "Reports & Shifts",
-                create_invoice_title: "Create New Invoice",
-                label_serial: "Invoice Serial Number",
-                label_staff: "Staff Member",
-                label_service: "Service / Offer",
-                label_duration: "Duration",
-                label_price: "Price (SAR)",
-                label_payment: "Payment Method",
-                label_location: "Service Location",
-                btn_save_invoice: "Save to Cloud & Issue Invoice",
-                live_preview_title: "Live Invoice Preview",
-                btn_print_thermal: "Print Thermal Receipt",
-                btn_download_pdf: "Download Invoice PDF",
-                reports_title: "Sales & Shift Reports",
-                btn_print_report: "Print Report / Shift",
-                btn_export_report_pdf: "Export Report PDF",
-                filter_date: "Date",
-                filter_time_from: "From Time (Shift Start)",
-                filter_time_to: "To Time (Shift End)",
-                filter_staff: "Filter by Staff",
-                opt_all_staff: "All Staff",
-                m_total_revenue: "Total Shift Revenue",
-                m_total_ops: "Total Invoices",
-                m_cash_total: "Total Cash",
-                m_card_total: "Card & Transfer",
-                m_avg_order: "Average Order",
-                th_serial: "Invoice #",
-                th_time: "Time",
-                th_date: "Date",
-                th_staff: "Staff",
-                th_service: "Service",
-                th_pay: "Payment",
-                th_price: "Amount",
-                th_action: "Action",
-                modal_view_invoice: "View Selected Invoice",
-                btn_print: "Print Invoice",
-                btn_download: "Download PDF",
-                admin_panel_title: "Admin Control Panel",
-                admin_pass_label: "Enter Manager Access Code",
-                btn_login: "Login",
-                manage_staff: "Manage Staff:",
-                btn_add_staff: "Add Staff",
-                manage_services: "Manage Services & Offers:",
-                btn_add_service: "Add Service / Offer",
-                current_services: "Currently Available Services:",
-                btn_close: "Close Panel"
-            }
-        };
-
-        // Initialize App
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('filterDate').valueAsDate = new Date();
             generateNextSerial();
-            populateDropdowns();
+            await fetchCloudMasterData();
             loadReports();
             updateLivePreview();
         });
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            document.documentElement.lang = currentLang;
-            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            document.getElementById('langText').innerText = currentLang === 'ar' ? 'English' : 'عربي';
+        // Fetch Cloud Staff and Services so mobile & desktop sync seamlessly
+        async function fetchCloudMasterData() {
+            if (!supabaseClient) return;
 
-            // Translate elements
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
-            });
+            try {
+                // Fetch Staff
+                const { data: staffData } = await supabaseClient.from('staff').select('*');
+                if (staffData && staffData.length > 0) {
+                    staffList = staffData;
+                } else {
+                    staffList = [{ id: 1, name: 'مساج سويدي' }, { id: 2, name: 'أخصائي حمام مغربي' }];
+                }
 
-            updateLivePreview();
-            loadReports();
+                // Fetch Services
+                const { data: servicesData } = await supabaseClient.from('services').select('*');
+                if (servicesData && servicesData.length > 0) {
+                    servicesList = servicesData;
+                } else {
+                    servicesList = [
+                        { id: 1, name: 'مساج استرخائي', price: 150 },
+                        { id: 2, name: 'حمام مغربي ملكي', price: 200 },
+                        { id: 3, name: 'جلسة بدي كير', price: 100 }
+                    ];
+                }
+            } catch (e) {
+                console.error("Error fetching master data:", e);
+            }
+
+            populateDropdowns();
         }
 
         function switchTab(tabId) {
@@ -728,22 +550,25 @@
             const serviceSelect = document.getElementById('serviceSelect');
 
             staffSelect.innerHTML = '';
-            filterStaff.innerHTML = `<option value="ALL">${i18n[currentLang].opt_all_staff}</option>`;
+            filterStaff.innerHTML = `<option value="ALL">جميع العاملين</option>`;
             serviceSelect.innerHTML = '';
 
             staffList.forEach(s => {
-                staffSelect.add(new Option(s, s));
-                filterStaff.add(new Option(s, s));
+                const sName = typeof s === 'string' ? s : s.name;
+                staffSelect.add(new Option(sName, sName));
+                filterStaff.add(new Option(sName, sName));
             });
 
             servicesList.forEach(srv => {
-                const opt = new Option(`${srv.name} (${srv.price} SAR)`, srv.name);
-                opt.dataset.price = srv.price;
+                const srvName = typeof srv === 'string' ? srv : srv.name;
+                const srvPrice = srv.price || 0;
+                const opt = new Option(`${srvName} (${srvPrice} SAR)`, srvName);
+                opt.dataset.price = srvPrice;
                 serviceSelect.add(opt);
             });
 
             if (servicesList.length > 0) {
-                document.getElementById('price').value = servicesList[0].price;
+                document.getElementById('price').value = servicesList[0].price || 0;
             }
         }
 
@@ -757,14 +582,14 @@
         }
 
         function setDuration(arVal, enVal) {
-            document.getElementById('duration').value = currentLang === 'ar' ? arVal : enVal;
+            document.getElementById('duration').value = arVal;
             updateLivePreview();
         }
 
         function updateLivePreview() {
             const now = new Date();
-            const dateStr = now.toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US');
-            const timeStr = now.toLocaleTimeString(currentLang === 'ar' ? 'ar-SA' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString('ar-SA');
+            const timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
 
             document.getElementById('r-date').innerText = dateStr;
             document.getElementById('r-serial').innerText = document.getElementById('invSerial').value;
@@ -781,7 +606,6 @@
 
         async function saveInvoice(e) {
             e.preventDefault();
-            
             const now = new Date();
             const newInv = {
                 serial: document.getElementById('invSerial').value,
@@ -796,17 +620,14 @@
                 time: now.toTimeString().split(' ')[0].substring(0, 5)
             };
 
-            // Save to Cloud (Supabase) if available
             if (supabaseClient) {
                 try {
                     await supabaseClient.from('invoices').insert([newInv]);
-                } catch (err) {
-                    console.warn("Supabase insertion error, falling back to local:", err);
-                }
+                } catch (err) { console.error("Supabase error:", err); }
             }
 
             invoices.unshift(newInv);
-            alert(currentLang === 'ar' ? 'تم حفظ الفاتورة بنجاح!' : 'Invoice saved successfully!');
+            alert('تم حفظ الفاتورة بنجاح!');
             generateNextSerial();
             updateLivePreview();
             loadReports();
@@ -820,14 +641,11 @@
 
             let records = invoices;
 
-            // Fetch from Cloud if connected
             if (supabaseClient) {
                 try {
-                    const { data, error } = await supabaseClient.from('invoices').select('*');
+                    const { data, error } = await supabaseClient.from('invoices').select('*').order('created_at', { ascending: false });
                     if (!error && data) records = data;
-                } catch (e) {
-                    console.log("Using memory records");
-                }
+                } catch (e) { console.log("Error loading reports:", e); }
             }
 
             const filtered = records.filter(inv => {
@@ -848,7 +666,7 @@
 
             data.forEach((inv, index) => {
                 totalRev += inv.price;
-                if (inv.payment_method.includes('كاش') || inv.payment_method.toLowerCase().includes('cash')) {
+                if (inv.payment_method.includes('كاش')) {
                     totalCash += inv.price;
                 } else {
                     totalBank += inv.price;
@@ -894,13 +712,8 @@
             document.getElementById('invoiceModal').classList.add('active');
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
-        }
-
-        function openAdminModal() {
-            document.getElementById('adminModal').classList.add('active');
-        }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function openAdminModal() { document.getElementById('adminModal').classList.add('active'); }
 
         function checkAdmin() {
             const pass = document.getElementById('adminPass').value;
@@ -909,7 +722,7 @@
                 document.getElementById('adminControls').style.display = 'block';
                 renderAdminLists();
             } else {
-                alert(currentLang === 'ar' ? 'رمز الدخول غير صحيح' : 'Incorrect Access Code');
+                alert('رمز الدخول غير صحيح');
             }
         }
 
@@ -917,60 +730,59 @@
             const staffUI = document.getElementById('staffListUI');
             const serviceUI = document.getElementById('serviceListUI');
 
-            staffUI.innerHTML = staffList.map((s, i) => `
+            staffUI.innerHTML = staffList.map((s) => `
                 <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                    <span>${s}</span>
-                    <button class="btn btn-danger btn-sm" onclick="removeStaff(${i})">X</button>
+                    <span>${s.name || s}</span>
+                    <button class="btn btn-danger btn-sm" onclick="removeStaff(${s.id})">X</button>
                 </li>
             `).join('');
 
-            serviceUI.innerHTML = servicesList.map((srv, i) => `
+            serviceUI.innerHTML = servicesList.map((srv) => `
                 <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                     <span>${srv.name} (${srv.price} SAR)</span>
-                    <button class="btn btn-danger btn-sm" onclick="removeService(${i})">X</button>
+                    <button class="btn btn-danger btn-sm" onclick="removeService(${srv.id})">X</button>
                 </li>
             `).join('');
         }
 
-        function addStaff() {
+        async function addStaff() {
             const val = document.getElementById('newStaffName').value.trim();
-            if (val) {
-                staffList.push(val);
-                localStorage.setItem('haiba_staff', JSON.stringify(staffList));
+            if (val && supabaseClient) {
+                await supabaseClient.from('staff').insert([{ name: val }]);
                 document.getElementById('newStaffName').value = '';
-                populateDropdowns();
+                await fetchCloudMasterData();
                 renderAdminLists();
             }
         }
 
-        function removeStaff(i) {
-            staffList.splice(i, 1);
-            localStorage.setItem('haiba_staff', JSON.stringify(staffList));
-            populateDropdowns();
-            renderAdminLists();
+        async function removeStaff(id) {
+            if (supabaseClient && id) {
+                await supabaseClient.from('staff').delete().eq('id', id);
+                await fetchCloudMasterData();
+                renderAdminLists();
+            }
         }
 
-        function addService() {
+        async function addService() {
             const name = document.getElementById('newServiceName').value.trim();
             const price = parseFloat(document.getElementById('newServicePrice').value) || 0;
-            if (name) {
-                servicesList.push({ name, price });
-                localStorage.setItem('haiba_services', JSON.stringify(servicesList));
+            if (name && supabaseClient) {
+                await supabaseClient.from('services').insert([{ name, price }]);
                 document.getElementById('newServiceName').value = '';
                 document.getElementById('newServicePrice').value = '';
-                populateDropdowns();
+                await fetchCloudMasterData();
                 renderAdminLists();
             }
         }
 
-        function removeService(i) {
-            servicesList.splice(i, 1);
-            localStorage.setItem('haiba_services', JSON.stringify(servicesList));
-            populateDropdowns();
-            renderAdminLists();
+        async function removeService(id) {
+            if (supabaseClient && id) {
+                await supabaseClient.from('services').delete().eq('id', id);
+                await fetchCloudMasterData();
+                renderAdminLists();
+            }
         }
 
-        // Printing & Exporting Utilities
         function printElement(elemId) {
             const target = document.getElementById(elemId);
             target.classList.add('printable-target');
@@ -991,18 +803,16 @@
         function exportPDF(elemId, filename) {
             const element = document.getElementById(elemId);
             const opt = {
-                margin:       5,
-                filename:     `${filename}_${Date.now()}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                margin: 5,
+                filename: `${filename}_${Date.now()}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
             html2pdf().set(opt).from(element).save();
         }
 
-        function exportReportPDF() {
-            exportPDF('report-main-card', 'SalesReport');
-        }
+        function exportReportPDF() { exportPDF('report-main-card', 'SalesReport'); }
     </script>
 </body>
 </html>
