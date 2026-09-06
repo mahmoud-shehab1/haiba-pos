@@ -560,14 +560,23 @@
         const SUPABASE_URL = 'https://smdyhhawptqasbwyogpx.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_smdyhhawptqasbwyogpx';
         
-        let supabaseClient = null;
-        if (window.supabase) {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabaseClient;
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
-        let currentLang = 'ar'; // Default Language
+        // Global State
+        let currentLang = 'ar';
+        let staffList = JSON.parse(localStorage.getItem('haiba_staff')) || ['مساج سويدي', 'أخصائي حمام مغربي'];
+        let servicesList = JSON.parse(localStorage.getItem('haiba_services')) || [
+            { name: 'مساج استرخائي', price: 150 },
+            { name: 'حمام مغربي ملكي', price: 200 },
+            { name: 'جلسة بدي كير', price: 100 }
+        ];
+        let invoices = [];
 
-        const translations = {
+        // Translations Dictionary
+        const i18n = {
             ar: {
                 brand_title: "مركز هيبة الاسترخاء",
                 brand_subtitle: "فرع جدة - المساج والحمام المغربي والبدي كير",
@@ -585,19 +594,6 @@
                 label_location: "مكان تقديم الخدمة",
                 btn_save_invoice: "حفظ سحابياً وإصدار الفاتورة",
                 live_preview_title: "معاينة الفاتورة مباشر",
-                rec_title: "مركز هيبة الاسترخاء",
-                rec_sub: "جدة - المساج والحمام المغربي",
-                rec_lbl_serial: "رقم الفاتورة:",
-                rec_lbl_time: "الوقت والتاريخ:",
-                rec_lbl_staff: "الموظف/ة:",
-                rec_lbl_service: "الخدمة:",
-                rec_lbl_duration: "المدة:",
-                rec_lbl_type: "الموقع:",
-                rec_lbl_pay: "طريقة الدفع:",
-                rec_lbl_price: "المبلغ الإجمالي:",
-                rec_foot_1: "أهلاً بكم - نتمنى لكم تجربة ممتعة",
-                rec_foot_2: "يرجى الاحتفاظ بالفاتورة",
-                currency: "ر.س",
                 btn_print_thermal: "طباعة الفاتورة الحرارية",
                 btn_download_pdf: "تنزيل الفاتورة PDF",
                 reports_title: "تقارير المبيعات والشفتات اليومية والسنوية",
@@ -632,22 +628,17 @@
                 manage_services: "إضافة عروض أو خدمات جديدة:",
                 btn_add_service: "إضافة الخدمة / العرض",
                 current_services: "الخدمات والعروض المتاحة حالياً:",
-                btn_close: "إغلاق اللوحة",
-                pay_cash: "كاش",
-                pay_card: "صرافة (شبكة)",
-                pay_transfer: "تحويل بنكي",
-                loc_center: "حضور بالمركز",
-                loc_home: "زيارة منزلية"
+                btn_close: "إغلاق اللوحة"
             },
             en: {
                 brand_title: "Haiba Relaxation Center",
                 brand_subtitle: "Jeddah Branch - Massage, Moroccan Bath & Pedicure",
                 cloud_connected: "Cloud Connected",
                 admin_panel: "Admin Panel",
-                nav_pos: "Issue Invoice",
-                nav_reports: "Reports & Shifts Analytics",
+                nav_pos: "Create Invoice",
+                nav_reports: "Reports & Shifts",
                 create_invoice_title: "Create New Invoice",
-                label_serial: "Invoice No. (Serial)",
+                label_serial: "Invoice Serial Number",
                 label_staff: "Staff Member",
                 label_service: "Service / Offer",
                 label_duration: "Duration",
@@ -655,23 +646,10 @@
                 label_payment: "Payment Method",
                 label_location: "Service Location",
                 btn_save_invoice: "Save to Cloud & Issue Invoice",
-                live_preview_title: "Live Receipt Preview",
-                rec_title: "Haiba Relaxation Center",
-                rec_sub: "Jeddah - Massage & Moroccan Bath",
-                rec_lbl_serial: "Invoice No:",
-                rec_lbl_time: "Date & Time:",
-                rec_lbl_staff: "Staff:",
-                rec_lbl_service: "Service:",
-                rec_lbl_duration: "Duration:",
-                rec_lbl_type: "Location:",
-                rec_lbl_pay: "Payment:",
-                rec_lbl_price: "Total Amount:",
-                rec_foot_1: "Welcome - Wish you a pleasant experience",
-                rec_foot_2: "Please keep this receipt",
-                currency: "SAR",
+                live_preview_title: "Live Invoice Preview",
                 btn_print_thermal: "Print Thermal Receipt",
                 btn_download_pdf: "Download Invoice PDF",
-                reports_title: "Sales Reports & Shift Analytics",
+                reports_title: "Sales & Shift Reports",
                 btn_print_report: "Print Report / Shift",
                 btn_export_report_pdf: "Export Report PDF",
                 filter_date: "Date",
@@ -681,10 +659,10 @@
                 opt_all_staff: "All Staff",
                 m_total_revenue: "Total Shift Revenue",
                 m_total_ops: "Total Invoices",
-                m_cash_total: "Cash Total",
+                m_cash_total: "Total Cash",
                 m_card_total: "Card & Transfer",
-                m_avg_order: "Avg. Invoice Value",
-                th_serial: "Invoice No.",
+                m_avg_order: "Average Order",
+                th_serial: "Invoice #",
                 th_time: "Time",
                 th_date: "Date",
                 th_staff: "Staff",
@@ -693,416 +671,337 @@
                 th_price: "Amount",
                 th_action: "Action",
                 modal_view_invoice: "View Selected Invoice",
-                btn_print: "Print Receipt",
+                btn_print: "Print Invoice",
                 btn_download: "Download PDF",
                 admin_panel_title: "Admin Control Panel",
-                admin_pass_label: "Enter Admin Password",
+                admin_pass_label: "Enter Manager Access Code",
                 btn_login: "Login",
                 manage_staff: "Manage Staff:",
                 btn_add_staff: "Add Staff",
                 manage_services: "Manage Services & Offers:",
                 btn_add_service: "Add Service / Offer",
                 current_services: "Currently Available Services:",
-                btn_close: "Close Panel",
-                pay_cash: "Cash",
-                pay_card: "Card / Mada",
-                pay_transfer: "Bank Transfer",
-                loc_center: "At Spa Center",
-                loc_home: "Home Visit"
+                btn_close: "Close Panel"
             }
         };
 
-        let localInvoices = JSON.parse(localStorage.getItem('heeba_invoices')) || [];
-        let localStaff = JSON.parse(localStorage.getItem('heeba_staff')) || ["أحمد", "سارة", "خالد"];
-        let localServices = JSON.parse(localStorage.getItem('heeba_services')) || [
-            { name: "مساج سويدي 60 دقيقة", price: 180 },
-            { name: "حمام مغربي ملكي", price: 250 },
-            { name: "جلسة بدي كير كاملة", price: 120 }
-        ];
-
-        window.onload = function() {
-            initApp();
-        };
-
-        function initApp() {
-            loadStaffOptions();
-            loadServicesOptions();
-            generateSerial();
-            document.getElementById('filterDate').value = new Date().toISOString().split('T')[0];
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('filterDate').valueAsDate = new Date();
+            generateNextSerial();
+            populateDropdowns();
             loadReports();
-        }
+            updateLivePreview();
+        });
 
-        /* Language Toggle Functionality */
         function toggleLanguage() {
             currentLang = currentLang === 'ar' ? 'en' : 'ar';
             document.documentElement.lang = currentLang;
             document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            document.getElementById('langText').innerText = currentLang === 'ar' ? 'English' : 'العربية';
+            document.getElementById('langText').innerText = currentLang === 'ar' ? 'English' : 'عربي';
 
-            // Update UI elements with data-i18n
-            document.querySelectorAll('[data-i18n]').forEach(elem => {
-                const key = elem.getAttribute('data-i18n');
-                if (translations[currentLang][key]) {
-                    elem.innerText = translations[currentLang][key];
-                }
+            // Translate elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[currentLang][key]) el.innerText = i18n[currentLang][key];
             });
-
-            // Update option labels
-            document.querySelectorAll('[data-i18n-opt]').forEach(elem => {
-                const key = elem.getAttribute('data-i18n-opt');
-                if (translations[currentLang][key]) {
-                    elem.innerText = translations[currentLang][key];
-                }
-            });
-
-            // Update Live Receipt Headers & Footers
-            const t = translations[currentLang];
-            document.getElementById('rec-head-title').innerText = t.rec_title;
-            document.getElementById('rec-head-sub').innerText = t.rec_sub;
-            document.getElementById('lbl-r-serial').innerText = t.rec_lbl_serial;
-            document.getElementById('lbl-r-time').innerText = t.rec_lbl_time;
-            document.getElementById('lbl-r-staff').innerText = t.rec_lbl_staff;
-            document.getElementById('lbl-r-service').innerText = t.rec_lbl_service;
-            document.getElementById('lbl-r-duration').innerText = t.rec_lbl_duration;
-            document.getElementById('lbl-r-type').innerText = t.rec_lbl_type;
-            document.getElementById('lbl-r-pay').innerText = t.rec_lbl_pay;
-            document.getElementById('lbl-r-price').innerText = t.rec_lbl_price;
-            document.getElementById('rec-foot-msg').innerHTML = `<p>${t.rec_foot_1}</p><p style="margin-top:2px;">${t.rec_foot_2}</p>`;
-
-            // Update Modal Thermal Receipt
-            document.getElementById('m-rec-head-title').innerText = t.rec_title;
-            document.getElementById('m-rec-head-sub').innerText = t.rec_sub;
-            document.getElementById('m-lbl-r-serial').innerText = t.rec_lbl_serial;
-            document.getElementById('m-lbl-r-time').innerText = t.rec_lbl_time;
-            document.getElementById('m-lbl-r-staff').innerText = t.rec_lbl_staff;
-            document.getElementById('m-lbl-r-service').innerText = t.rec_lbl_service;
-            document.getElementById('m-lbl-r-duration').innerText = t.rec_lbl_duration;
-            document.getElementById('m-lbl-r-type').innerText = t.rec_lbl_type;
-            document.getElementById('m-lbl-r-pay').innerText = t.rec_lbl_pay;
-            document.getElementById('m-lbl-r-price').innerText = t.rec_lbl_price;
-            document.getElementById('m-rec-foot-msg').innerHTML = `<p>${t.rec_foot_1}</p><p style="margin-top:2px;">${t.rec_foot_2}</p>`;
 
             updateLivePreview();
             loadReports();
         }
 
-        /* Navigation */
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
             document.getElementById(tabId).classList.add('active');
-            document.getElementById('btn-tab-' + tabId).classList.add('active');
-
-            if(tabId === 'reports') loadReports();
+            document.getElementById(`btn-tab-${tabId}`).classList.add('active');
         }
 
-        /* Helpers */
-        function setDuration(valAr, valEn) {
-            document.getElementById('duration').value = currentLang === 'ar' ? valAr : valEn;
-            updateLivePreview();
+        function generateNextSerial() {
+            const nextNum = Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('invSerial').value = `HS-${nextNum}`;
         }
 
-        function generateSerial() {
-            const serial = 'HS-' + Date.now().toString().slice(-6);
-            document.getElementById('invSerial').value = serial;
-            updateLivePreview();
+        function populateDropdowns() {
+            const staffSelect = document.getElementById('staffSelect');
+            const filterStaff = document.getElementById('filterStaff');
+            const serviceSelect = document.getElementById('serviceSelect');
+
+            staffSelect.innerHTML = '';
+            filterStaff.innerHTML = `<option value="ALL">${i18n[currentLang].opt_all_staff}</option>`;
+            serviceSelect.innerHTML = '';
+
+            staffList.forEach(s => {
+                staffSelect.add(new Option(s, s));
+                filterStaff.add(new Option(s, s));
+            });
+
+            servicesList.forEach(srv => {
+                const opt = new Option(`${srv.name} (${srv.price} SAR)`, srv.name);
+                opt.dataset.price = srv.price;
+                serviceSelect.add(opt);
+            });
+
+            if (servicesList.length > 0) {
+                document.getElementById('price').value = servicesList[0].price;
+            }
         }
 
         function handleServiceChange() {
             const select = document.getElementById('serviceSelect');
             const selectedOpt = select.options[select.selectedIndex];
-            if(selectedOpt && selectedOpt.dataset.price) {
+            if (selectedOpt && selectedOpt.dataset.price) {
                 document.getElementById('price').value = selectedOpt.dataset.price;
             }
             updateLivePreview();
         }
 
+        function setDuration(arVal, enVal) {
+            document.getElementById('duration').value = currentLang === 'ar' ? arVal : enVal;
+            updateLivePreview();
+        }
+
         function updateLivePreview() {
             const now = new Date();
-            const timeFormatted = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            const curr = translations[currentLang].currency;
+            const dateStr = now.toLocaleDateString(currentLang === 'ar' ? 'ar-SA' : 'en-US');
+            const timeStr = now.toLocaleTimeString(currentLang === 'ar' ? 'ar-SA' : 'en-US', { hour: '2-digit', minute: '2-digit' });
 
-            document.getElementById('r-serial').innerText = document.getElementById('invSerial').value || 'HS-000000';
-            document.getElementById('r-date').innerText = now.toISOString().split('T')[0];
-            document.getElementById('r-time').innerText = timeFormatted;
+            document.getElementById('r-date').innerText = dateStr;
+            document.getElementById('r-serial').innerText = document.getElementById('invSerial').value;
+            document.getElementById('r-time').innerText = `${dateStr} ${timeStr}`;
             document.getElementById('r-staff').innerText = document.getElementById('staffSelect').value || '--';
             document.getElementById('r-service').innerText = document.getElementById('serviceSelect').value || '--';
             document.getElementById('r-duration').innerText = document.getElementById('duration').value || '--';
-            
-            const locElem = document.getElementById('serviceLocation');
-            document.getElementById('r-type').innerText = locElem.options[locElem.selectedIndex]?.text || '--';
-
-            const payElem = document.getElementById('paymentMethod');
-            document.getElementById('r-pay').innerText = payElem.options[payElem.selectedIndex]?.text || '--';
+            document.getElementById('r-type').innerText = document.getElementById('serviceLocation').value;
+            document.getElementById('r-pay').innerText = document.getElementById('paymentMethod').value;
             
             const priceVal = parseFloat(document.getElementById('price').value) || 0;
-            document.getElementById('r-price').innerText = priceVal.toFixed(2) + ' ' + curr;
+            document.getElementById('r-price').innerText = `${priceVal.toFixed(2)} SAR`;
         }
 
-        /* Staff and Services Management */
-        function loadStaffOptions() {
-            const selects = [document.getElementById('staffSelect'), document.getElementById('filterStaff')];
-            selects.forEach((select, idx) => {
-                if(!select) return;
-                select.innerHTML = idx === 1 ? `<option value="ALL">${translations[currentLang].opt_all_staff}</option>` : '';
-                localStaff.forEach(s => {
-                    select.innerHTML += `<option value="${s}">${s}</option>`;
-                });
-            });
+        async function saveInvoice(e) {
+            e.preventDefault();
+            
+            const now = new Date();
+            const newInv = {
+                serial: document.getElementById('invSerial').value,
+                staff: document.getElementById('staffSelect').value,
+                service: document.getElementById('serviceSelect').value,
+                duration: document.getElementById('duration').value,
+                price: parseFloat(document.getElementById('price').value) || 0,
+                payment_method: document.getElementById('paymentMethod').value,
+                location: document.getElementById('serviceLocation').value,
+                created_at: now.toISOString(),
+                date: document.getElementById('filterDate').value || now.toISOString().split('T')[0],
+                time: now.toTimeString().split(' ')[0].substring(0, 5)
+            };
 
-            const staffUI = document.getElementById('staffListUI');
-            if(staffUI) {
-                staffUI.innerHTML = '';
-                localStaff.forEach((s, i) => {
-                    staffUI.innerHTML += `<li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                        <span>${s}</span>
-                        <button class="btn btn-danger btn-sm" onclick="removeStaff(${i})"><i class="fa-solid fa-trash"></i></button>
-                    </li>`;
-                });
-            }
-        }
-
-        function loadServicesOptions() {
-            const select = document.getElementById('serviceSelect');
-            if(select) {
-                select.innerHTML = '';
-                localServices.forEach((s, i) => {
-                    select.innerHTML += `<option value="${s.name}" data-price="${s.price}">${s.name} - ${s.price} ${translations[currentLang].currency}</option>`;
-                });
-                if(localServices.length > 0) {
-                    document.getElementById('price').value = localServices[0].price;
+            // Save to Cloud (Supabase) if available
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('invoices').insert([newInv]);
+                } catch (err) {
+                    console.warn("Supabase insertion error, falling back to local:", err);
                 }
             }
 
-            const serviceUI = document.getElementById('serviceListUI');
-            if(serviceUI) {
-                serviceUI.innerHTML = '';
-                localServices.forEach((s, i) => {
-                    serviceUI.innerHTML += `<li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                        <span>${s.name} (${s.price} ${translations[currentLang].currency})</span>
-                        <button class="btn btn-danger btn-sm" onclick="removeService(${i})"><i class="fa-solid fa-trash"></i></button>
-                    </li>`;
-                });
+            invoices.unshift(newInv);
+            alert(currentLang === 'ar' ? 'تم حفظ الفاتورة بنجاح!' : 'Invoice saved successfully!');
+            generateNextSerial();
+            updateLivePreview();
+            loadReports();
+        }
+
+        async function loadReports() {
+            const selectedDate = document.getElementById('filterDate').value;
+            const timeFrom = document.getElementById('filterTimeFrom').value;
+            const timeTo = document.getElementById('filterTimeTo').value;
+            const staffFilter = document.getElementById('filterStaff').value;
+
+            let records = invoices;
+
+            // Fetch from Cloud if connected
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient.from('invoices').select('*');
+                    if (!error && data) records = data;
+                } catch (e) {
+                    console.log("Using memory records");
+                }
             }
+
+            const filtered = records.filter(inv => {
+                const matchDate = !selectedDate || inv.date === selectedDate;
+                const matchStaff = staffFilter === 'ALL' || inv.staff === staffFilter;
+                const matchTime = (!timeFrom || inv.time >= timeFrom) && (!timeTo || inv.time <= timeTo);
+                return matchDate && matchStaff && matchTime;
+            });
+
+            renderTableAndMetrics(filtered);
+        }
+
+        function renderTableAndMetrics(data) {
+            const tbody = document.getElementById('reportsTableBody');
+            tbody.innerHTML = '';
+
+            let totalRev = 0, totalCash = 0, totalBank = 0;
+
+            data.forEach((inv, index) => {
+                totalRev += inv.price;
+                if (inv.payment_method.includes('كاش') || inv.payment_method.toLowerCase().includes('cash')) {
+                    totalCash += inv.price;
+                } else {
+                    totalBank += inv.price;
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${inv.serial}</strong></td>
+                    <td>${inv.time}</td>
+                    <td>${inv.date}</td>
+                    <td>${inv.staff}</td>
+                    <td>${inv.service}</td>
+                    <td>${inv.payment_method}</td>
+                    <td><strong>${inv.price.toFixed(2)} SAR</strong></td>
+                    <td class="no-print">
+                        <button class="btn btn-print btn-sm" onclick="viewModalInvoice(${index})"><i class="fa-solid fa-eye"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('totalRevenue').innerText = `${totalRev.toFixed(2)} SAR`;
+            document.getElementById('totalOps').innerText = data.length;
+            document.getElementById('totalCash').innerText = `${totalCash.toFixed(2)} SAR`;
+            document.getElementById('totalBank').innerText = `${totalBank.toFixed(2)} SAR`;
+            document.getElementById('avgOrder').innerText = `${(data.length ? totalRev / data.length : 0).toFixed(2)} SAR`;
+        }
+
+        function viewModalInvoice(index) {
+            const inv = invoices[index];
+            if (!inv) return;
+
+            document.getElementById('m-r-date').innerText = inv.date;
+            document.getElementById('m-r-serial').innerText = inv.serial;
+            document.getElementById('m-r-time').innerText = `${inv.date} ${inv.time}`;
+            document.getElementById('m-r-staff').innerText = inv.staff;
+            document.getElementById('m-r-service').innerText = inv.service;
+            document.getElementById('m-r-duration').innerText = inv.duration;
+            document.getElementById('m-r-type').innerText = inv.location;
+            document.getElementById('m-r-pay').innerText = inv.payment_method;
+            document.getElementById('m-r-price').innerText = `${inv.price.toFixed(2)} SAR`;
+
+            document.getElementById('invoiceModal').classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.add('active');
+        }
+
+        function checkAdmin() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === '1234') {
+                document.getElementById('loginSec').style.display = 'none';
+                document.getElementById('adminControls').style.display = 'block';
+                renderAdminLists();
+            } else {
+                alert(currentLang === 'ar' ? 'رمز الدخول غير صحيح' : 'Incorrect Access Code');
+            }
+        }
+
+        function renderAdminLists() {
+            const staffUI = document.getElementById('staffListUI');
+            const serviceUI = document.getElementById('serviceListUI');
+
+            staffUI.innerHTML = staffList.map((s, i) => `
+                <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <span>${s}</span>
+                    <button class="btn btn-danger btn-sm" onclick="removeStaff(${i})">X</button>
+                </li>
+            `).join('');
+
+            serviceUI.innerHTML = servicesList.map((srv, i) => `
+                <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <span>${srv.name} (${srv.price} SAR)</span>
+                    <button class="btn btn-danger btn-sm" onclick="removeService(${i})">X</button>
+                </li>
+            `).join('');
         }
 
         function addStaff() {
-            const name = document.getElementById('newStaffName').value.trim();
-            if(name) {
-                localStaff.push(name);
-                localStorage.setItem('heeba_staff', JSON.stringify(localStaff));
+            const val = document.getElementById('newStaffName').value.trim();
+            if (val) {
+                staffList.push(val);
+                localStorage.setItem('haiba_staff', JSON.stringify(staffList));
                 document.getElementById('newStaffName').value = '';
-                loadStaffOptions();
+                populateDropdowns();
+                renderAdminLists();
             }
         }
 
-        function removeStaff(index) {
-            localStaff.splice(index, 1);
-            localStorage.setItem('heeba_staff', JSON.stringify(localStaff));
-            loadStaffOptions();
+        function removeStaff(i) {
+            staffList.splice(i, 1);
+            localStorage.setItem('haiba_staff', JSON.stringify(staffList));
+            populateDropdowns();
+            renderAdminLists();
         }
 
         function addService() {
             const name = document.getElementById('newServiceName').value.trim();
             const price = parseFloat(document.getElementById('newServicePrice').value) || 0;
-            if(name) {
-                localServices.push({ name, price });
-                localStorage.setItem('heeba_services', JSON.stringify(localServices));
+            if (name) {
+                servicesList.push({ name, price });
+                localStorage.setItem('haiba_services', JSON.stringify(servicesList));
                 document.getElementById('newServiceName').value = '';
                 document.getElementById('newServicePrice').value = '';
-                loadServicesOptions();
-                updateLivePreview();
+                populateDropdowns();
+                renderAdminLists();
             }
         }
 
-        function removeService(index) {
-            localServices.splice(index, 1);
-            localStorage.setItem('heeba_services', JSON.stringify(localServices));
-            loadServicesOptions();
-            updateLivePreview();
+        function removeService(i) {
+            servicesList.splice(i, 1);
+            localStorage.setItem('haiba_services', JSON.stringify(servicesList));
+            populateDropdowns();
+            renderAdminLists();
         }
 
-        /* Invoice Management & Saving to Supabase Cloud */
-        async function saveInvoice(e) {
-            e.preventDefault();
-            const btn = document.getElementById('saveBtn');
-            btn.disabled = true;
-
-            const now = new Date();
-            const invoiceData = {
-                serial: document.getElementById('invSerial').value,
-                date: now.toISOString().split('T')[0],
-                time: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
-                staff: document.getElementById('staffSelect').value,
-                service: document.getElementById('serviceSelect').value,
-                duration: document.getElementById('duration').value,
-                price: parseFloat(document.getElementById('price').value) || 0,
-                paymentMethod: document.getElementById('paymentMethod').value,
-                location: document.getElementById('serviceLocation').value,
-                created_at: now.toISOString()
-            };
-
-            localInvoices.push(invoiceData);
-            localStorage.setItem('heeba_invoices', JSON.stringify(localInvoices));
-
-            if(supabaseClient) {
-                try {
-                    await supabaseClient.from('invoices').insert([invoiceData]);
-                } catch(err) {
-                    console.log('Supabase sync warning:', err);
-                }
-            }
-
-            alert(currentLang === 'ar' ? 'تم حفظ الفاتورة بنجاح في السحابة!' : 'Invoice saved successfully to cloud!');
-            generateSerial();
-            btn.disabled = false;
-        }
-
-        /* Analytics & Reports Calculations */
-        function loadReports() {
-            const dateVal = document.getElementById('filterDate').value;
-            const timeFrom = document.getElementById('filterTimeFrom').value;
-            const timeTo = document.getElementById('filterTimeTo').value;
-            const staffFilter = document.getElementById('filterStaff').value;
-
-            let filtered = localInvoices.filter(inv => {
-                if(inv.date !== dateVal) return false;
-                if(staffFilter !== 'ALL' && inv.staff !== staffFilter) return false;
-                if(inv.time < timeFrom || inv.time > timeTo) return false;
-                return true;
-            });
-
-            let totalRev = 0;
-            let cashTotal = 0;
-            let bankTotal = 0;
-
-            const tbody = document.getElementById('reportsTableBody');
-            tbody.innerHTML = '';
-
-            filtered.forEach((inv, index) => {
-                totalRev += inv.price;
-                
-                if(inv.paymentMethod === 'كاش' || inv.paymentMethod === 'Cash') {
-                    cashTotal += inv.price;
-                } else {
-                    bankTotal += inv.price;
-                }
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${inv.serial}</strong></td>
-                        <td>${inv.time}</td>
-                        <td>${inv.date}</td>
-                        <td>${inv.staff}</td>
-                        <td>${inv.service} (${inv.duration})</td>
-                        <td><span class="chip">${inv.paymentMethod}</span></td>
-                        <td><strong>${inv.price.toFixed(2)} ${translations[currentLang].currency}</strong></td>
-                        <td class="no-print">
-                            <button class="btn btn-primary btn-sm" onclick="viewModalInvoice(${index})"><i class="fa-solid fa-eye"></i></button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteInvoice(${index})"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            const curr = translations[currentLang].currency;
-            document.getElementById('totalRevenue').innerText = totalRev.toFixed(2) + ' ' + curr;
-            document.getElementById('totalOps').innerText = filtered.length;
-            document.getElementById('totalCash').innerText = cashTotal.toFixed(2) + ' ' + curr;
-            document.getElementById('totalBank').innerText = bankTotal.toFixed(2) + ' ' + curr;
-            
-            const avg = filtered.length > 0 ? (totalRev / filtered.length) : 0;
-            document.getElementById('avgOrder').innerText = avg.toFixed(2) + ' ' + curr;
-        }
-
-        function deleteInvoice(index) {
-            if(confirm(currentLang === 'ar' ? 'هل أنت تأكد من حذف هذه الفاتورة؟' : 'Are you sure you want to delete this invoice?')) {
-                localInvoices.splice(index, 1);
-                localStorage.setItem('heeba_invoices', JSON.stringify(localInvoices));
-                loadReports();
-            }
-        }
-
-        function viewModalInvoice(index) {
-            const inv = localInvoices[index];
-            if(!inv) return;
-
-            const curr = translations[currentLang].currency;
-            document.getElementById('m-r-serial').innerText = inv.serial;
-            document.getElementById('m-r-date').innerText = inv.date;
-            document.getElementById('m-r-time').innerText = inv.time;
-            document.getElementById('m-r-staff').innerText = inv.staff;
-            document.getElementById('m-r-service').innerText = inv.service;
-            document.getElementById('m-r-duration').innerText = inv.duration;
-            document.getElementById('m-r-type').innerText = inv.location;
-            document.getElementById('m-r-pay').innerText = inv.paymentMethod;
-            document.getElementById('m-r-price').innerText = inv.price.toFixed(2) + ' ' + curr;
-
-            openModal('invoiceModal');
-        }
-
-        /* Improved Print & PDF Export Functions */
-        function printElement(elementId) {
-            const elem = document.getElementById(elementId);
-            elem.classList.add('printable-target');
+        // Printing & Exporting Utilities
+        function printElement(elemId) {
+            const target = document.getElementById(elemId);
+            target.classList.add('printable-target');
             window.print();
-            elem.classList.remove('printable-target');
-        }
-
-        function exportPDF(elementId, filename) {
-            const element = document.getElementById(elementId);
-            const isThermal = elementId.includes('thermal');
-            
-            const opt = {
-                margin:       isThermal ? 2 : 10,
-                filename:     `${filename}_${Date.now()}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { 
-                    unit: 'mm', 
-                    format: isThermal ? [80, 150] : 'a4', 
-                    orientation: 'portrait' 
-                }
-            };
-            html2pdf().set(opt).from(element).save();
+            target.classList.remove('printable-target');
         }
 
         function printReport() {
             const printArea = document.getElementById('report-print-area');
-            const cardContent = document.getElementById('report-main-card').innerHTML;
-            printArea.innerHTML = cardContent;
+            const reportCard = document.getElementById('report-main-card');
+            printArea.innerHTML = reportCard.innerHTML;
             printArea.classList.add('printable-target');
             window.print();
             printArea.classList.remove('printable-target');
             printArea.innerHTML = '';
         }
 
+        function exportPDF(elemId, filename) {
+            const element = document.getElementById(elemId);
+            const opt = {
+                margin:       5,
+                filename:     `${filename}_${Date.now()}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+
         function exportReportPDF() {
-            exportPDF('report-main-card', 'Shift_Report');
-        }
-
-        /* Modals & Admin Logic */
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-        function openAdminModal() {
-            document.getElementById('loginSec').style.display = 'block';
-            document.getElementById('adminControls').style.display = 'none';
-            document.getElementById('adminPass').value = '';
-            openModal('adminModal');
-        }
-
-        function checkAdmin() {
-            const pass = document.getElementById('adminPass').value;
-            if(pass === '1234') {
-                document.getElementById('loginSec').style.display = 'none';
-                document.getElementById('adminControls').style.display = 'block';
-                loadStaffOptions();
-                loadServicesOptions();
-            } else {
-                alert(currentLang === 'ar' ? 'رمز الدخول غير صحيح!' : 'Incorrect Password!');
-            }
+            exportPDF('report-main-card', 'SalesReport');
         }
     </script>
 </body>
