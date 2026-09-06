@@ -9,14 +9,14 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- html2pdf.js للتصدير المباشر لـ PDF -->
+  <!-- html2pdf.js للتصدير المباشر والمثالي لـ PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <!-- Supabase JS SDK للربط السحابي -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
     
     * {
       font-family: 'Tajawal', sans-serif;
@@ -36,7 +36,7 @@
         top: 0;
         width: 80mm;
         margin: 0;
-        padding: 5px;
+        padding: 2mm;
       }
       @page {
         size: 80mm auto;
@@ -50,88 +50,126 @@
       max-width: 380px;
       margin: 0 auto;
       background: #ffffff;
-      padding: 15px;
-      border-radius: 8px;
+      padding: 12px;
+      border-radius: 6px;
       color: #000000;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
       height: auto !important;
       min-height: max-content;
       overflow: visible !important;
     }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased min-h-screen">
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
 
-  <!-- Navigation Bar -->
+  <!-- Top Navigation Bar -->
   <header class="bg-emerald-900 text-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3 space-x-reverse">
         <i class="fa-solid fa-spa text-2xl text-emerald-400"></i>
-        <h1 class="font-bold text-xl tracking-wide" id="txt-app-title">مركز هيبة الاسترخاء - POS</h1>
-        <span id="cloud-status" class="text-xs bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-600">
-          <i class="fa-solid fa-cloud-check ml-1"></i> سحابي
+        <div>
+          <h1 class="font-bold text-lg tracking-wide leading-none" id="txt-app-title">مركز هيبة الاسترخاء - POS</h1>
+          <span class="text-[10px] text-emerald-300 font-medium" id="txt-app-subtitle">نظام إدارة نقاط البيع والشعارات</span>
+        </div>
+        <span id="cloud-status" class="mr-2 text-xs bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-600 flex items-center gap-1">
+          <i class="fa-solid fa-cloud-check text-emerald-400"></i> <span id="txt-cloud-lbl">سحابي</span>
         </span>
       </div>
-      <div class="flex items-center gap-3">
-        <button onclick="toggleLanguage()" class="bg-emerald-800 hover:bg-emerald-700 px-3 py-1.5 rounded-md text-sm border border-emerald-600 font-semibold transition">
-          <i class="fa-solid fa-globe mr-1"></i> <span id="lang-btn-txt">English</span>
+      <div class="flex items-center gap-2">
+        <button onclick="toggleLanguage()" class="bg-emerald-800 hover:bg-emerald-700 px-3 py-1.5 rounded-lg text-xs border border-emerald-600 font-semibold transition flex items-center gap-1">
+          <i class="fa-solid fa-globe"></i> <span id="lang-btn-txt">English</span>
         </button>
-        <button onclick="openAdminModal()" class="bg-amber-600 hover:bg-amber-500 px-3 py-1.5 rounded-md text-sm font-semibold transition">
-          <i class="fa-solid fa-user-gear mr-1"></i> <span id="txt-admin-btn">الإدارة</span>
+        <button onclick="openAdminModal()" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1">
+          <i class="fa-solid fa-user-gear"></i> <span id="txt-admin-btn">الإدارة</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Main POS Dashboard -->
-  <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <!-- Main POS Dashboard Grid -->
+  <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow w-full">
 
-    <!-- Left Panel: Services & Orders (7 Cols) -->
+    <!-- Left Section: Services, Stats & Recent Invoices (7 Cols) -->
     <section class="lg:col-span-7 space-y-6">
       
-      <!-- Quick Stats -->
-      <div class="grid grid-cols-3 gap-4">
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <p class="text-xs text-slate-500 font-medium" id="lbl-stat-sales">إجمالي مبيعات اليوم</p>
-          <h3 class="text-xl font-bold text-emerald-700 mt-1" id="val-today-sales">0.00 ر.س</h3>
+      <!-- Quick Analytics Summary -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between text-slate-500 mb-1">
+            <span class="text-xs font-medium" id="lbl-stat-sales">مبيعات اليوم</span>
+            <i class="fa-solid fa-chart-line text-emerald-600 text-sm"></i>
+          </div>
+          <h3 class="text-lg font-bold text-emerald-700" id="val-today-sales">0.00 ر.س</h3>
         </div>
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <p class="text-xs text-slate-500 font-medium" id="lbl-stat-orders">عدد الفواتير</p>
-          <h3 class="text-xl font-bold text-slate-800 mt-1" id="val-today-orders">0</h3>
+        <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between text-slate-500 mb-1">
+            <span class="text-xs font-medium" id="lbl-stat-orders">الفواتير</span>
+            <i class="fa-solid fa-receipt text-slate-600 text-sm"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-800" id="val-today-orders">0</h3>
         </div>
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-          <p class="text-xs text-slate-500 font-medium" id="lbl-stat-avg">متوسط الفاتورة</p>
-          <h3 class="text-xl font-bold text-blue-600 mt-1" id="val-avg-order">0.00 ر.س</h3>
+        <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between text-slate-500 mb-1">
+            <span class="text-xs font-medium" id="lbl-stat-avg">المتوسط</span>
+            <i class="fa-solid fa-calculator text-blue-600 text-sm"></i>
+          </div>
+          <h3 class="text-lg font-bold text-blue-600" id="val-avg-order">0.00 ر.س</h3>
         </div>
       </div>
 
-      <!-- Services Catalog -->
+      <!-- Catalog of Available Services -->
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-lg text-slate-800 mb-4 border-b pb-2 flex items-center justify-between">
-          <span id="txt-services-heading"><i class="fa-solid fa-list-check text-emerald-600 ml-2"></i> قائمة الخدمات</span>
-        </h2>
+        <div class="flex items-center justify-between border-b pb-3 mb-4">
+          <h2 class="font-bold text-base text-slate-800 flex items-center gap-2" id="txt-services-heading">
+            <i class="fa-solid fa-spa text-emerald-600"></i> قائمة الخدمات المتوفرة
+          </h2>
+          <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-semibold" id="services-count">0 خدمة</span>
+        </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="services-grid">
-          <!-- Dynamically Injected -->
+          <!-- Dynamic Services Injected Here -->
         </div>
       </div>
 
-      <!-- Recent Orders List & Cancellation -->
+      <!-- Recent Orders List & Cancellation Options -->
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="font-bold text-lg text-slate-800 mb-4 border-b pb-2" id="txt-recent-orders">فواتير اليوم الأخيرة (سحابي)</h2>
+        <div class="flex items-center justify-between border-b pb-3 mb-4">
+          <h2 class="font-bold text-base text-slate-800 flex items-center gap-2" id="txt-recent-orders">
+            <i class="fa-solid fa-clock-rotate-left text-slate-600"></i> فواتير اليوم الأخيرة (سحابي)
+          </h2>
+          <button onclick="fetchOrdersFromCloud()" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold flex items-center gap-1">
+            <i class="fa-solid fa-rotate-right"></i> تحديث
+          </button>
+        </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-sm text-right">
+          <table class="w-full text-xs text-right">
             <thead class="bg-slate-50 text-slate-600 border-b">
               <tr>
-                <th class="p-2">رقم الفاتورة</th>
-                <th class="p-2">الموظف</th>
-                <th class="p-2">المبلغ</th>
-                <th class="p-2">طريقة الدفع</th>
-                <th class="p-2">الحالة</th>
-                <th class="p-2 text-center">إجراءات</th>
+                <th class="p-2.5">الفاتورة</th>
+                <th class="p-2.5">الأخصائي/الموظف</th>
+                <th class="p-2.5">المبلغ</th>
+                <th class="p-2.5">الدفع</th>
+                <th class="p-2.5">الحالة</th>
+                <th class="p-2.5 text-center">إجراءات</th>
               </tr>
             </thead>
-            <tbody id="orders-table-body" class="divide-y">
-              <!-- Orders Injected -->
+            <tbody id="orders-table-body" class="divide-y divide-slate-100">
+              <!-- Orders Dynamic Injected -->
             </tbody>
           </table>
         </div>
@@ -139,65 +177,67 @@
 
     </section>
 
-    <!-- Right Panel: Cart & Checkout (5 Cols) -->
+    <!-- Right Section: Active Cart & Checkout Panel (5 Cols) -->
     <section class="lg:col-span-5 space-y-6">
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 sticky top-20">
-        <h2 class="font-bold text-lg text-slate-800 mb-4 border-b pb-2 flex items-center justify-between">
-          <span id="txt-cart-title"><i class="fa-solid fa-cart-shopping text-emerald-600 ml-2"></i> الفاتورة الحالية</span>
-          <button onclick="clearCart()" class="text-xs text-red-600 hover:text-red-800 font-semibold" id="btn-clear-cart">إلغاء الكل</button>
-        </h2>
+        <div class="flex justify-between items-center border-b pb-3 mb-4">
+          <h2 class="font-bold text-base text-slate-800 flex items-center gap-2" id="txt-cart-title">
+            <i class="fa-solid fa-cart-shopping text-emerald-600"></i> الفاتورة الحالية
+          </h2>
+          <button onclick="clearCart()" class="text-xs text-red-600 hover:text-red-800 font-semibold transition" id="btn-clear-cart">إلغاء الكل</button>
+        </div>
 
-        <!-- Employee Selection -->
+        <!-- Employee Selection Box -->
         <div class="mb-4">
-          <label class="block text-xs font-semibold text-slate-600 mb-1" id="lbl-select-emp">اختر الموظف / الأخصائي:</label>
-          <select id="employee-select" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500">
-            <!-- Employees Injected -->
+          <label class="block text-xs font-semibold text-slate-600 mb-1.5" id="lbl-select-emp">اختر الموظف / الأخصائي:</label>
+          <select id="employee-select" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+            <!-- Dynamic Employees Injected -->
           </select>
         </div>
 
-        <!-- Cart Items -->
-        <div id="cart-items" class="space-y-2 max-h-60 overflow-y-auto mb-4 border-b pb-3">
-          <p class="text-xs text-slate-400 text-center py-6" id="txt-empty-cart">السلة فارغة. قم باختيار خدمة من القائمة.</p>
+        <!-- Selected Cart Services List -->
+        <div id="cart-items" class="space-y-2 max-h-56 overflow-y-auto mb-4 border-b pb-3 pr-1">
+          <p class="text-xs text-slate-400 text-center py-8" id="txt-empty-cart">السلة فارغة. قم باختيار خدمة من القائمة.</p>
         </div>
 
-        <!-- Summary Calculation -->
-        <div class="space-y-1.5 text-sm border-b pb-3 mb-4">
+        <!-- Billing Math & Financial Totals -->
+        <div class="space-y-2 text-xs border-b pb-3 mb-4">
           <div class="flex justify-between text-slate-600">
             <span id="lbl-subtotal">المجموع الفرعي:</span>
-            <span id="cart-subtotal">0.00 ر.س</span>
+            <span id="cart-subtotal" class="font-bold">0.00 ر.س</span>
           </div>
           <div class="flex justify-between text-slate-600">
             <span id="lbl-vat">ضريبة القيمة المضافة (15%):</span>
-            <span id="cart-vat">0.00 ر.س</span>
+            <span id="cart-vat" class="font-bold">0.00 ر.س</span>
           </div>
-          <div class="flex justify-between font-bold text-base text-slate-900 pt-1">
-            <span id="lbl-total">المبلغ الإجمالي:</span>
-            <span id="cart-total" class="text-emerald-700">0.00 ر.س</span>
+          <div class="flex justify-between font-bold text-sm text-slate-900 pt-1 border-t border-slate-100">
+            <span id="lbl-total">المبلغ الإجمالي النهائي:</span>
+            <span id="cart-total" class="text-emerald-700 font-extrabold text-base">0.00 ر.س</span>
           </div>
         </div>
 
-        <!-- Payment Methods -->
+        <!-- Payment Method Options -->
         <div class="mb-5">
-          <label class="block text-xs font-semibold text-slate-600 mb-2" id="lbl-pay-method">طريقة الدفع:</label>
+          <label class="block text-xs font-semibold text-slate-600 mb-2" id="lbl-pay-method">طريقة الدفع المختارة:</label>
           <div class="grid grid-cols-3 gap-2">
-            <button onclick="setPaymentMethod('cash')" id="pay-cash" class="pay-method-btn border-2 border-emerald-600 bg-emerald-50 text-emerald-800 font-semibold text-xs py-2 rounded-lg text-center">
-              <i class="fa-solid fa-money-bill-wave block mb-1"></i> <span class="method-name">نقدي</span>
+            <button onclick="setPaymentMethod('cash')" id="pay-cash" class="pay-method-btn border-2 border-emerald-600 bg-emerald-50 text-emerald-800 font-bold text-xs py-2 rounded-lg text-center transition">
+              <i class="fa-solid fa-money-bill-wave block mb-1 text-sm"></i> <span class="method-name">نقدي</span>
             </button>
-            <button onclick="setPaymentMethod('card')" id="pay-card" class="pay-method-btn border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold text-xs py-2 rounded-lg text-center">
-              <i class="fa-solid fa-credit-card block mb-1"></i> <span class="method-name">شبكة</span>
+            <button onclick="setPaymentMethod('card')" id="pay-card" class="pay-method-btn border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold text-xs py-2 rounded-lg text-center transition">
+              <i class="fa-solid fa-credit-card block mb-1 text-sm"></i> <span class="method-name">شبكة</span>
             </button>
-            <button onclick="setPaymentMethod('transfer')" id="pay-transfer" class="pay-method-btn border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold text-xs py-2 rounded-lg text-center">
-              <i class="fa-solid fa-mobile-screen block mb-1"></i> <span class="method-name">تحويل</span>
+            <button onclick="setPaymentMethod('transfer')" id="pay-transfer" class="pay-method-btn border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold text-xs py-2 rounded-lg text-center transition">
+              <i class="fa-solid fa-mobile-screen block mb-1 text-sm"></i> <span class="method-name">تحويل</span>
             </button>
           </div>
         </div>
 
-        <!-- Actions -->
+        <!-- Checkout Actions: Thermal Print / Export PDF -->
         <div class="grid grid-cols-2 gap-2">
-          <button onclick="checkoutAndPrint()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-lg text-sm shadow transition flex items-center justify-center gap-1">
+          <button onclick="checkoutAndPrint()" class="w-full bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold py-2.5 rounded-lg text-xs shadow transition flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-print"></i> <span id="btn-submit-print">إصدار وطباعة</span>
           </button>
-          <button onclick="checkoutAndPDF()" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 rounded-lg text-sm shadow transition flex items-center justify-center gap-1">
+          <button onclick="checkoutAndPDF()" class="w-full bg-blue-700 hover:bg-blue-800 active:bg-blue-900 text-white font-bold py-2.5 rounded-lg text-xs shadow transition flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-file-pdf"></i> <span id="btn-submit-pdf">تصدير PDF</span>
           </button>
         </div>
@@ -206,92 +246,157 @@
 
   </main>
 
-  <!-- Hidden Printable Template -->
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500">
+    مركز هيبة الاسترخاء &copy; 2026 - جميع الحقوق محفوظة | نظام إدارة الفواتير والمبيعات POS
+  </footer>
+
+  <!-- Hidden HTML Container Dedicated for Thermal Printing & PDF Generation -->
   <div class="hidden">
     <div id="printable-area">
-      <div class="receipt-box text-center font-mono text-black text-xs leading-relaxed" id="receipt-content">
-        <!-- Injected via JS -->
+      <div class="receipt-box text-center font-mono text-black text-[11px] leading-tight" id="receipt-content">
+        <!-- Receipt Content Injected Dynamically by Javascript -->
       </div>
     </div>
   </div>
 
-  <!-- Admin Settings Modal -->
+  <!-- Admin Settings & Management Modal -->
   <div id="admin-modal" class="fixed inset-0 bg-black/60 hidden backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 relative">
       <div class="flex justify-between items-center border-b pb-3 mb-4">
-        <h3 class="font-bold text-slate-800" id="txt-admin-title">لوحة التحكم والإدارة</h3>
-        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2" id="txt-admin-title">
+          <i class="fa-solid fa-sliders text-amber-600"></i> لوحة الإدارة والتحكم
+        </h3>
+        <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Passcode -->
+      <!-- Step 1: Admin Passcode Screen -->
       <div id="admin-login-sec" class="space-y-4">
-        <p class="text-xs text-slate-600" id="txt-enter-pass">يرجى إدخال كلمة المرور (1234):</p>
-        <input type="password" id="admin-pass-input" placeholder="****" class="w-full border rounded-lg p-2 text-center text-lg tracking-widest font-bold">
-        <button onclick="verifyAdminPass()" class="w-full bg-emerald-700 text-white font-bold py-2 rounded-lg text-sm" id="btn-pass-verify">دخول</button>
+        <p class="text-xs text-slate-600" id="txt-enter-pass">يرجى إدخال كلمة المرور الخاصة بالإدارة للوصول:</p>
+        <input type="password" id="admin-pass-input" placeholder="****" class="w-full border rounded-lg p-2.5 text-center text-lg tracking-widest font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+        <button onclick="verifyAdminPass()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-lg text-xs transition" id="btn-pass-verify">تأكيد الدخول</button>
       </div>
 
-      <!-- Settings Body -->
-      <div id="admin-body-sec" class="hidden space-y-4">
-        <div class="border-b pb-3">
-          <h4 class="font-bold text-xs text-slate-700 mb-2" id="txt-add-emp">إضافة موظف جديد</h4>
+      <!-- Step 2: Admin Dashboard Body (Add/Remove Services and Staff) -->
+      <div id="admin-body-sec" class="hidden space-y-5">
+        
+        <!-- Add Staff -->
+        <div class="border-b pb-4">
+          <h4 class="font-bold text-xs text-slate-700 mb-2 flex items-center gap-1" id="txt-add-emp">
+            <i class="fa-solid fa-user-plus text-emerald-600"></i> إضافة موظف / أخصائي جديد
+          </h4>
           <div class="flex gap-2">
-            <input type="text" id="new-emp-name" placeholder="اسم الموظف" class="flex-1 border rounded-lg p-1.5 text-xs">
-            <button onclick="addEmployee()" class="bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold" id="btn-add-emp">إضافة</button>
+            <input type="text" id="new-emp-name" placeholder="اسم الموظف" class="flex-1 border rounded-lg p-2 text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+            <button onclick="addEmployee()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3 py-2 rounded-lg font-bold transition" id="btn-add-emp">إضافة</button>
           </div>
+          <!-- Employees List -->
+          <div id="admin-emp-list" class="mt-2 flex flex-wrap gap-1"></div>
         </div>
 
-        <div>
-          <h4 class="font-bold text-xs text-slate-700 mb-2" id="txt-add-srv">إضافة خدمة جديدة</h4>
+        <!-- Add Service -->
+        <div class="border-b pb-4">
+          <h4 class="font-bold text-xs text-slate-700 mb-2 flex items-center gap-1" id="txt-add-srv">
+            <i class="fa-solid fa-folder-plus text-emerald-600"></i> إضافة خدمة جديدة
+          </h4>
           <div class="space-y-2">
-            <input type="text" id="new-srv-name" placeholder="اسم الخدمة" class="w-full border rounded-lg p-1.5 text-xs">
+            <input type="text" id="new-srv-name" placeholder="اسم الخدمة (مثال: مساج ريفلكسولوجي)" class="w-full border rounded-lg p-2 text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none">
             <div class="flex gap-2">
-              <input type="number" id="new-srv-price" placeholder="السعر" class="w-1/2 border rounded-lg p-1.5 text-xs">
-              <button onclick="addService()" class="w-1/2 bg-emerald-700 text-white text-xs py-1.5 rounded-lg font-bold" id="btn-add-srv">حفظ الخدمة</button>
+              <input type="number" id="new-srv-price" placeholder="السعر (ر.س)" class="w-1/2 border rounded-lg p-2 text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+              <button onclick="addService()" class="w-1/2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs py-2 rounded-lg font-bold transition" id="btn-add-srv">حفظ الخدمة</button>
             </div>
           </div>
         </div>
+
+        <!-- Manage Cloud Keys -->
+        <div>
+          <h4 class="font-bold text-xs text-slate-700 mb-1">إعدادات Supabase السحابية</h4>
+          <p class="text-[10px] text-slate-500 mb-2">يمكنك ربط مفاتيح قاعدة البيانات الخاصة بك هنا أونلاين.</p>
+          <input type="text" id="cfg-supabase-url" placeholder="Supabase URL" class="w-full border rounded-lg p-1.5 text-[11px] mb-1.5 font-mono">
+          <input type="password" id="cfg-supabase-key" placeholder="Supabase Anon Key" class="w-full border rounded-lg p-1.5 text-[11px] mb-2 font-mono">
+          <button onclick="saveSupabaseConfig()" class="w-full bg-slate-800 hover:bg-slate-900 text-white text-xs py-1.5 rounded-lg font-bold transition">حفظ إعدادات الربط السحابي</button>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <!-- JavaScript App Logic & Supabase Integration -->
+  <!-- Main JavaScript App Core -->
   <script>
-    // 🌐 1. تهيئة الربط السحابي مع Supabase
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // استبدله برابط مشروعك
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // استبدله بالمفتاح الخاص بك
+    // 🌐 1. إعدادات وقواعد الربط السحابي مع Supabase
+    let SUPABASE_URL = localStorage.getItem('haiba_sb_url') || 'YOUR_SUPABASE_URL';
+    let SUPABASE_ANON_KEY = localStorage.getItem('haiba_sb_key') || 'YOUR_SUPABASE_ANON_KEY';
     
     let supabase = null;
-    if (typeof window.supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    function initSupabase() {
+      if (typeof window.supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_URL.trim() !== '') {
+        try {
+          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          document.getElementById('cloud-status').className = "mr-2 text-xs bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-600 flex items-center gap-1";
+          document.getElementById('txt-cloud-lbl').innerText = "سحابي مفعل";
+        } catch(e) {
+          console.warn("Supabase init failed", e);
+        }
+      } else {
+        document.getElementById('cloud-status').className = "mr-2 text-xs bg-amber-800 text-amber-200 px-2 py-0.5 rounded-full border border-amber-600 flex items-center gap-1";
+        document.getElementById('txt-cloud-lbl').innerText = "تخزين محلي";
+      }
     }
 
-    // Translation Data
+    // Languages Translation Master Dictionary
     const i18n = {
       ar: {
-        appTitle: "مركز هيبة الاسترخاء - POS", adminBtn: "الإدارة",
-        statSales: "إجمالي مبيعات اليوم", statOrders: "عدد الفواتير", statAvg: "متوسط الفاتورة",
-        servicesHeading: "قائمة الخدمات", recentOrders: "فواتير اليوم الأخيرة (سحابي)",
-        cartTitle: "الفاتورة الحالية", clearCart: "إلغاء الكل", selectEmp: "اختر الموظف / الأخصائي:",
-        emptyCart: "السلة فارغة. قم باختيار خدمة من القائمة.", subtotal: "المجموع الفرعي:",
-        vat: "ضريبة القيمة المضافة (15%):", total: "المبلغ الإجمالي:", payMethod: "طريقة الدفع:",
-        cash: "نقدي", card: "شبكة", transfer: "تحويل", submitPrint: "إصدار وطباعة", submitPdf: "تصدير PDF",
-        adminTitle: "لوحة التحكم والإدارة", enterPass: "يرجى إدخال كلمة المرور (1234):", passVerify: "دخول",
-        addEmp: "إضافة موظف جديد", addSrv: "إضافة خدمة جديدة", btnEmpAdd: "إضافة", btnSrvAdd: "حفظ الخدمة",
-        langBtn: "English", cancelled: "ملغاة", active: "نشطة", cancelBtn: "إلغاء",
-        receiptHeader: "مركز هيبة الاسترخاء", receiptSub: "جدة - المساج والحمام المغربي", taxNum: "الرقم الضريبي: 310000000000003"
+        appTitle: "مركز هيبة الاسترخاء - POS",
+        appSubtitle: "نظام إدارة نقاط البيع والشعارات",
+        adminBtn: "الإدارة",
+        cloudLbl: "سحابي",
+        statSales: "مبيعات اليوم",
+        statOrders: "الفواتير",
+        statAvg: "المتوسط",
+        servicesHeading: "قائمة الخدمات المتوفرة",
+        recentOrders: "فواتير اليوم الأخيرة (سحابي)",
+        cartTitle: "الفاتورة الحالية",
+        clearCart: "إلغاء الكل",
+        selectEmp: "اختر الموظف / الأخصائي:",
+        emptyCart: "السلة فارغة. قم باختيار خدمة من القائمة.",
+        subtotal: "المجموع الفرعي:",
+        vat: "ضريبة القيمة المضافة (15%):",
+        total: "المبلغ الإجمالي النهائي:",
+        payMethod: "طريقة الدفع المختارة:",
+        cash: "نقدي", card: "شبكة", transfer: "تحويل",
+        submitPrint: "إصدار وطباعة", submitPdf: "تصدير PDF",
+        adminTitle: "لوحة الإدارة والتحكم", enterPass: "يرجى إدخال كلمة المرور (1234):",
+        passVerify: "تأكيد الدخول", addEmp: "إضافة موظف / أخصائي جديد", addSrv: "إضافة خدمة جديدة",
+        btnEmpAdd: "إضافة", btnSrvAdd: "حفظ الخدمة", langBtn: "English",
+        cancelled: "ملغاة", active: "نشطة", cancelBtn: "إلغاء",
+        receiptHeader: "مركز هيبة الاسترخاء", receiptSub: "جدة - المساج والحمام المغربي",
+        taxNum: "الرقم الضريبي: 310000000000003"
       },
       en: {
-        appTitle: "Haiba Spa Center - POS", adminBtn: "Admin",
-        statSales: "Today's Sales", statOrders: "Total Orders", statAvg: "Average Order",
-        servicesHeading: "Services Menu", recentOrders: "Recent Orders (Cloud)",
-        cartTitle: "Current Cart", clearCart: "Clear All", selectEmp: "Select Employee:",
-        emptyCart: "Cart is empty. Select a service.", subtotal: "Subtotal:",
-        vat: "VAT (15%):", total: "Total Amount:", payMethod: "Payment Method:",
-        cash: "Cash", card: "Card", transfer: "Transfer", submitPrint: "Issue & Print", submitPdf: "Export PDF",
-        adminTitle: "Admin Panel", enterPass: "Enter Passcode (1234):", passVerify: "Login",
-        addEmp: "Add New Employee", addSrv: "Add New Service", btnEmpAdd: "Add", btnSrvAdd: "Save Service",
-        langBtn: "عربي", cancelled: "Cancelled", active: "Active", cancelBtn: "Cancel",
-        receiptHeader: "Haiba Spa Center", receiptSub: "Jeddah - Massage & Moroccan Bath", taxNum: "Tax ID: 310000000000003"
+        appTitle: "Haiba Spa Center - POS",
+        appSubtitle: "POS Management & Billing System",
+        adminBtn: "Admin",
+        cloudLbl: "Cloud",
+        statSales: "Today Sales",
+        statOrders: "Invoices",
+        statAvg: "Average",
+        servicesHeading: "Available Services List",
+        recentOrders: "Recent Today Invoices (Cloud)",
+        cartTitle: "Current Invoice Cart",
+        clearCart: "Clear All",
+        selectEmp: "Select Employee / Specialist:",
+        emptyCart: "Cart is empty. Select a service from the menu.",
+        subtotal: "Subtotal Amount:",
+        vat: "VAT (15%):",
+        total: "Final Total Amount:",
+        payMethod: "Selected Payment Method:",
+        cash: "Cash", card: "Card", transfer: "Transfer",
+        submitPrint: "Issue & Print", submitPdf: "Export PDF",
+        adminTitle: "Admin Panel & Controls", enterPass: "Enter Admin Passcode (1234):",
+        passVerify: "Login", addEmp: "Add New Employee", addSrv: "Add New Service",
+        btnEmpAdd: "Add", btnSrvAdd: "Save Service", langBtn: "عربي",
+        cancelled: "Cancelled", active: "Active", cancelBtn: "Cancel",
+        receiptHeader: "Haiba Spa Center", receiptSub: "Jeddah - Massage & Moroccan Bath",
+        taxNum: "Tax ID: 310000000000003"
       }
     };
 
@@ -299,25 +404,32 @@
     let currentPaymentMethod = 'cash';
     let cart = [];
 
-    let employees = JSON.parse(localStorage.getItem('haiba_employees')) || ["أحمد", "محمد", "عبدالله"];
+    // Master Initial State Setup with LocalStorage Defaults
+    let employees = JSON.parse(localStorage.getItem('haiba_employees')) || ["أحمد", "محمد", "عبدالله", "محمود"];
     let services = JSON.parse(localStorage.getItem('haiba_services')) || [
       { id: 1, name: "مساج سويدي 60 دقيقة", price: 180 },
       { id: 2, name: "حمام مغربي ملكي", price: 220 },
       { id: 3, name: "مساج + حمام مغربي", price: 350 },
-      { id: 4, name: "مساج أحجار ساخنة", price: 250 }
+      { id: 4, name: "مساج أحجار ساخنة", price: 250 },
+      { id: 5, name: "مساج ريفلكسولوجي قدمين", price: 120 },
+      { id: 6, name: "تنظيف بشرة هيبة العميق", price: 200 }
     ];
     let orders = JSON.parse(localStorage.getItem('haiba_orders')) || [];
 
-    // App Initialization
+    // Initial Execution on Window Load
     window.onload = async function() {
+      initSupabase();
       renderServices();
       renderEmployees();
       renderCart();
       await fetchOrdersFromCloud();
       updateAnalytics();
+
+      document.getElementById('cfg-supabase-url').value = SUPABASE_URL !== 'YOUR_SUPABASE_URL' ? SUPABASE_URL : '';
+      document.getElementById('cfg-supabase-key').value = SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY' ? SUPABASE_ANON_KEY : '';
     };
 
-    // 🌐 2. جلب الفواتير من Supabase سحابياً
+    // 🌐 2. جلب الفواتير المحدثة من السحابة (Supabase)
     async function fetchOrdersFromCloud() {
       if (supabase) {
         try {
@@ -326,40 +438,41 @@
             .select('*')
             .order('created_at', { ascending: false });
 
-          if (!error && data) {
+          if (!error && data && data.length > 0) {
             orders = data;
             localStorage.setItem('haiba_orders', JSON.stringify(orders));
           }
         } catch (e) {
-          console.warn("Supabase Fetch Error, using LocalStorage backup", e);
+          console.warn("Cloud Fetch Failed, falling back to local database", e);
         }
       }
       renderOrdersTable();
+      updateAnalytics();
     }
 
-    // 🌐 3. حفظ الفاتورة سحابياً في Supabase
+    // 🌐 3. إرسال وحفظ الفواتير إلى Supabase
     async function saveOrderToCloud(order) {
-      // الحفظ المحلي الفوري
       orders.unshift(order);
       localStorage.setItem('haiba_orders', JSON.stringify(orders));
 
-      // الحفظ السحابي أونلاين
       if (supabase) {
         try {
           const { error } = await supabase.from('orders').insert([order]);
-          if (error) console.error("Cloud Save Failed:", error);
+          if (error) console.error("Cloud insertion error:", error);
         } catch (e) {
-          console.error("Cloud connection failed:", e);
+          console.error("Cloud operation failed:", e);
         }
       }
     }
 
+    // Switch System Language
     function toggleLanguage() {
       currentLang = currentLang === 'ar' ? 'en' : 'ar';
       document.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
       
       const t = i18n[currentLang];
       document.getElementById('txt-app-title').innerText = t.appTitle;
+      document.getElementById('txt-app-subtitle').innerText = t.appSubtitle;
       document.getElementById('txt-admin-btn').innerText = t.adminBtn;
       document.getElementById('lbl-stat-sales').innerText = t.statSales;
       document.getElementById('lbl-stat-orders').innerText = t.statOrders;
@@ -382,21 +495,34 @@
       renderOrdersTable();
     }
 
+    // Render Catalog Items
     function renderServices() {
       const grid = document.getElementById('services-grid');
+      document.getElementById('services-count').innerText = `${services.length} خدمة`;
       grid.innerHTML = services.map(s => `
-        <button onclick="addToCart(${s.id})" class="p-3 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-lg text-right transition flex flex-col justify-between h-24">
-          <span class="font-bold text-xs text-slate-800 line-clamp-2">${s.name}</span>
-          <span class="text-emerald-700 font-bold text-sm">${s.price} ر.س</span>
+        <button onclick="addToCart(${s.id})" class="p-3 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-xl text-right transition flex flex-col justify-between h-24 shadow-sm hover:shadow group">
+          <span class="font-bold text-xs text-slate-800 group-hover:text-emerald-900 line-clamp-2">${s.name}</span>
+          <span class="text-emerald-700 font-extrabold text-sm">${s.price} ر.س</span>
         </button>
       `).join('');
     }
 
+    // Render Staff Options
     function renderEmployees() {
       const select = document.getElementById('employee-select');
       select.innerHTML = employees.map(e => `<option value="${e}">${e}</option>`).join('');
+
+      const list = document.getElementById('admin-emp-list');
+      if(list) {
+        list.innerHTML = employees.map((e, idx) => `
+          <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-bold flex items-center gap-1">
+            ${e} <i onclick="deleteEmployee(${idx})" class="fa-solid fa-xmark text-red-500 cursor-pointer hover:text-red-700"></i>
+          </span>
+        `).join('');
+      }
     }
 
+    // Cart Management
     function addToCart(serviceId) {
       const srv = services.find(s => s.id === serviceId);
       const existing = cart.find(c => c.id === serviceId);
@@ -411,7 +537,7 @@
     function renderCart() {
       const container = document.getElementById('cart-items');
       if (cart.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">${i18n[currentLang].emptyCart}</p>`;
+        container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">${i18n[currentLang].emptyCart}</p>`;
         document.getElementById('cart-subtotal').innerText = "0.00 ر.س";
         document.getElementById('cart-vat').innerText = "0.00 ر.س";
         document.getElementById('cart-total').innerText = "0.00 ر.س";
@@ -423,14 +549,14 @@
         const itemTotal = item.price * item.qty;
         subtotal += itemTotal;
         return `
-          <div class="flex justify-between items-center text-xs bg-slate-50 p-2 rounded-md">
+          <div class="flex justify-between items-center text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-200">
             <div>
               <p class="font-bold text-slate-800">${item.name}</p>
-              <p class="text-slate-500">${item.price} ر.س × ${item.qty}</p>
+              <p class="text-[11px] text-slate-500">${item.price} ر.س × ${item.qty}</p>
             </div>
             <div class="flex items-center gap-2">
-              <span class="font-bold text-slate-800">${itemTotal} ر.س</span>
-              <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700 font-bold"><i class="fa-solid fa-trash-can"></i></button>
+              <span class="font-bold text-slate-800">${itemTotal.toFixed(2)} ر.س</span>
+              <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700 font-bold p-1"><i class="fa-solid fa-trash-can"></i></button>
             </div>
           </div>
         `;
@@ -487,47 +613,52 @@
       };
     }
 
+    // Build Thermal Receipt Template (80mm Dual Copy Optimized)
     function buildReceiptHTML(order) {
       const t = i18n[currentLang];
+      const itemsList = order.items.map(i => `
+        <tr class="border-b border-slate-200">
+          <td class="py-1 text-right">${i.name}</td>
+          <td class="py-1 text-center">${i.qty}</td>
+          <td class="py-1 text-left">${(i.price * i.qty).toFixed(2)}</td>
+        </tr>
+      `).join('');
+
       return `
-        <div class="text-center font-bold text-sm mb-1">${t.receiptHeader}</div>
-        <div class="text-center text-xs mb-2">${t.receiptSub}</div>
-        <div class="text-center text-xs mb-2 border-b pb-2 border-dashed border-black">${t.taxNum}</div>
-        
-        <div class="text-right text-xs space-y-1 mb-2 border-b pb-2 border-dashed border-black">
-          <div>رقم الفاتورة: <span>${order.id}</span></div>
-          <div>التاريخ والوقت: <span>${order.date} ${order.time}</span></div>
-          <div>الموظف/ة: <span>${order.employee}</span></div>
-          <div>طريقة الدفع: <span>${t[order.paymentMethod]}</span></div>
-        </div>
+        <div class="receipt-single mb-4">
+          <div class="text-center font-extrabold text-sm mb-0.5">${t.receiptHeader}</div>
+          <div class="text-center text-[10px] mb-1 text-slate-700">${t.receiptSub}</div>
+          <div class="text-center text-[10px] mb-2 border-b pb-1.5 border-dashed border-black font-bold">${t.taxNum}</div>
+          
+          <div class="text-right text-[10px] space-y-0.5 mb-2 border-b pb-1.5 border-dashed border-black">
+            <div class="flex justify-between"><span>رقم الفاتورة:</span> <span class="font-bold">${order.id}</span></div>
+            <div class="flex justify-between"><span>التاريخ والوقت:</span> <span>${order.date} ${order.time}</span></div>
+            <div class="flex justify-between"><span>الأخصائي/الموظف:</span> <span class="font-bold">${order.employee}</span></div>
+            <div class="flex justify-between"><span>طريقة الدفع:</span> <span class="font-bold">${t[order.paymentMethod]}</span></div>
+          </div>
 
-        <table class="w-full text-xs text-right mb-2">
-          <thead>
-            <tr class="border-b border-black">
-              <th class="py-1">الخدمة</th>
-              <th class="py-1">العدد</th>
-              <th class="py-1">المبلغ</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${order.items.map(i => `
-              <tr>
-                <td class="py-1">${i.name}</td>
-                <td class="py-1">${i.qty}</td>
-                <td class="py-1">${(i.price * i.qty).toFixed(2)}</td>
+          <table class="w-full text-[10px] text-right mb-2">
+            <thead>
+              <tr class="border-b border-black font-bold">
+                <th class="py-1 text-right">الخدمة</th>
+                <th class="py-1 text-center">العدد</th>
+                <th class="py-1 text-left">المبلغ</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${itemsList}
+            </tbody>
+          </table>
 
-        <div class="border-t border-dashed border-black pt-2 space-y-1 text-xs text-right">
-          <div class="flex justify-between"><span>المجموع الفرعي:</span><span>${order.subtotal.toFixed(2)} ر.س</span></div>
-          <div class="flex justify-between"><span>الضريبة (15%):</span><span>${order.vat.toFixed(2)} ر.س</span></div>
-          <div class="flex justify-between font-bold text-sm pt-1 border-t border-black"><span>الإجمالي الكلي:</span><span>${order.total.toFixed(2)} ر.س</span></div>
-        </div>
+          <div class="border-t border-dashed border-black pt-1.5 space-y-0.5 text-[10px] text-right">
+            <div class="flex justify-between"><span>المجموع الفرعي:</span><span>${order.subtotal.toFixed(2)} ر.س</span></div>
+            <div class="flex justify-between"><span>الضريبة (15%):</span><span>${order.vat.toFixed(2)} ر.س</span></div>
+            <div class="flex justify-between font-extrabold text-xs pt-1 border-t border-black"><span>الإجمالي الكلي:</span><span>${order.total.toFixed(2)} ر.س</span></div>
+          </div>
 
-        <div class="text-center text-xs mt-4 pt-2 border-t border-dashed border-black">
-          شكراً لزيارتكم مركز هيبة الاسترخاء
+          <div class="text-center text-[9px] mt-3 pt-1 border-t border-dashed border-black">
+            شكراً لزيارتكم مركز هيبة الاسترخاء<br>نسخة العميل
+          </div>
         </div>
       `;
     }
@@ -556,11 +687,11 @@
       receiptElem.innerHTML = buildReceiptHTML(order);
 
       const opt = {
-        margin: [5, 5, 5, 5],
+        margin: [3, 3, 3, 3],
         filename: `Invoice_${order.id}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-        jsPDF: { unit: 'mm', format: [80, 200], orientation: 'portrait' }
+        jsPDF: { unit: 'mm', format: [80, 180], orientation: 'portrait' }
       };
 
       html2pdf().set(opt).from(receiptElem).save();
@@ -573,15 +704,21 @@
     function renderOrdersTable() {
       const tbody = document.getElementById('orders-table-body');
       const t = i18n[currentLang];
+
+      if(orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-slate-400">لا توجد فواتير حظر مسجلة اليوم</td></tr>`;
+        return;
+      }
+
       tbody.innerHTML = orders.slice(0, 10).map(o => `
-        <tr class="${o.status === 'cancelled' ? 'bg-red-50 text-slate-400 line-through' : ''}">
-          <td class="p-2 font-mono font-bold">${o.id}</td>
-          <td class="p-2">${o.employee}</td>
-          <td class="p-2 font-bold">${o.total.toFixed(2)} ر.س</td>
-          <td class="p-2">${t[o.paymentMethod]}</td>
-          <td class="p-2">${o.status === 'cancelled' ? `<span class="text-red-600 no-underline font-bold">${t.cancelled}</span>` : `<span class="text-emerald-600 font-bold">${t.active}</span>`}</td>
-          <td class="p-2 text-center no-underline">
-            ${o.status !== 'cancelled' ? `<button onclick="cancelOrder('${o.id}')" class="text-xs bg-red-100 text-red-700 hover:bg-red-200 px-2 py-1 rounded font-bold">${t.cancelBtn}</button>` : '-'}
+        <tr class="${o.status === 'cancelled' ? 'bg-red-50/60 text-slate-400 line-through' : 'hover:bg-slate-50'}">
+          <td class="p-2.5 font-mono font-bold">${o.id}</td>
+          <td class="p-2.5 font-medium">${o.employee}</td>
+          <td class="p-2.5 font-bold">${o.total.toFixed(2)} ر.س</td>
+          <td class="p-2.5">${t[o.paymentMethod]}</td>
+          <td class="p-2.5">${o.status === 'cancelled' ? `<span class="text-red-600 no-underline font-bold">${t.cancelled}</span>` : `<span class="text-emerald-600 font-bold">${t.active}</span>`}</td>
+          <td class="p-2.5 text-center no-underline">
+            ${o.status !== 'cancelled' ? `<button onclick="cancelOrder('${o.id}')" class="text-[10px] bg-red-100 text-red-700 hover:bg-red-200 px-2 py-0.5 rounded font-bold transition">${t.cancelBtn}</button>` : '-'}
           </td>
         </tr>
       `).join('');
@@ -614,7 +751,7 @@
       document.getElementById('val-avg-order').innerText = `${avg.toFixed(2)} ر.س`;
     }
 
-    // Admin Panel Logic
+    // Admin Panel Logic Functions
     function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
     function closeAdminModal() { 
       document.getElementById('admin-modal').classList.add('hidden'); 
@@ -628,6 +765,7 @@
       if (pass === '1234') {
         document.getElementById('admin-login-sec').classList.add('hidden');
         document.getElementById('admin-body-sec').classList.remove('hidden');
+        renderEmployees();
       } else {
         alert("كلمة المرور غير صحيحة!");
       }
@@ -640,8 +778,13 @@
         localStorage.setItem('haiba_employees', JSON.stringify(employees));
         renderEmployees();
         input.value = '';
-        alert("تمت إضافة الموظف بنجاح!");
       }
+    }
+
+    function deleteEmployee(index) {
+      employees.splice(index, 1);
+      localStorage.setItem('haiba_employees', JSON.stringify(employees));
+      renderEmployees();
     }
 
     function addService() {
@@ -654,6 +797,20 @@
         document.getElementById('new-srv-name').value = '';
         document.getElementById('new-srv-price').value = '';
         alert("تمت إضافة الخدمة بنجاح!");
+      }
+    }
+
+    function saveSupabaseConfig() {
+      const url = document.getElementById('cfg-supabase-url').value.trim();
+      const key = document.getElementById('cfg-supabase-key').value.trim();
+
+      if(url && key) {
+        localStorage.setItem('haiba_sb_url', url);
+        localStorage.setItem('haiba_sb_key', key);
+        SUPABASE_URL = url;
+        SUPABASE_ANON_KEY = key;
+        initSupabase();
+        alert("تم حفظ إعدادات Supabase وتفعيل الاتصال السحابي!");
       }
     }
   </script>
