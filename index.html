@@ -632,7 +632,6 @@
                 } catch (err) { console.error("Supabase error:", err); }
             }
 
-            // تخزين محلي احترافي كدعم احتياطي
             let localInvs = JSON.parse(localStorage.getItem('haiba_invoices') || '[]');
             localInvs.push(newInv);
             localStorage.setItem('haiba_invoices', JSON.stringify(localInvs));
@@ -662,7 +661,6 @@
                 records = JSON.parse(localStorage.getItem('haiba_invoices') || '[]');
             }
 
-            // فلترة السجلات حسب التاريخ والوقت واسم العامل
             const filtered = records.filter(rec => {
                 if (selectedDate && rec.date && rec.date !== selectedDate) return false;
                 if (timeFrom && timeTo && rec.time && (rec.time < timeFrom || rec.time > timeTo)) return false;
@@ -675,20 +673,18 @@
             let totalBnk = 0;
             let staffStats = {};
 
-            // تهيئة إحصائيات العمال
             staffList.forEach(s => {
                 const name = s.name || s;
                 staffStats[name] = { count: 0, income: 0, commission: 0 };
             });
 
             let tableHtml = '';
-            filtered.forEach((r, idx) => {
+            filtered.forEach((r) => {
                 const price = parseFloat(r.price) || 0;
                 totalRev += price;
                 if (r.payment_method === 'كاش') totalCsh += price;
                 else totalBnk += price;
 
-                // حساب العمولات بدقة بناءً على الشروط المدخلة
                 if (!staffStats[r.staff]) {
                     staffStats[r.staff] = { count: 0, income: 0, commission: 0 };
                 }
@@ -696,10 +692,8 @@
                 staffStats[r.staff].income += price;
 
                 if (r.location === 'حضور بالمركز') {
-                    // الشرط 1: 30% عمولة لجلسات المركز
                     staffStats[r.staff].commission += price * 0.30;
                 } else if (r.location === 'زيارة منزلية') {
-                    // الشرط 2 و 3: إيان 20 ريال، وباقي العمال 50 ريال للجلسة المنزلية
                     if (r.staff.trim() === 'إيان') {
                         staffStats[r.staff].commission += 20;
                     } else {
@@ -717,7 +711,7 @@
                         <td>${r.payment_method}</td>
                         <td><strong>${price.toFixed(2)} SAR</strong></td>
                         <td class="no-print">
-                            <button class="btn btn-danger btn-sm" onclick="deleteInvoice('${r.serial}', ${idx})"><i class="fa-solid fa-trash"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteInvoice('${r.serial}')"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
@@ -729,7 +723,6 @@
             document.getElementById('totalCash').innerText = `${totalCsh.toFixed(2)} SAR`;
             document.getElementById('totalBank').innerText = `${totalBnk.toFixed(2)} SAR`;
 
-            // ملخص إنتاجية وعمولات العمال
             let staffPerfHtml = '';
             for (let [sName, data] of Object.entries(staffStats)) {
                 if (staffFilter !== 'ALL' && sName !== staffFilter) continue;
@@ -745,16 +738,28 @@
             document.getElementById('staffPerformanceBody').innerHTML = staffPerfHtml;
         }
 
-        async function deleteInvoice(serial, index) {
-            if (!confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) return;
-            
+        // دالة حذف الفاتورة المحدثة والمضبوطة برقم الفاتورة
+        async function deleteInvoice(serial) {
+            if (!confirm(`هل أنت متأكد من حذف وإلغاء الفاتورة رقم (${serial})؟`)) return;
+
+            // حذف من السحابة إذا كانت مفعلة
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('invoices').delete().eq('serial', serial);
+                } catch (err) {
+                    console.error("Cloud delete error:", err);
+                }
+            }
+
+            // حذف من التخزين المحلي
             let localInvs = JSON.parse(localStorage.getItem('haiba_invoices') || '[]');
-            localInvs.splice(index, 1);
+            localInvs = localInvs.filter(inv => inv.serial !== serial);
             localStorage.setItem('haiba_invoices', JSON.stringify(localInvs));
+
+            alert('تم إلغاء وحذف الفاتورة بنجاح!');
             loadReports();
         }
 
-        // إدارة المصروفات الاحترافية
         function openExpenseModal() {
             document.getElementById('expenseDesc').value = '';
             document.getElementById('expenseAmount').value = '';
@@ -818,7 +823,6 @@
             loadExpenses();
         }
 
-        // إدارة لوحة المدير
         function openAdminModal() {
             document.getElementById('adminModal').classList.add('active');
             document.getElementById('loginSec').style.display = 'block';
