@@ -9,10 +9,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- html2pdf.js للتصدير المباشر لـ PDF -->
+  <!-- html2pdf.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- Supabase JS SDK للربط السحابي -->
+  <!-- Supabase JS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -22,7 +22,6 @@
       font-family: 'Tajawal', sans-serif;
     }
 
-    /* Print Setup for 80mm Thermal Receipt */
     @media print {
       body * {
         visibility: hidden !important;
@@ -44,7 +43,6 @@
       }
     }
 
-    /* Standard Invoice Box Layout */
     .receipt-box {
       width: 100%;
       max-width: 380px;
@@ -59,7 +57,6 @@
       overflow: visible !important;
     }
 
-    /* Custom Scrollbars */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -78,7 +75,7 @@
 </head>
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
 
-  <!-- Top Navigation Bar -->
+  <!-- Header -->
   <header class="bg-emerald-900 text-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3 space-x-reverse">
@@ -87,8 +84,8 @@
           <h1 class="font-bold text-lg tracking-wide leading-none" id="txt-app-title">مركز هيبة الاسترخاء - POS</h1>
           <span class="text-[10px] text-emerald-300 font-medium" id="txt-app-subtitle">نظام إدارة نقاط البيع والفواتير الإلكترونية</span>
         </div>
-        <span id="cloud-status" class="mr-2 text-xs bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-600 flex items-center gap-1">
-          <i class="fa-solid fa-cloud-check text-emerald-400"></i> <span id="txt-cloud-lbl">سحابي</span>
+        <span id="cloud-status" class="mr-2 text-xs bg-amber-800 text-amber-200 px-2 py-0.5 rounded-full border border-amber-600 flex items-center gap-1">
+          <i class="fa-solid fa-database"></i> <span id="txt-cloud-lbl">تخزين محلي</span>
         </span>
       </div>
       <div class="flex items-center gap-2">
@@ -102,13 +99,13 @@
     </div>
   </header>
 
-  <!-- Main POS Dashboard Grid -->
+  <!-- Main POS Interface -->
   <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow w-full">
 
-    <!-- Left Section: Services, Stats & Recent Invoices (7 Cols) -->
+    <!-- Left Column -->
     <section class="lg:col-span-7 space-y-6">
       
-      <!-- Quick Analytics Summary -->
+      <!-- Analytics Stats -->
       <div class="grid grid-cols-3 gap-3">
         <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
           <div class="flex items-center justify-between text-slate-500 mb-1">
@@ -133,7 +130,7 @@
         </div>
       </div>
 
-      <!-- Catalog of Available Services -->
+      <!-- Services -->
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
         <div class="flex items-center justify-between border-b pb-3 mb-4">
           <h2 class="font-bold text-base text-slate-800 flex items-center gap-2" id="txt-services-heading">
@@ -142,15 +139,15 @@
           <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-semibold" id="services-count">0 خدمة</span>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="services-grid">
-          <!-- Dynamic Services Injected Here -->
+          <!-- Dynamic Items Injected Here -->
         </div>
       </div>
 
-      <!-- Recent Orders List & Cancellation Options -->
+      <!-- Recent Orders Table -->
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
         <div class="flex items-center justify-between border-b pb-3 mb-4">
           <h2 class="font-bold text-base text-slate-800 flex items-center gap-2" id="txt-recent-orders">
-            <i class="fa-solid fa-clock-rotate-left text-slate-600"></i> فواتير اليوم الأخيرة (سحابي)
+            <i class="fa-solid fa-clock-rotate-left text-slate-600"></i> فواتير اليوم الأخيرة
           </h2>
           <button onclick="fetchOrdersFromCloud()" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold flex items-center gap-1">
             <i class="fa-solid fa-rotate-right"></i> تحديث
@@ -169,7 +166,7 @@
               </tr>
             </thead>
             <tbody id="orders-table-body" class="divide-y divide-slate-100">
-              <!-- Orders Dynamic Injected -->
+              <!-- Orders Injected Here -->
             </tbody>
           </table>
         </div>
@@ -177,7 +174,7 @@
 
     </section>
 
-    <!-- Right Section: Active Cart & Checkout Panel (5 Cols) -->
+    <!-- Right Column (Cart) -->
     <section class="lg:col-span-5 space-y-6">
       <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 sticky top-20">
         <div class="flex justify-between items-center border-b pb-3 mb-4">
@@ -187,20 +184,17 @@
           <button onclick="clearCart()" class="text-xs text-red-600 hover:text-red-800 font-semibold transition" id="btn-clear-cart">إلغاء الكل</button>
         </div>
 
-        <!-- Employee Selection Box -->
         <div class="mb-4">
           <label class="block text-xs font-semibold text-slate-600 mb-1.5" id="lbl-select-emp">اختر الموظف / الأخصائي:</label>
           <select id="employee-select" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs font-medium text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
-            <!-- Dynamic Employees Injected -->
+            <!-- Dynamic Employees -->
           </select>
         </div>
 
-        <!-- Selected Cart Services List -->
         <div id="cart-items" class="space-y-2 max-h-56 overflow-y-auto mb-4 border-b pb-3 pr-1">
           <p class="text-xs text-slate-400 text-center py-8" id="txt-empty-cart">السلة فارغة. قم باختيار خدمة من القائمة.</p>
         </div>
 
-        <!-- Billing Math & Financial Totals -->
         <div class="space-y-2 text-xs border-b pb-3 mb-4">
           <div class="flex justify-between text-slate-600">
             <span id="lbl-subtotal">المجموع الفرعي:</span>
@@ -216,7 +210,6 @@
           </div>
         </div>
 
-        <!-- Payment Method Options -->
         <div class="mb-5">
           <label class="block text-xs font-semibold text-slate-600 mb-2" id="lbl-pay-method">طريقة الدفع المختارة:</label>
           <div class="grid grid-cols-3 gap-2">
@@ -232,7 +225,6 @@
           </div>
         </div>
 
-        <!-- Checkout Actions: Thermal Print / Export PDF -->
         <div class="grid grid-cols-2 gap-2">
           <button onclick="checkoutAndPrint()" class="w-full bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-bold py-2.5 rounded-lg text-xs shadow transition flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-print"></i> <span id="btn-submit-print">إصدار وطباعة</span>
@@ -246,21 +238,18 @@
 
   </main>
 
-  <!-- Footer -->
   <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500">
     مركز هيبة الاسترخاء &copy; 2026 - جميع الحقوق محفوظة | نظام إدارة الفواتير والمبيعات POS
   </footer>
 
-  <!-- Hidden HTML Container Dedicated for Thermal Printing & PDF Generation -->
+  <!-- Print Thermal Template Container -->
   <div class="hidden">
     <div id="printable-area">
-      <div class="receipt-box text-center font-mono text-black text-[11px] leading-tight" id="receipt-content">
-        <!-- Receipt Content Injected Dynamically by Javascript -->
-      </div>
+      <div class="receipt-box text-center font-mono text-black text-[11px] leading-tight" id="receipt-content"></div>
     </div>
   </div>
 
-  <!-- Admin Settings & Management Modal -->
+  <!-- Admin Modal -->
   <div id="admin-modal" class="fixed inset-0 bg-black/60 hidden backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 relative">
       <div class="flex justify-between items-center border-b pb-3 mb-4">
@@ -270,17 +259,13 @@
         <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Step 1: Admin Passcode Screen -->
       <div id="admin-login-sec" class="space-y-4">
-        <p class="text-xs text-slate-600" id="txt-enter-pass">يرجى إدخال كلمة المرور الخاصة بالإدارة للوصول:</p>
+        <p class="text-xs text-slate-600" id="txt-enter-pass">يرجى إدخال كلمة المرور (1234):</p>
         <input type="password" id="admin-pass-input" placeholder="****" class="w-full border rounded-lg p-2.5 text-center text-lg tracking-widest font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
         <button onclick="verifyAdminPass()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-lg text-xs transition" id="btn-pass-verify">تأكيد الدخول</button>
       </div>
 
-      <!-- Step 2: Admin Dashboard Body (Add/Remove Services and Staff) -->
       <div id="admin-body-sec" class="hidden space-y-5">
-        
-        <!-- Add Staff -->
         <div class="border-b pb-4">
           <h4 class="font-bold text-xs text-slate-700 mb-2 flex items-center gap-1" id="txt-add-emp">
             <i class="fa-solid fa-user-plus text-emerald-600"></i> إضافة موظف / أخصائي جديد
@@ -289,17 +274,15 @@
             <input type="text" id="new-emp-name" placeholder="اسم الموظف" class="flex-1 border rounded-lg p-2 text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none">
             <button onclick="addEmployee()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-3 py-2 rounded-lg font-bold transition" id="btn-add-emp">إضافة</button>
           </div>
-          <!-- Employees List -->
           <div id="admin-emp-list" class="mt-2 flex flex-wrap gap-1"></div>
         </div>
 
-        <!-- Add Service -->
         <div class="border-b pb-4">
           <h4 class="font-bold text-xs text-slate-700 mb-2 flex items-center gap-1" id="txt-add-srv">
             <i class="fa-solid fa-folder-plus text-emerald-600"></i> إضافة خدمة جديدة
           </h4>
           <div class="space-y-2">
-            <input type="text" id="new-srv-name" placeholder="اسم الخدمة (مثال: مساج ريفلكسولوجي)" class="w-full border rounded-lg p-2 text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none">
+            <input type="text" id="new-srv-name" placeholder="اسم الخدمة" class="w-full border rounded-lg p-2 text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none">
             <div class="flex gap-2">
               <input type="number" id="new-srv-price" placeholder="السعر (ر.س)" class="w-1/2 border rounded-lg p-2 text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none">
               <button onclick="addService()" class="w-1/2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs py-2 rounded-lg font-bold transition" id="btn-add-srv">حفظ الخدمة</button>
@@ -307,10 +290,9 @@
           </div>
         </div>
 
-        <!-- Manage Cloud Keys -->
         <div>
           <h4 class="font-bold text-xs text-slate-700 mb-1">إعدادات Supabase السحابية</h4>
-          <p class="text-[10px] text-slate-500 mb-2">يمكنك ربط مفاتيح قاعدة البيانات الخاصة بك هنا أونلاين.</p>
+          <p class="text-[10px] text-slate-500 mb-2">يمكنك ربط مفاتيح قاعدة البيانات السحابية هنا.</p>
           <input type="text" id="cfg-supabase-url" placeholder="Supabase URL" class="w-full border rounded-lg p-1.5 text-[11px] mb-1.5 font-mono">
           <input type="password" id="cfg-supabase-key" placeholder="Supabase Anon Key" class="w-full border rounded-lg p-1.5 text-[11px] mb-2 font-mono">
           <button onclick="saveSupabaseConfig()" class="w-full bg-slate-800 hover:bg-slate-900 text-white text-xs py-1.5 rounded-lg font-bold transition">حفظ إعدادات الربط السحابي</button>
@@ -320,21 +302,19 @@
     </div>
   </div>
 
-  <!-- Main JavaScript App Core -->
   <script>
-    // 🌐 1. إعدادات وقواعد الربط السحابي مع Supabase
-    let SUPABASE_URL = localStorage.getItem('haiba_sb_url') || 'YOUR_SUPABASE_URL';
-    let SUPABASE_ANON_KEY = localStorage.getItem('haiba_sb_key') || 'YOUR_SUPABASE_ANON_KEY';
-    
-    let supabase = null;
+    let SUPABASE_URL = localStorage.getItem('haiba_sb_url') || '';
+    let SUPABASE_ANON_KEY = localStorage.getItem('haiba_sb_key') || '';
+    let sbClient = null;
+
     function initSupabase() {
-      if (typeof window.supabase !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_URL.trim() !== '') {
+      if (typeof window.supabase !== 'undefined' && SUPABASE_URL && SUPABASE_URL.trim() !== '') {
         try {
-          supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
           document.getElementById('cloud-status').className = "mr-2 text-xs bg-emerald-800 text-emerald-200 px-2 py-0.5 rounded-full border border-emerald-600 flex items-center gap-1";
           document.getElementById('txt-cloud-lbl').innerText = "سحابي مفعل";
         } catch(e) {
-          console.warn("Supabase init failed", e);
+          console.warn("Supabase Init Error:", e);
         }
       } else {
         document.getElementById('cloud-status').className = "mr-2 text-xs bg-amber-800 text-amber-200 px-2 py-0.5 rounded-full border border-amber-600 flex items-center gap-1";
@@ -342,61 +322,34 @@
       }
     }
 
-    // Languages Translation Master Dictionary
     const i18n = {
       ar: {
         appTitle: "مركز هيبة الاسترخاء - POS",
         appSubtitle: "نظام إدارة نقاط البيع والفواتير الإلكترونية",
         adminBtn: "الإدارة",
-        cloudLbl: "سحابي",
-        statSales: "مبيعات اليوم",
-        statOrders: "الفواتير",
-        statAvg: "المتوسط",
-        servicesHeading: "قائمة الخدمات المتوفرة",
-        recentOrders: "فواتير اليوم الأخيرة (سحابي)",
-        cartTitle: "الفاتورة الحالية",
-        clearCart: "إلغاء الكل",
-        selectEmp: "اختر الموظف / الأخصائي:",
+        statSales: "مبيعات اليوم", statOrders: "الفواتير", statAvg: "المتوسط",
+        servicesHeading: "قائمة الخدمات المتوفرة", recentOrders: "فواتير اليوم الأخيرة",
+        cartTitle: "الفاتورة الحالية", clearCart: "إلغاء الكل", selectEmp: "اختر الموظف / الأخصائي:",
         emptyCart: "السلة فارغة. قم باختيار خدمة من القائمة.",
-        subtotal: "المجموع الفرعي:",
-        vat: "ضريبة القيمة المضافة (15%):",
-        total: "المبلغ الإجمالي النهائي:",
-        payMethod: "طريقة الدفع المختارة:",
-        cash: "نقدي", card: "شبكة", transfer: "تحويل",
+        subtotal: "المجموع الفرعي:", vat: "ضريبة القيمة المضافة (15%):", total: "المبلغ الإجمالي النهائي:",
+        payMethod: "طريقة الدفع المختارة:", cash: "نقدي", card: "شبكة", transfer: "تحويل",
         submitPrint: "إصدار وطباعة", submitPdf: "تصدير PDF",
-        adminTitle: "لوحة الإدارة والتحكم", enterPass: "يرجى إدخال كلمة المرور (1234):",
-        passVerify: "تأكيد الدخول", addEmp: "إضافة موظف / أخصائي جديد", addSrv: "إضافة خدمة جديدة",
-        btnEmpAdd: "إضافة", btnSrvAdd: "حفظ الخدمة", langBtn: "English",
-        cancelled: "ملغاة", active: "نشطة", cancelBtn: "إلغاء",
-        receiptHeader: "مركز هيبة الاسترخاء", receiptSub: "جدة - المساج والحمام المغربي",
-        taxNum: "الرقم الضريبي: 310000000000003"
+        cancelled: "ملغاة", active: "نشطة", cancelBtn: "إلغاء", langBtn: "English",
+        receiptHeader: "مركز هيبة الاسترخاء", receiptSub: "جدة - المساج والحمام المغربي", taxNum: "الرقم الضريبي: 310000000000003"
       },
       en: {
         appTitle: "Haiba Spa Center - POS",
         appSubtitle: "POS Management & Billing System",
         adminBtn: "Admin",
-        cloudLbl: "Cloud",
-        statSales: "Today Sales",
-        statOrders: "Invoices",
-        statAvg: "Average",
-        servicesHeading: "Available Services List",
-        recentOrders: "Recent Today Invoices (Cloud)",
-        cartTitle: "Current Invoice Cart",
-        clearCart: "Clear All",
-        selectEmp: "Select Employee / Specialist:",
+        statSales: "Today Sales", statOrders: "Invoices", statAvg: "Average",
+        servicesHeading: "Available Services List", recentOrders: "Recent Today Invoices",
+        cartTitle: "Current Invoice Cart", clearCart: "Clear All", selectEmp: "Select Employee / Specialist:",
         emptyCart: "Cart is empty. Select a service from the menu.",
-        subtotal: "Subtotal Amount:",
-        vat: "VAT (15%):",
-        total: "Final Total Amount:",
-        payMethod: "Selected Payment Method:",
-        cash: "Cash", card: "Card", transfer: "Transfer",
+        subtotal: "Subtotal Amount:", vat: "VAT (15%):", total: "Final Total Amount:",
+        payMethod: "Selected Payment Method:", cash: "Cash", card: "Card", transfer: "Transfer",
         submitPrint: "Issue & Print", submitPdf: "Export PDF",
-        adminTitle: "Admin Panel & Controls", enterPass: "Enter Admin Passcode (1234):",
-        passVerify: "Login", addEmp: "Add New Employee", addSrv: "Add New Service",
-        btnEmpAdd: "Add", btnSrvAdd: "Save Service", langBtn: "عربي",
-        cancelled: "Cancelled", active: "Active", cancelBtn: "Cancel",
-        receiptHeader: "Haiba Spa Center", receiptSub: "Jeddah - Massage & Moroccan Bath",
-        taxNum: "Tax ID: 310000000000003"
+        cancelled: "Cancelled", active: "Active", cancelBtn: "Cancel", langBtn: "عربي",
+        receiptHeader: "Haiba Spa Center", receiptSub: "Jeddah - Massage & Moroccan Bath", taxNum: "Tax ID: 310000000000003"
       }
     };
 
@@ -404,7 +357,6 @@
     let currentPaymentMethod = 'cash';
     let cart = [];
 
-    // Master Initial State Setup with LocalStorage Defaults
     let employees = JSON.parse(localStorage.getItem('haiba_employees')) || ["أحمد", "محمد", "عبدالله", "محمود"];
     let services = JSON.parse(localStorage.getItem('haiba_services')) || [
       { id: 1, name: "مساج سويدي 60 دقيقة", price: 180 },
@@ -416,8 +368,7 @@
     ];
     let orders = JSON.parse(localStorage.getItem('haiba_orders')) || [];
 
-    // Initial Execution on Window Load
-    window.onload = async function() {
+    window.addEventListener('DOMContentLoaded', async () => {
       initSupabase();
       renderServices();
       renderEmployees();
@@ -425,47 +376,39 @@
       await fetchOrdersFromCloud();
       updateAnalytics();
 
-      document.getElementById('cfg-supabase-url').value = SUPABASE_URL !== 'YOUR_SUPABASE_URL' ? SUPABASE_URL : '';
-      document.getElementById('cfg-supabase-key').value = SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY' ? SUPABASE_ANON_KEY : '';
-    };
+      document.getElementById('cfg-supabase-url').value = SUPABASE_URL;
+      document.getElementById('cfg-supabase-key').value = SUPABASE_ANON_KEY;
+    });
 
-    // 🌐 2. جلب الفواتير المحدثة من السحابة (Supabase)
     async function fetchOrdersFromCloud() {
-      if (supabase) {
+      if (sbClient) {
         try {
-          const { data, error } = await supabase
-            .from('orders')
-            .select('*')
-            .order('created_at', { ascending: false });
-
+          const { data, error } = await sbClient.from('orders').select('*').order('created_at', { ascending: false });
           if (!error && data && data.length > 0) {
             orders = data;
             localStorage.setItem('haiba_orders', JSON.stringify(orders));
           }
         } catch (e) {
-          console.warn("Cloud Fetch Failed, falling back to local database", e);
+          console.warn("Cloud Fetch Failed", e);
         }
       }
       renderOrdersTable();
       updateAnalytics();
     }
 
-    // 🌐 3. إرسال وحفظ الفواتير إلى Supabase
     async function saveOrderToCloud(order) {
       orders.unshift(order);
       localStorage.setItem('haiba_orders', JSON.stringify(orders));
 
-      if (supabase) {
+      if (sbClient) {
         try {
-          const { error } = await supabase.from('orders').insert([order]);
-          if (error) console.error("Cloud insertion error:", error);
+          await sbClient.from('orders').insert([order]);
         } catch (e) {
-          console.error("Cloud operation failed:", e);
+          console.error("Cloud insert error:", e);
         }
       }
     }
 
-    // Switch System Language
     function toggleLanguage() {
       currentLang = currentLang === 'ar' ? 'en' : 'ar';
       document.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
@@ -495,7 +438,6 @@
       renderOrdersTable();
     }
 
-    // Render Catalog Items
     function renderServices() {
       const grid = document.getElementById('services-grid');
       document.getElementById('services-count').innerText = `${services.length} خدمة`;
@@ -507,7 +449,6 @@
       `).join('');
     }
 
-    // Render Staff Options
     function renderEmployees() {
       const select = document.getElementById('employee-select');
       select.innerHTML = employees.map(e => `<option value="${e}">${e}</option>`).join('');
@@ -522,7 +463,6 @@
       }
     }
 
-    // Cart Management
     function addToCart(serviceId) {
       const srv = services.find(s => s.id === serviceId);
       const existing = cart.find(c => c.id === serviceId);
@@ -597,7 +537,7 @@
       const subtotal = cart.reduce((a, b) => a + (b.price * b.qty), 0);
       const vat = subtotal * 0.15;
       const total = subtotal + vat;
-      const emp = document.getElementById('employee-select').value;
+      const emp = document.getElementById('employee-select').value || 'عام';
 
       return {
         id: 'HS-' + Math.floor(100000 + Math.random() * 900000),
@@ -613,7 +553,6 @@
       };
     }
 
-    // Build Thermal Receipt Template (80mm Dual Copy Optimized)
     function buildReceiptHTML(order) {
       const t = i18n[currentLang];
       const itemsList = order.items.map(i => `
@@ -657,7 +596,7 @@
           </div>
 
           <div class="text-center text-[9px] mt-3 pt-1 border-t border-dashed border-black">
-            شكراً لزيارتكم مركز هيبة الاسترخاء<br>نسخة العميل
+            شكراً لزيارتكم مركز هيبة الاسترخاء
           </div>
         </div>
       `;
@@ -715,7 +654,7 @@
           <td class="p-2.5 font-mono font-bold">${o.id}</td>
           <td class="p-2.5 font-medium">${o.employee}</td>
           <td class="p-2.5 font-bold">${o.total.toFixed(2)} ر.س</td>
-          <td class="p-2.5">${t[o.paymentMethod]}</td>
+          <td class="p-2.5">${t[o.paymentMethod] || o.paymentMethod}</td>
           <td class="p-2.5">${o.status === 'cancelled' ? `<span class="text-red-600 no-underline font-bold">${t.cancelled}</span>` : `<span class="text-emerald-600 font-bold">${t.active}</span>`}</td>
           <td class="p-2.5 text-center no-underline">
             ${o.status !== 'cancelled' ? `<button onclick="cancelOrder('${o.id}')" class="text-[10px] bg-red-100 text-red-700 hover:bg-red-200 px-2 py-0.5 rounded font-bold transition">${t.cancelBtn}</button>` : '-'}
@@ -731,8 +670,8 @@
           target.status = 'cancelled';
           localStorage.setItem('haiba_orders', JSON.stringify(orders));
 
-          if (supabase) {
-            await supabase.from('orders').update({ status: 'cancelled' }).eq('id', id);
+          if (sbClient) {
+            await sbClient.from('orders').update({ status: 'cancelled' }).eq('id', id);
           }
 
           renderOrdersTable();
@@ -751,7 +690,6 @@
       document.getElementById('val-avg-order').innerText = `${avg.toFixed(2)} ر.س`;
     }
 
-    // Admin Panel Logic Functions
     function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
     function closeAdminModal() { 
       document.getElementById('admin-modal').classList.add('hidden'); 
@@ -810,7 +748,7 @@
         SUPABASE_URL = url;
         SUPABASE_ANON_KEY = key;
         initSupabase();
-        alert("تم حفظ إعدادات Supabase وتفعيل الاتصال السحابي!");
+        alert("تم حفظ إعدادات Supabase!");
       }
     }
   </script>
