@@ -427,7 +427,7 @@
 
     <script>
         const SUPABASE_URL = 'https://pkhgmcdfvvbtdouqnrom.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraGdtY2RmdnZidGRvdXFucm9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMDkyNDQsImV4cCI6MjA1Njg4NTI0NH0.RkYvLUpM1tW1gC3L2B0S4P5M_yX6x5V8Q9W2T1Y3Z4A';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraGdtY2RmdnZidGRvdXFucm9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2ODYzMTgsImV4cCI6MjEwNDI2MjMxOH0._Vj4P5L5ZjEyZfenWVKMgNnVa3PJ0g_hjoxNwSslNuc';
         
         let supabaseClient;
         if (typeof supabase !== 'undefined') {
@@ -602,7 +602,6 @@
                 if (isCash) totalCash += inv.price;
                 else totalBank += inv.price;
 
-                // Build staff performance stats
                 const stName = inv.staff || 'غير محدد';
                 if (!staffStats[stName]) {
                     staffStats[stName] = { count: 0, cash: 0, bank: 0, total: 0 };
@@ -625,7 +624,6 @@
                 tbody.appendChild(tr);
             });
 
-            // Render Staff Summary Table
             Object.keys(staffStats).forEach(st => {
                 const stat = staffStats[st];
                 const tr = document.createElement('tr');
