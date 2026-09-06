@@ -151,7 +151,7 @@
         .modal-content { background: white; width: 100%; max-width: 500px; padding: 1.5rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
 
         @media print {
-            @page { margin: 0; }
+            @page { size: auto; margin: 10mm; }
             body * { visibility: hidden !important; }
             .printable-target, .printable-target * { visibility: visible !important; }
             .printable-target { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; margin: 0 !important; padding: 0 !important; background: white !important; color: black !important; }
@@ -286,9 +286,10 @@
 
         <!-- TAB 2: REPORTS -->
         <div id="reports" class="tab-content">
-            <div class="card" id="report-main-card">
+            <div class="card printable-target" id="report-main-card">
                 <div class="card-header">
                     <div class="card-title"><i class="fa-solid fa-chart-line"></i> <span>تقارير المبيعات والشفتات اليومية والسنوية</span></div>
+                    <button class="btn btn-print no-print" onclick="printReports()"><i class="fa-solid fa-print"></i> <span>طباعة تقارير الشفت</span></button>
                 </div>
 
                 <div class="grid-form no-print">
@@ -364,7 +365,7 @@
 
                 <!-- SECTION: ALL INVOICES DETAIL -->
                 <div style="margin-top: 1.5rem;">
-                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> تفاصيل الفواتير المسجلة:</h3>
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> تفاصيل الفواتير المسجلة وإلغائها:</h3>
                     <div class="table-responsive">
                         <table>
                             <thead>
@@ -376,6 +377,7 @@
                                     <th>الخدمة / العرض</th>
                                     <th>طريقة الدفع</th>
                                     <th>المبلغ</th>
+                                    <th class="no-print">إجراء</th>
                                 </tr>
                             </thead>
                             <tbody id="reportsTableBody"></tbody>
@@ -620,6 +622,7 @@
                     <td>${inv.service}</td>
                     <td>${inv.payment_method}</td>
                     <td><strong>${inv.price.toFixed(2)} SAR</strong></td>
+                    <td class="no-print"><button class="btn btn-danger btn-sm" onclick="cancelInvoice('${inv.id}')"><i class="fa-solid fa-ban"></i> إلغاء</button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -641,6 +644,26 @@
             document.getElementById('totalOps').innerText = data.length;
             document.getElementById('totalCash').innerText = `${totalCash.toFixed(2)} SAR`;
             document.getElementById('totalBank').innerText = `${totalBank.toFixed(2)} SAR`;
+        }
+
+        async function cancelInvoice(id) {
+            const pass = prompt("إلغاء الفاتورة يتطلب إذن المدير. أدخل رمز المدير:");
+            if (pass !== "1234") {
+                if (pass !== null) alert("رمز المدير غير صحيح!");
+                return;
+            }
+
+            if (confirm("هل أنت متأكد من رغبتك في إلغاء وحذف هذه الفاتورة نهائياً؟")) {
+                if (supabaseClient) {
+                    const { error } = await supabaseClient.from('invoices').delete().eq('id', id);
+                    if (error) {
+                        alert("حدث خطأ أثناء الحذف: " + error.message);
+                    } else {
+                        alert("تم إلغاء وحذف الفاتورة بنجاح وتحديث التقارير.");
+                        loadReports();
+                    }
+                }
+            }
         }
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -725,6 +748,10 @@
             target.classList.add('printable-target');
             window.print();
             target.classList.remove('printable-target');
+        }
+
+        function printReports() {
+            window.print();
         }
 
         function exportPDF(elemId, filename) {
