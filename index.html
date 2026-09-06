@@ -130,8 +130,8 @@
 
         .thermal-wrapper { display: flex; justify-content: center; width: 100%; }
         .thermal-box {
-            width: 100%; max-width: 78mm; padding: 14px 12px; background: #FFF;
-            font-size: 12px; line-height: 1.4; color: #000; border: 1px dashed #CBD5E1;
+            width: 100%; max-width: 78mm; padding: 16px; background: #FFF !important;
+            font-size: 12px; line-height: 1.4; color: #000 !important; border: 1px dashed #CBD5E1;
             border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 8px; text-align: right;
         }
 
@@ -316,7 +316,7 @@
                     <div class="metric-card green">
                         <div>
                             <span>إجمالي إيراد الشفت</span>
-                            <div class="metric-value" id="totalRevenue">0.00 ر.س</div>
+                            <div class="metric-value" id="totalRevenue">0.00 SAR</div>
                         </div>
                         <i class="fa-solid fa-wallet fa-2x" style="opacity:0.3"></i>
                     </div>
@@ -330,34 +330,57 @@
                     <div class="metric-card amber">
                         <div>
                             <span>إجمالي الكاش</span>
-                            <div class="metric-value" id="totalCash">0.00 ر.س</div>
+                            <div class="metric-value" id="totalCash">0.00 SAR</div>
                         </div>
                         <i class="fa-solid fa-money-bill-wave fa-2x" style="opacity:0.3"></i>
                     </div>
                     <div class="metric-card purple">
                         <div>
                             <span>شبكة وتحويل</span>
-                            <div class="metric-value" id="totalBank">0.00 ر.س</div>
+                            <div class="metric-value" id="totalBank">0.00 SAR</div>
                         </div>
                         <i class="fa-solid fa-credit-card fa-2x" style="opacity:0.3"></i>
                     </div>
                 </div>
 
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>رقم الفاتورة</th>
-                                <th>الوقت</th>
-                                <th>التاريخ</th>
-                                <th>العامل/ة</th>
-                                <th>الخدمة / العرض</th>
-                                <th>طريقة الدفع</th>
-                                <th>المبلغ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="reportsTableBody"></tbody>
-                    </table>
+                <!-- SECTION: STAFF PERFORMANCE SUMMARY -->
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> ملخص إنتاجية وتقارير العمال في الفترة المحددة:</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>اسم العامل / العاملة</th>
+                                    <th>عدد الخدمات والمشتركين</th>
+                                    <th>تحصيل كاش</th>
+                                    <th>تحصيل شبكة / تحويل</th>
+                                    <th>إجمالي مبيعات العامل</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staffPerformanceBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SECTION: ALL INVOICES DETAIL -->
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> تفاصيل الفواتير المسجلة:</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>رقم الفاتورة</th>
+                                    <th>الوقت</th>
+                                    <th>التاريخ</th>
+                                    <th>العامل/ة</th>
+                                    <th>الخدمة / العرض</th>
+                                    <th>طريقة الدفع</th>
+                                    <th>المبلغ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -404,7 +427,6 @@
 
     <script>
         const SUPABASE_URL = 'https://pkhgmcdfvvbtdouqnrom.supabase.co';
-        // Legacy anon key extracted from project dashboard
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraGdtY2RmdnZidGRvdXFucm9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMDkyNDQsImV4cCI6MjA1Njg4NTI0NH0.RkYvLUpM1tW1gC3L2B0S4P5M_yX6x5V8Q9W2T1Y3Z4A';
         
         let supabaseClient;
@@ -414,7 +436,6 @@
 
         let staffList = [];
         let servicesList = [];
-        let invoices = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('filterDate').valueAsDate = new Date();
@@ -428,17 +449,11 @@
             if (!supabaseClient) return;
 
             try {
-                // Fetch Staff
-                const { data: staffData, error: sErr } = await supabaseClient.from('staff').select('*');
-                if (!sErr && staffData) {
-                    staffList = staffData;
-                }
+                const { data: staffData } = await supabaseClient.from('staff').select('*');
+                if (staffData) staffList = staffData;
 
-                // Fetch Services
-                const { data: servicesData, error: svErr } = await supabaseClient.from('services').select('*');
-                if (!svErr && servicesData) {
-                    servicesList = servicesData;
-                }
+                const { data: servicesData } = await supabaseClient.from('services').select('*');
+                if (servicesData) servicesList = servicesData;
             } catch (e) {
                 console.error("Error fetching master data:", e);
             }
@@ -574,17 +589,28 @@
 
         function renderTableAndMetrics(data) {
             const tbody = document.getElementById('reportsTableBody');
+            const staffTbody = document.getElementById('staffPerformanceBody');
             tbody.innerHTML = '';
+            staffTbody.innerHTML = '';
 
             let totalRev = 0, totalCash = 0, totalBank = 0;
+            const staffStats = {};
 
             data.forEach((inv) => {
                 totalRev += inv.price;
-                if (inv.payment_method && inv.payment_method.includes('كاش')) {
-                    totalCash += inv.price;
-                } else {
-                    totalBank += inv.price;
+                const isCash = inv.payment_method && inv.payment_method.includes('كاش');
+                if (isCash) totalCash += inv.price;
+                else totalBank += inv.price;
+
+                // Build staff performance stats
+                const stName = inv.staff || 'غير محدد';
+                if (!staffStats[stName]) {
+                    staffStats[stName] = { count: 0, cash: 0, bank: 0, total: 0 };
                 }
+                staffStats[stName].count += 1;
+                staffStats[stName].total += inv.price;
+                if (isCash) staffStats[stName].cash += inv.price;
+                else staffStats[stName].bank += inv.price;
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -597,6 +623,20 @@
                     <td><strong>${inv.price.toFixed(2)} SAR</strong></td>
                 `;
                 tbody.appendChild(tr);
+            });
+
+            // Render Staff Summary Table
+            Object.keys(staffStats).forEach(st => {
+                const stat = staffStats[st];
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${st}</strong></td>
+                    <td><span class="chip">${stat.count} خدمات</span></td>
+                    <td>${stat.cash.toFixed(2)} SAR</td>
+                    <td>${stat.bank.toFixed(2)} SAR</td>
+                    <td><strong style="color:var(--primary);">${stat.total.toFixed(2)} SAR</strong></td>
+                `;
+                staffTbody.appendChild(tr);
             });
 
             document.getElementById('totalRevenue').innerText = `${totalRev.toFixed(2)} SAR`;
@@ -692,11 +732,11 @@
         function exportPDF(elemId, filename) {
             const element = document.getElementById(elemId);
             const opt = {
-                margin: 5,
-                filename: `${filename}_${Date.now()}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                margin:       5,
+                filename:     `${filename}_${Date.now()}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
+                jsPDF:        { unit: 'mm', format: [80, 160], orientation: 'portrait' }
             };
             html2pdf().set(opt).from(element).save();
         }
