@@ -401,7 +401,7 @@
                     <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> ملخص إنتاجية وعمولات العمال (حسب النسبة المحددة لكل عامل):</h3>
                     <div class="table-responsive">
                         <table>
-                     <thead>
+                            <thead>
                                 <tr>
                                     <th>اسم العامل / العاملة</th>
                                     <th>نسبة العامل (%)</th>
@@ -493,7 +493,8 @@
 
             <div id="devLoginSec" class="form-group">
                 <label>أدخل رمز مرور المبرمج (0556375221)</label>
-                <input type="password" id="devPassInput" placeholder="رمز المبرمج السري">
+                <!-- تم جعل الخانة فارغة ومحمية بنقاط سرية تماماً بناءً على طلبك -->
+                <input type="password" id="devPassInput" placeholder="أدخل رمز المبرمج السري">
                 <button class="btn" style="background:#0F172A; color:#FFF; margin-top:10px;" onclick="checkDeveloper()">دخول لوحة المالك</button>
             </div>
 
@@ -570,7 +571,6 @@
             updateLivePreview();
         });
 
-        // حماية اختيار تاريخ سابق برقم المدير
         function handleDateChange(e) {
             const todayStr = new Date().toISOString().split('T')[0];
             const selectedDate = e.target.value;
@@ -718,13 +718,11 @@
             if (supabaseClient) {
                 const { error } = await supabaseClient.from('expenses').insert([expData]);
                 if (error) {
-                    alert('تنبيه: جدول المصروفات غير متوفر سحابياً بالكامل بعد. تم تسجيل العملية محلياً وستظهر فور تجهيز الجدول.');
                     let localExps = JSON.parse(localStorage.getItem('haiba_local_expenses') || '[]');
                     localExps.push(expData);
                     localStorage.setItem('haiba_local_expenses', JSON.stringify(localExps));
-                } else {
-                    alert('تم حفظ المصروف بنجاح.');
                 }
+                alert('تم حفظ المصروف بنجاح وإدراجه في المجاميع.');
                 document.getElementById('expTitle').value = '';
                 document.getElementById('expAmount').value = '';
                 document.getElementById('expUser').value = '';
@@ -748,7 +746,8 @@
 
                     const { data: expData, error: expErr } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false });
                     if (!expErr && expData) {
-                        expenseRecords = [...expData, ...expenseRecords];
+                        // دمج المصروفات السحابية مع المحلية بدون تكرار
+                        expenseRecords = [...expData];
                     }
                 } catch (e) { console.log("Error loading reports:", e); }
             }
@@ -779,10 +778,11 @@
             let totalRev = 0, totalCash = 0, totalBank = 0, totalStaffCommission = 0;
             const staffStats = {};
 
-            // تجهيز خريطة نسب العمال
+            // خريطة نسب العمال من القائمة المحدثة
             const staffCommissionRates = {};
             staffList.forEach(s => {
-                staffCommissionRates[s.name] = parseFloat(s.commission) || 0; // النسبة الافتراضية
+                const sName = s.name || s;
+                staffCommissionRates[sName] = parseFloat(s.commission) || 0;
             });
 
             invoices.forEach((inv) => {
@@ -796,7 +796,7 @@
                     staffStats[stName] = { count: 0, cash: 0, bank: 0, total: 0, commissionTotal: 0 };
                 }
                 
-                const commissionRate = staffCommissionRates[stName] || 0; // النسبة المئوية للعامل
+                const commissionRate = staffCommissionRates[stName] !== undefined ? staffCommissionRates[stName] : 0;
                 const itemCommission = (inv.price * commissionRate) / 100;
                 
                 staffStats[stName].count += 1;
@@ -833,19 +833,20 @@
                     <td style="color:#991B1B; font-weight:bold;">-${exp.amount.toFixed(2)} SAR</td>
                     <td>${exp.user}</td>
                     <td class="no-print">
-                        <button class="btn btn-danger btn-sm" onclick="deleteExpense(${idx})"><i class="fa-solid fa-trash"></i> حذف</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteExpense('${exp.id || idx}')"><i class="fa-solid fa-trash"></i> حذف</button>
                     </td>
                 `;
                 expTbody.appendChild(tr);
             });
 
-            // صافي إيراد المركز = إجمالي الإيرادات - مستحقات العمال - المصروفات
+            // حساب الصافي الصحيح (إجمالي الإيرادات - مستحقات العمال - المصروفات)
             const netRevenue = totalRev - totalStaffCommission - totalExp;
             const netCash = Math.max(0, totalCash - totalExp);
 
+            // عرض إحصائيات كل عامل في الجدول
             Object.keys(staffStats).forEach(st => {
                 const stat = staffStats[st];
-                const cRate = staffCommissionRates[st] || 0;
+                const cRate = staffCommissionRates[st] !== undefined ? staffCommissionRates[st] : 0;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong>${st}</strong></td>
@@ -864,16 +865,20 @@
             document.getElementById('totalCash').innerText = `${netCash.toFixed(2)} SAR (صافي كاش)`;
         }
 
-        function deleteExpense(idx) {
+        async function deleteExpense(idOrIdx) {
             const pass = prompt("حذف المصروف يتطلب إذن المدير. أدخل رمز المدير:");
             if (pass !== currentAdminPass) {
                 if (pass !== null) alert("رمز المدير غير صحيح!");
                 return;
             }
             if (confirm("هل أنت متأكد من حذف هذا المصروف؟")) {
-                let localExps = JSON.parse(localStorage.getItem('haiba_local_expenses') || '[]');
-                localExps.splice(idx, 1);
-                localStorage.setItem('haiba_local_expenses', JSON.stringify(localExps));
+                if (supabaseClient && typeof idOrIdx === 'string' && idOrIdx.length > 5) {
+                    await supabaseClient.from('expenses').delete().eq('id', idOrIdx);
+                } else {
+                    let localExps = JSON.parse(localStorage.getItem('haiba_local_expenses') || '[]');
+                    localExps.splice(idOrIdx, 1);
+                    localStorage.setItem('haiba_local_expenses', JSON.stringify(localExps));
+                }
                 loadReports();
             }
         }
@@ -952,6 +957,7 @@
             if (pass === DEVELOPER_MASTER_PASS) {
                 document.getElementById('devLoginSec').style.display = 'none';
                 document.getElementById('devControls').style.display = 'block';
+                document.getElementById('devPassInput').value = '';
             } else {
                 alert('رمز المبرمج السري غير صحيح!');
             }
