@@ -9,6 +9,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- html2pdf for Professional PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Supabase JS Client library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         :root {
@@ -62,6 +64,7 @@
         .pos-split-container {
             display: grid; grid-template-columns: 1fr 400px; gap: 1.25rem; align-items: start;
         }
+
         @media (max-width: 992px) {
             .pos-split-container { grid-template-columns: 1fr; }
         }
@@ -101,6 +104,7 @@
         .btn-print { background: #0284C7; color: white; }
         .btn-danger { background: #EF4444; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; }
         .btn-warning { background: #F59E0B; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; }
+        .btn-sm { padding: 4px 8px; font-size: 0.8rem; }
 
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 1rem 0; }
         .metric-card {
@@ -183,7 +187,7 @@
                             </div>
                             <div class="form-group">
                                 <label>تاريخ الفاتورة</label>
-                                <input type="date" id="invDateInput" required onchange="updateLivePreview()">
+                                <input type="date" id="invDateInput" required onchange="handleDateChange(event)">
                             </div>
                             <div class="form-group">
                                 <label>اسم العامل / العاملة</label>
@@ -191,7 +195,7 @@
                             </div>
                             <div class="form-group">
                                 <label>الخدمة / العرض المقدم</label>
-                                <select id="serviceSelect" required onchange="onServiceSelectChange()"></select>
+                                <select id="serviceSelect" required onchange="handleServiceChange()"></select>
                             </div>
                             <div class="form-group">
                                 <label>المدة</label>
@@ -244,7 +248,7 @@
                                 <p id="r-date" style="margin-top:3px; font-size:11px; font-weight:bold;"></p>
                             </div>
                             
-                            <div class="thermal-row"><span>رقم الفاتورة:</span><strong id="r-serial">HS-000001</strong></div>
+                            <div class="thermal-row"><span>رقم الفاتورة:</span><strong id="r-serial">HS-000000</strong></div>
                             <div class="thermal-row"><span>الوقت والتاريخ:</span><span id="r-time">--:--</span></div>
                             <div class="thermal-row"><span>الموظف/ة:</span><span id="r-staff">--</span></div>
                             <div class="thermal-divider"></div>
@@ -287,7 +291,7 @@
                             <input type="date" id="expDate" required>
                         </div>
                         <div class="form-group">
-                            <label>بند المصروف (مثال: ضيافة، أدوات نظافة)</label>
+                            <label>بند المصروف (مثال: ضيافة، أدوات نظافة، صيانة)</label>
                             <input type="text" id="expTitle" placeholder="أدخل اسم المصروف" required>
                         </div>
                         <div class="form-group">
@@ -326,16 +330,24 @@
 
         <!-- TAB 3: REPORTS -->
         <div id="reports" class="tab-content">
-            <div class="card">
+            <div class="card printable-target" id="report-main-card">
                 <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-chart-line"></i> <span>التقارير اليومية والشفت (الإيرادات، نسب العمال، والمصروفات)</span></div>
-                    <button class="btn btn-print no-print" onclick="printElement('reports')"><i class="fa-solid fa-print"></i> <span>طباعة التقرير</span></button>
+                    <div class="card-title"><i class="fa-solid fa-chart-line"></i> <span>التقارير اليومية والشفت (شاملة الإيرادات، نسب العمال، والمصروفات)</span></div>
+                    <button class="btn btn-print no-print" onclick="printReports()"><i class="fa-solid fa-print"></i> <span>طباعة تقرير الشفت</span></button>
                 </div>
 
                 <div class="grid-form no-print">
                     <div class="form-group">
                         <label>التاريخ</label>
                         <input type="date" id="filterDate" onchange="loadReports()">
+                    </div>
+                    <div class="form-group">
+                        <label>من الساعة (بداية الشفت)</label>
+                        <input type="time" id="filterTimeFrom" value="00:00" onchange="loadReports()">
+                    </div>
+                    <div class="form-group">
+                        <label>إلى الساعة (نهاية الشفت)</label>
+                        <input type="time" id="filterTimeTo" value="23:59" onchange="loadReports()">
                     </div>
                     <div class="form-group">
                         <label>تصفية حسب العامل/ة</label>
@@ -369,7 +381,7 @@
                     </div>
                     <div class="metric-card blue">
                         <div>
-                            <span>صافي إيراد المركز</span>
+                            <span>صافي إيراد المركز (بعد العمال والمصروفات)</span>
                             <div class="metric-value" id="netRevenueMetric">0.00 SAR</div>
                         </div>
                         <i class="fa-solid fa-scale-balanced fa-2x" style="opacity:0.3"></i>
@@ -383,8 +395,9 @@
                     </div>
                 </div>
 
+                <!-- SECTION: STAFF PERFORMANCE & COMMISSIONS SUMMARY -->
                 <div style="margin-top: 1.5rem;">
-                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> ملخص إنتاجية وعمولات العمال:</h3>
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> ملخص إنتاجية وعمولات العمال (حسب القواعد المعتمدة):</h3>
                     <div class="table-responsive">
                         <table>
                             <thead>
@@ -392,7 +405,7 @@
                                     <th>اسم العامل / العاملة</th>
                                     <th>عدد الخدمات</th>
                                     <th>إجمالي مبيعات العامل</th>
-                                    <th>مستحق العامل (العمولة)</th>
+                                    <th>مستحق العامل (العمولة المحسوبة)</th>
                                 </tr>
                             </thead>
                             <tbody id="staffPerformanceBody"></tbody>
@@ -400,6 +413,7 @@
                     </div>
                 </div>
 
+                <!-- SECTION: ALL INVOICES DETAIL -->
                 <div style="margin-top: 1.5rem;">
                     <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> تفاصيل الفواتير المسجلة:</h3>
                     <div class="table-responsive">
@@ -407,13 +421,13 @@
                             <thead>
                                 <tr>
                                     <th>رقم الفاتورة</th>
-                                    <th>التاريخ والوقت</th>
+                                    <th>الوقت والتاريخ</th>
                                     <th>العامل/ة</th>
-                                    <th>الخدمة</th>
-                                    <th>الموقع</th>
-                                    <th>الدفع</th>
+                                    <th>الخدمة / العرض</th>
+                                    <th>الموقع (مركز / منزلي)</th>
+                                    <th>طريقة الدفع</th>
                                     <th>المبلغ</th>
-                                    <th class="no-print">إجراءات</th>
+                                    <th class="no-print">إجراءات المدير</th>
                                 </tr>
                             </thead>
                             <tbody id="reportsTableBody"></tbody>
@@ -434,16 +448,16 @@
             
             <div id="loginSec" class="form-group">
                 <label>أدخل رمز الدخول الخاص بالمدير</label>
-                <input type="password" id="adminPass" placeholder="رمز المدير (الافتراضي: 1234)">
+                <input type="password" id="adminPass" placeholder="رمز المدير الحالي">
                 <button class="btn btn-primary" style="margin-top:10px;" onclick="checkAdmin()">تسجيل الدخول</button>
             </div>
 
             <div id="adminControls" style="display:none;">
                 <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:8px; border-radius:8px; margin-bottom:12px; color:#166534; font-size:0.85rem;">
-                    <i class="fa-solid fa-circle-check"></i> تم تسجيل الدخول بنجاح. إدارة كادر العمل والخدمات:
+                    <i class="fa-solid fa-circle-check"></i> تم تسجيل دخول المدير بنجاح. إدارة كادر العمل والخدمات:
                 </div>
 
-                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);">إدارة كادر العمل:</h4>
+                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-users"></i> <span>إدارة كادر العمل:</span></h4>
                 <div class="form-group" style="gap:8px;">
                     <input type="text" id="newStaffName" placeholder="اسم العامل / العاملة جديد">
                     <button class="btn btn-accent" style="margin-top:6px;" onclick="addStaff()">إضافة عامل جديد</button>
@@ -452,12 +466,14 @@
 
                 <hr style="margin: 1.25rem 0; border:0; border-top:1px solid var(--border);">
                 
-                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);">إضافة خدمات أو عروض جديدة:</h4>
+                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-tags"></i> <span>إضافة عروض أو خدمات جديدة (سحابياً):</span></h4>
                 <div class="form-group" style="gap:8px;">
                     <input type="text" id="newServiceName" placeholder="اسم الخدمة أو العرض">
                     <input type="number" id="newServicePrice" placeholder="السعر الافتراضي">
-                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addService()">إضافة الخدمة</button>
+                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addService()">إضافة الخدمة / العرض سحابياً</button>
                 </div>
+                
+                <h5 style="font-size:0.85rem; margin-top:10px; color:#475569;">الخدمات والعروض المتاحة حالياً:</h5>
                 <ul id="serviceListUI" style="list-style:none; margin-top:6px; max-height:120px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
 
                 <button class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="closeModal('adminModal')">إغلاق اللوحة</button>
@@ -475,29 +491,30 @@
 
             <div id="devLoginSec" class="form-group">
                 <label>أدخل رمز مرور المبرمج</label>
-                <input type="password" id="devPassInput" placeholder="أدخل رمز المبرمج (الافتراضي: 9999)">
+                <!-- خانة محمية ونظيفة تماماً -->
+                <input type="password" id="devPassInput" placeholder="أدخل رمز المبرمج السري">
                 <button class="btn" style="background:#0F172A; color:#FFF; margin-top:10px;" onclick="checkDeveloper()">دخول لوحة المالك</button>
             </div>
 
             <div id="devControls" style="display:none;">
                 <div style="background:#EFF6FF; border:1px solid #BFDBFE; padding:10px; border-radius:8px; margin-bottom:12px; color:#1E40AF; font-size:0.85rem;">
-                    <i class="fa-solid fa-shield-halved"></i> أهلاً بك يا محمود. من هنا يمكنك تغيير كلمة مرور لوحة المدير.
+                    <i class="fa-solid fa-shield-halved"></i> أهلاً بك يا محمود. من هنا يمكنك تغيير كلمة مرور لوحة المدير متى شئت.
                 </div>
                 <div class="form-group">
                     <label>كلمة المرور الجديدة للمدير</label>
                     <input type="text" id="newAdminPasswordVal" placeholder="أدخل كلمة المرور الجديدة">
-                    <button class="btn btn-primary" style="margin-top:8px;" onclick="updateAdminPassword()">حفظ وتحديث كلمة المرور</button>
+                    <button class="btn btn-primary" style="margin-top:8px;" onclick="updateAdminPassword()">حفظ وتحديث كلمة مرور المدير</button>
                 </div>
                 <button class="btn" style="width:100%; margin-top:1rem; background:#CBD5E1; color:#0F172A;" onclick="closeModal('devModal')">إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- مودال تعديل الفاتورة -->
+    <!-- MODAL: EDIT INVOICE (ADMIN) -->
     <div id="editInvoiceModal" class="modal">
         <div class="modal-content">
             <div class="card-header">
-                <div class="card-title">تعديل بيانات الفاتورة</div>
+                <div class="card-title"><i class="fa-solid fa-pen-to-square"></i> <span>تعديل بيانات الفاتورة (صلاحية المدير)</span></div>
                 <button onclick="closeModal('editInvoiceModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <input type="hidden" id="editInvId">
@@ -506,100 +523,138 @@
                 <input type="text" id="editInvSerial" readonly style="background:#E2E8F0;">
             </div>
             <div class="form-group" style="margin-bottom:10px;">
+                <label>مكان تقديم الخدمة</label>
+                <select id="editInvLocation">
+                    <option value="حضور بالمركز">حضور بالمركز</option>
+                    <option value="زيارة منزلية">زيارة منزلية</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label>طريقة الدفع</label>
+                <select id="editInvPay">
+                    <option value="كاش">كاش</option>
+                    <option value="صرافة (شبكة)">صرافة (شبكة)</option>
+                    <option value="تحويل بنكي">تحويل بنكي</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
                 <label>المبلغ (ر.س)</label>
                 <input type="number" id="editInvPrice" step="0.01">
             </div>
-            <button class="btn btn-primary" style="width:100%;" onclick="submitEditInvoice()">حفظ التعديلات</button>
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>تاريخ الفاتورة</label>
+                <input type="date" id="editInvDate">
+            </div>
+            <button class="btn btn-primary" style="width:100%;" onclick="submitEditInvoice()">حفظ التعديلات سحابياً</button>
         </div>
     </div>
 
     <script>
-        // التخزين المحلي والبيانات الأساسية
-        let db = {
-            staff: JSON.parse(localStorage.getItem('haiba_staff')) || ['أحمد', 'محمد', 'سارة', 'ريم'],
-            services: JSON.parse(localStorage.getItem('haiba_services')) || [
-                {name: 'مساج استرخائي 60 دقيقة', price: 150},
-                {name: 'حمام مغربي ملكي', price: 200},
-                {name: 'بدي كير ومناكير', price: 90},
-                {name: 'باقة العناية الشاملة', price: 350}
-            ],
-            invoices: JSON.parse(localStorage.getItem('haiba_invoices')) || [],
-            expenses: JSON.parse(localStorage.getItem('haiba_expenses')) || [],
-            adminPass: localStorage.getItem('haiba_admin_pass') || '1234'
-        };
-
-        function saveData() {
-            localStorage.setItem('haiba_staff', JSON.stringify(db.staff));
-            localStorage.setItem('haiba_services', JSON.stringify(db.services));
-            localStorage.setItem('haiba_invoices', JSON.stringify(db.invoices));
-            localStorage.setItem('haiba_expenses', JSON.stringify(db.expenses));
-            localStorage.setItem('haiba_admin_pass', db.adminPass);
+        const SUPABASE_URL = 'https://pkhgmcdfvvbtdouqnrom.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraGdtY2RmdnZidGRvdXFucm9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2ODYzMTgsImV4cCI6MjEwNDI2MjMxOH0._Vj4P5L5ZjEyZfenWVKMgNnVa3PJ0g_hjoxNwSslNuc';
+        
+        let supabaseClient;
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
-        // التنقل بين التبويبات
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById('btn-tab-' + tabId).classList.add('active');
-            if(tabId === 'reports') loadReports();
-        }
+        // عمال المركز الافتراضيون
+        let staffList = JSON.parse(localStorage.getItem('haiba_staff_list') || JSON.stringify([
+            { name: "مني" },
+            { name: "ريان فلبيني" },
+            { name: "جون فلبيني" }
+        ]));
+        
+        let servicesList = [];
+        let currentAdminPass = localStorage.getItem('haiba_admin_pass') || '1234';
+        const DEVELOPER_MASTER_PASS = '0556375221'; // كلمة مرور المالك
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-        function openAdminModal() {
-            document.getElementById('adminModal').classList.add('active');
-            renderAdminLists();
-        }
-        function openDeveloperModal() {
-            document.getElementById('devModal').classList.add('active');
-        }
+        document.addEventListener('DOMContentLoaded', async () => {
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('filterDate').value = todayStr;
+            document.getElementById('invDateInput').value = todayStr;
+            document.getElementById('expDate').value = todayStr;
 
-        // تهيئة الشاشة وتعبئة القوائم
-        function initApp() {
-            const today = new Date().toISOString().split('T')[0];
-            if(document.getElementById('invDateInput')) document.getElementById('invDateInput').value = today;
-            if(document.getElementById('expDate')) document.getElementById('expDate').value = today;
-            if(document.getElementById('filterDate')) document.getElementById('filterDate').value = today;
-            
-            // رقم الفاتورة التسلسلي
-            const nextSerial = 'HS-' + String(db.invoices.length + 1).padStart(6, '0');
-            document.getElementById('invSerial').value = nextSerial;
+            generateNextSerial();
+            await fetchCloudMasterData();
+            loadReports();
+            updateLivePreview();
+        });
 
-            populateDropdowns();
+        function handleDateChange(e) {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const selectedDate = e.target.value;
+            if (selectedDate < todayStr) {
+                const pass = prompt("اختيار تاريخ سابق يتطلب إذن المدير. أدخل رمز المدير:");
+                if (pass !== currentAdminPass) {
+                    alert("رمز المدير غير صحيح! تم إعادة التاريخ إلى اليوم الحالي.");
+                    e.target.value = todayStr;
+                }
+            }
             updateLivePreview();
         }
 
-        function populateDropdowns() {
-            // Staff
-            const staffSelect = document.getElementById('staffSelect');
-            const filterStaff = document.getElementById('filterStaff');
-            staffSelect.innerHTML = '';
-            filterStaff.innerHTML = '<option value="ALL">جميع العاملين</option>';
-            
-            db.staff.forEach(s => {
-                staffSelect.innerHTML += `<option value="${s}">${s}</option>`;
-                filterStaff.innerHTML += `<option value="${s}">${s}</option>`;
-            });
-
-            // Services
-            const serviceSelect = document.getElementById('serviceSelect');
-            serviceSelect.innerHTML = '';
-            db.services.forEach(srv => {
-                serviceSelect.innerHTML += `<option value="${srv.name}" data-price="${srv.price}">${srv.name} (${srv.price} ر.س)</option>`;
-            });
-
-            onServiceSelectChange();
+        async function fetchCloudMasterData() {
+            if (supabaseClient) {
+                try {
+                    const { data: servicesData } = await supabaseClient.from('services').select('*');
+                    if (servicesData && servicesData.length > 0) servicesList = servicesData;
+                } catch (e) {
+                    console.error("Error fetching services:", e);
+                }
+            }
+            populateDropdowns();
         }
 
-        function onServiceSelectChange() {
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById(`btn-tab-${tabId}`).classList.add('active');
+            // تحديث التقارير والمصروفات عند الانتقال لتاب التقارير أو المصروفات
+            if (tabId === 'reports' || tabId === 'expenses') {
+                loadReports();
+            }
+        }
+
+        function generateNextSerial() {
+            const nextNum = Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('invSerial').value = `HS-${nextNum}`;
+        }
+
+        function populateDropdowns() {
+            const staffSelect = document.getElementById('staffSelect');
+            const filterStaff = document.getElementById('filterStaff');
+            const serviceSelect = document.getElementById('serviceSelect');
+
+            staffSelect.innerHTML = '';
+            filterStaff.innerHTML = `<option value="ALL">جميع العاملين</option>`;
+            serviceSelect.innerHTML = '';
+
+            staffList.forEach(s => {
+                const sName = s.name;
+                staffSelect.add(new Option(sName, sName));
+                filterStaff.add(new Option(sName, sName));
+            });
+
+            servicesList.forEach(srv => {
+                const srvName = srv.name;
+                const srvPrice = srv.price || 0;
+                const opt = new Option(`${srvName} (${srvPrice} SAR)`, srvName);
+                opt.dataset.price = srvPrice;
+                serviceSelect.add(opt);
+            });
+
+            if (servicesList.length > 0 && !document.getElementById('price').value) {
+                document.getElementById('price').value = servicesList[0].price || 0;
+            }
+        }
+
+        function handleServiceChange() {
             const select = document.getElementById('serviceSelect');
             const selectedOpt = select.options[select.selectedIndex];
-            if(selectedOpt) {
-                const price = selectedOpt.getAttribute('data-price');
-                document.getElementById('price').value = price;
-                document.getElementById('duration').value = '60 دقيقة';
+            if (selectedOpt && selectedOpt.dataset.price) {
+                document.getElementById('price').value = selectedOpt.dataset.price;
             }
             updateLivePreview();
         }
@@ -610,284 +665,533 @@
         }
 
         function updateLivePreview() {
+            const now = new Date();
+            const dateVal = document.getElementById('invDateInput').value || now.toISOString().split('T')[0];
+            const timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+
+            document.getElementById('r-date').innerText = `${dateVal} | ${timeStr}`;
             document.getElementById('r-serial').innerText = document.getElementById('invSerial').value;
+            document.getElementById('r-time').innerText = `${dateVal} ${timeStr}`;
             document.getElementById('r-staff').innerText = document.getElementById('staffSelect').value || '--';
             document.getElementById('r-service').innerText = document.getElementById('serviceSelect').value || '--';
             document.getElementById('r-duration').innerText = document.getElementById('duration').value || '--';
-            document.getElementById('r-price').innerText = (document.getElementById('price').value || '0.00') + ' ر.س';
-            document.getElementById('r-pay').innerText = document.getElementById('paymentMethod').value;
             document.getElementById('r-type').innerText = document.getElementById('serviceLocation').value;
-            document.getElementById('r-date').innerText = document.getElementById('invDateInput').value;
-            document.getElementById('r-time').innerText = new Date().toLocaleTimeString('ar-SA');
+            document.getElementById('r-pay').innerText = document.getElementById('paymentMethod').value;
+            
+            const priceVal = parseFloat(document.getElementById('price').value) || 0;
+            document.getElementById('r-price').innerText = `${priceVal.toFixed(2)} ر.س`;
         }
 
-        // حفظ الفاتورة
-        function saveInvoice(e) {
+        // دالة حساب عمولة العامل بناءً على القاعدة المعتمدة
+        function calculateCommission(staffName, location, price) {
+            const isHome = location && location.includes('منزلية');
+            if (isHome) {
+                // إذا كان العامل ريان (سواء كاتب ريان أو ريان فلبيني)
+                if (staffName.includes('ريان')) {
+                    return 20; // 20 ريال ثابتة
+                } else {
+                    return 50; // 50 ريال ثابتة لبقية العمالة في الزيارة المنزلية
+                }
+            } else {
+                // داخل المركز: 30% للجميع
+                return (price * 30) / 100;
+            }
+        }
+
+        async function saveInvoice(e) {
             e.preventDefault();
+            const now = new Date();
+            const invDate = document.getElementById('invDateInput').value || now.toISOString().split('T')[0];
+            
             const newInv = {
-                id: Date.now(),
                 serial: document.getElementById('invSerial').value,
-                date: document.getElementById('invDateInput').value,
-                time: new Date().toLocaleTimeString('ar-SA'),
                 staff: document.getElementById('staffSelect').value,
                 service: document.getElementById('serviceSelect').value,
                 duration: document.getElementById('duration').value,
-                price: parseFloat(document.getElementById('price').value),
-                pay: document.getElementById('paymentMethod').value,
-                location: document.getElementById('serviceLocation').value
+                price: parseFloat(document.getElementById('price').value) || 0,
+                payment_method: document.getElementById('paymentMethod').value,
+                location: document.getElementById('serviceLocation').value,
+                created_at: now.toISOString(),
+                date: invDate,
+                time: now.toTimeString().split(' ')[0].substring(0, 5)
             };
 
-            db.invoices.push(newInv);
-            saveData();
-            alert('تم حفظ الفاتورة بنجاح!');
-            
-            // إعادة التعيين للفاتورة التالية
-            initApp();
+            if (supabaseClient) {
+                try {
+                    const { error } = await supabaseClient.from('invoices').insert([newInv]);
+                    if (error) alert('خطأ أثناء الحفظ: ' + error.message);
+                    else {
+                        printElement('thermal-receipt');
+                    }
+                } catch (err) { console.error("Supabase error:", err); }
+            }
+
+            generateNextSerial();
+            updateLivePreview();
+            loadReports();
         }
 
-        // حفظ المصروف
-        function saveExpense(e) {
+        async function saveExpense(e) {
             e.preventDefault();
-            const exp = {
-                id: Date.now(),
+            const expData = {
                 date: document.getElementById('expDate').value,
                 title: document.getElementById('expTitle').value,
-                amount: parseFloat(document.getElementById('expAmount').value),
-                user: document.getElementById('expUser').value || 'الإدارة'
+                amount: parseFloat(document.getElementById('expAmount').value) || 0,
+                user: document.getElementById('expUser').value || 'الإدارة',
+                created_at: new Date().toISOString()
             };
-            db.expenses.push(exp);
-            saveData();
-            document.getElementById('expenseForm').reset();
-            document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
-            loadExpensesTable();
-            alert('تم تسجيل المصروف بنجاح.');
+
+            let saved = false;
+
+            // محاولة الحفظ في السحابة أولاً
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient.from('expenses').insert([expData]).select();
+                    if (!error && data) {
+                        saved = true;
+                    } else if (error) {
+                        console.error("Supabase expense insert error:", error);
+                    }
+                } catch (err) {
+                    console.error("Supabase expense error:", err);
+                }
+            }
+
+            // في حالة فشل السحابة أو عدم توفرها → حفظ محلي
+            if (!saved) {
+                let localExps = JSON.parse(localStorage.getItem('haiba_local_expenses') || '[]');
+                // إضافة معرف محلي مؤقت
+                expData.id = 'local_' + Date.now();
+                localExps.push(expData);
+                localStorage.setItem('haiba_local_expenses', JSON.stringify(localExps));
+                saved = true;
+            }
+
+            if (saved) {
+                alert('تم حفظ المصروف بنجاح وإدراجه في المجاميع والتقارير.');
+                document.getElementById('expTitle').value = '';
+                document.getElementById('expAmount').value = '';
+                document.getElementById('expUser').value = '';
+                await loadReports(); // تحديث فوري لكل الحسابات
+            } else {
+                alert('فشل حفظ المصروف. حاول مرة أخرى.');
+            }
         }
 
-        function loadExpensesTable() {
-            const tbody = document.getElementById('expensesTableBody');
+        async function loadReports() {
+            const selectedDate = document.getElementById('filterDate').value;
+            const timeFrom = document.getElementById('filterTimeFrom').value;
+            const timeTo = document.getElementById('filterTimeTo').value;
+            const staffFilter = document.getElementById('filterStaff').value;
+
+            let records = [];
+            let expenseRecords = [];
+
+            // تحميل المصروفات المحلية كأساس
+            const localExps = JSON.parse(localStorage.getItem('haiba_local_expenses') || '[]');
+            expenseRecords = [...localExps];
+
+            if (supabaseClient) {
+                try {
+                    // الفواتير
+                    const { data, error } = await supabaseClient.from('invoices').select('*').order('created_at', { ascending: false });
+                    if (!error && data) records = data;
+
+                    // المصروفات من السحابة
+                    const { data: expData, error: expErr } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false });
+                    if (!expErr && expData && expData.length > 0) {
+                        // دمج السحابة مع المحلي (تجنب التكرار)
+                        const cloudIds = new Set(expData.map(e => e.id));
+                        const pureLocal = localExps.filter(e => !e.id || String(e.id).startsWith('local_') || !cloudIds.has(e.id));
+                        expenseRecords = [...expData, ...pureLocal];
+                    }
+                } catch (e) {
+                    console.log("Error loading reports:", e);
+                    // نبقى على المحلي فقط
+                }
+            }
+
+            const filteredInvoices = records.filter(inv => {
+                const matchDate = !selectedDate || inv.date === selectedDate;
+                const matchStaff = staffFilter === 'ALL' || inv.staff === staffFilter;
+                const matchTime = (!timeFrom || inv.time >= timeFrom) && (!timeTo || inv.time <= timeTo);
+                return matchDate && matchStaff && matchTime;
+            });
+
+            const filteredExpenses = expenseRecords.filter(exp => {
+                return !selectedDate || exp.date === selectedDate;
+            });
+
+            renderTableAndMetrics(filteredInvoices, filteredExpenses);
+        }
+
+        function renderTableAndMetrics(invoices, expenses) {
+            const tbody = document.getElementById('reportsTableBody');
+            const staffTbody = document.getElementById('staffPerformanceBody');
+            const expTbody = document.getElementById('expensesTableBody');
+            
             tbody.innerHTML = '';
-            db.expenses.forEach(ex => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${ex.date}</td>
-                        <td>${ex.title}</td>
-                        <td>${ex.amount.toFixed(2)} ر.س</td>
-                        <td>${ex.user}</td>
-                        <td class="no-print"><button class="btn btn-danger" onclick="deleteExpense(${ex.id})">حذف</button></td>
-                    </tr>
+            staffTbody.innerHTML = '';
+            expTbody.innerHTML = '';
+
+            let totalRev = 0, totalCash = 0, totalBank = 0, totalStaffCommission = 0;
+            const staffStats = {};
+
+            invoices.forEach((inv) => {
+                const price = parseFloat(inv.price) || 0;
+                totalRev += price;
+                const isCash = inv.payment_method && inv.payment_method.includes('كاش');
+                if (isCash) totalCash += price;
+                else totalBank += price;
+
+                const stName = inv.staff || 'غير محدد';
+                if (!staffStats[stName]) {
+                    staffStats[stName] = { count: 0, cash: 0, bank: 0, total: 0, commissionTotal: 0 };
+                }
+                
+                // حساب العمولة تلقائياً حسب القواعد الجديدة
+                const itemCommission = calculateCommission(stName, inv.location, price);
+                
+                staffStats[stName].count += 1;
+                staffStats[stName].total += price;
+                staffStats[stName].commissionTotal += itemCommission;
+                totalStaffCommission += itemCommission;
+
+                if (isCash) staffStats[stName].cash += price;
+                else staffStats[stName].bank += price;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${inv.serial || '--'}</strong></td>
+                    <td>${inv.date || '--'} <br><small style="color:var(--text-muted);">${inv.time || ''}</small></td>
+                    <td>${inv.staff || '--'}</td>
+                    <td>${inv.service || '--'}</td>
+                    <td><span class="chip" style="background:${inv.location && inv.location.includes('منزلية') ? '#FEF3C7' : '#F1F5F9'};">${inv.location || 'حضور بالمركز'}</span></td>
+                    <td><span class="chip" style="background:#E2E8F0;">${inv.payment_method || '--'}</span></td>
+                    <td><strong>${price.toFixed(2)} SAR</strong></td>
+                    <td class="no-print" style="display:flex; gap:4px;">
+                        <button class="btn btn-warning btn-sm" onclick="openEditInvoice('${inv.id}', '${inv.serial}', '${inv.payment_method || 'كاش'}', ${price}, '${inv.date}', '${inv.location || 'حضور بالمركز'}')"><i class="fa-solid fa-pen"></i> تعديل</button>
+                        <button class="btn btn-danger btn-sm" onclick="cancelInvoice('${inv.id}')"><i class="fa-solid fa-ban"></i> حذف</button>
+                    </td>
                 `;
-            });
-        }
-
-        function deleteExpense(id) {
-            if(confirm('هل أنت متأكد من حذف هذا المصروف؟')) {
-                db.expenses = db.expenses.filter(x => x.id !== id);
-                saveData();
-                loadExpensesTable();
-            }
-        }
-
-        // التقارير والشفتات
-        function loadReports() {
-            const filterDate = document.getElementById('filterDate').value;
-            const filterStaff = document.getElementById('filterStaff').value;
-
-            let filteredInvoices = db.invoices.filter(inv => inv.date === filterDate);
-            let filteredExpenses = db.expenses.filter(ex => ex.date === filterDate);
-
-            if(filterStaff !== 'ALL') {
-                filteredInvoices = filteredInvoices.filter(inv => inv.staff === filterStaff);
-            }
-
-            let totalRev = filteredInvoices.reduce((sum, i) => sum + i.price, 0);
-            let totalExp = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
-            let totalCash = filteredInvoices.filter(i => i.pay === 'كاش').reduce((sum, i) => sum + i.price, 0);
-
-            // افتراض عمولة العمال 35% كمثال تنظيمى أو حسب الرغبة
-            let totalStaffComm = totalRev * 0.35; 
-            let netRev = totalRev - totalStaffComm - totalExp;
-
-            document.getElementById('totalRevenue').innerText = totalRev.toFixed(2) + ' SAR';
-            document.getElementById('totalStaffCommission').innerText = totalStaffComm.toFixed(2) + ' SAR';
-            document.getElementById('totalExpensesMetric').innerText = totalExp.toFixed(2) + ' SAR';
-            document.getElementById('netRevenueMetric').innerText = netRev.toFixed(2) + ' SAR';
-            document.getElementById('totalCash').innerText = totalCash.toFixed(2) + ' SAR';
-
-            // جدول أداء العمال
-            let staffPerfBody = document.getElementById('staffPerformanceBody');
-            staffPerfBody.innerHTML = '';
-            let staffMap = {};
-            filteredInvoices.forEach(i => {
-                if(!staffMap[i.staff]) staffMap[i.staff] = { count: 0, sales: 0 };
-                staffMap[i.staff].count += 1;
-                staffMap[i.staff].sales += i.price;
+                tbody.appendChild(tr);
             });
 
-            for(let st in staffMap) {
-                let comm = staffMap[st].sales * 0.35;
-                staffPerfBody.innerHTML += `
-                    <tr>
-                        <td>${st}</td>
-                        <td>${staffMap[st].count}</td>
-                        <td>${staffMap[st].sales.toFixed(2)} ر.س</td>
-                        <td>${comm.toFixed(2)} ر.س</td>
-                    </tr>
+            let totalExp = 0;
+            expenses.forEach((exp, idx) => {
+                const amount = parseFloat(exp.amount) || 0;
+                totalExp += amount;
+                const expId = exp.id || idx;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${exp.date || '--'}</td>
+                    <td><strong>${exp.title || '--'}</strong></td>
+                    <td style="color:#991B1B; font-weight:bold;">-${amount.toFixed(2)} SAR</td>
+                    <td>${exp.user || 'الإدارة'}</td>
+                    <td class="no-print">
+                        <button class="btn btn-danger btn-sm" onclick="deleteExpense('${expId}')"><i class="fa-solid fa-trash"></i> حذف</button>
+                    </td>
                 `;
-            }
-
-            // جدول تفاصيل الفواتير
-            let reportsTableBody = document.getElementById('reportsTableBody');
-            reportsTableBody.innerHTML = '';
-            filteredInvoices.forEach(inv => {
-                reportsTableBody.innerHTML += `
-                    <tr>
-                        <td>${inv.serial}</td>
-                        <td>${inv.date} ${inv.time}</td>
-                        <td>${inv.staff}</td>
-                        <td>${inv.service}</td>
-                        <td>${inv.location}</td>
-                        <td>${inv.pay}</td>
-                        <td>${inv.price.toFixed(2)} ر.س</td>
-                        <td class="no-print">
-                            <button class="btn btn-warning btn-sm" onclick="openEditInvoice(${inv.id})">تعديل</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteInvoice(${inv.id})">حذف</button>
-                        </td>
-                    </tr>
-                `;
+                expTbody.appendChild(tr);
             });
 
-            loadExpensesTable();
+            // الحسابات النهائية: المصروفات تؤثر مباشرة على صافي الإيراد وصافي الكاش
+            const netRevenue = totalRev - totalStaffCommission - totalExp;
+            const netCash = Math.max(0, totalCash - totalExp);
+
+            Object.keys(staffStats).forEach(st => {
+                const stat = staffStats[st];
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${st}</strong></td>
+                    <td><span class="chip">${stat.count} خدمات</span></td>
+                    <td>${stat.total.toFixed(2)} SAR</td>
+                    <td><strong style="color:var(--accent-hover);">${stat.commissionTotal.toFixed(2)} SAR</strong></td>
+                `;
+                staffTbody.appendChild(tr);
+            });
+
+            document.getElementById('totalRevenue').innerText = `${totalRev.toFixed(2)} SAR`;
+            document.getElementById('totalStaffCommission').innerText = `${totalStaffCommission.toFixed(2)} SAR`;
+            document.getElementById('totalExpensesMetric').innerText = `${totalExp.toFixed(2)} SAR`;
+            document.getElementById('netRevenueMetric').innerText = `${netRevenue.toFixed(2)} SAR`;
+            document.getElementById('totalCash').innerText = `${netCash.toFixed(2)} SAR (صافي كاش)`;
         }
 
-        function deleteInvoice(id) {
-            if(confirm('هل تريد حذف هذه الفاتورة نهائياً؟')) {
-                db.invoices = db.invoices.filter(i => i.id !== id);
-                saveData();
-                loadReports();
+        async function deleteExpense(idOrIdx) {
+            const pass = prompt("حذف المصروف يتطلب إذن المدير. أدخل رمز المدير:");
+            if (pass !== currentAdminPass) {
+                if (pass !== null) alert("رمز المدير غير صحيح!");
+                return;
+            }
+            if (confirm("هل أنت متأكد من حذف هذا المصروف؟")) {
+                let deleted = false;
+
+                // حذف من السحابة إذا كان معرف حقيقي (ليس محلي)
+                if (supabaseClient && typeof idOrIdx === 'string' && idOrIdx.length > 10 && !String(idOrIdx).startsWith('local_')) {
+                    try {
+                        const { error } = await supabaseClient.from('expenses').delete().eq('id', idOrIdx);
+                        if (!error) deleted = true;
+                    } catch (err) {
+                        console.error("Delete expense cloud error:", err);
+                    }
+                }
+
+                // دائماً نحاول حذف من المحلي أيضاً (للاحتياط)
+                let localExps = JSON.parse(localStorage.getItem('haiba_local_expenses') || '[]');
+                const beforeLen = localExps.length;
+                localExps = localExps.filter((exp, idx) => {
+                    // حذف بالمعرف أو بالفهرس
+                    if (String(idOrIdx).startsWith('local_') || typeof idOrIdx === 'number') {
+                        return exp.id !== idOrIdx && idx !== Number(idOrIdx);
+                    }
+                    return exp.id !== idOrIdx;
+                });
+                if (localExps.length !== beforeLen) {
+                    localStorage.setItem('haiba_local_expenses', JSON.stringify(localExps));
+                    deleted = true;
+                }
+
+                if (deleted) {
+                    alert('تم حذف المصروف بنجاح.');
+                }
+                await loadReports();
             }
         }
 
-        function openEditInvoice(id) {
-            const inv = db.invoices.find(i => i.id === id);
-            if(inv) {
-                document.getElementById('editInvId').value = inv.id;
-                document.getElementById('editInvSerial').value = inv.serial;
-                document.getElementById('editInvPrice').value = inv.price;
-                document.getElementById('editInvoiceModal').classList.add('active');
+        function openEditInvoice(id, serial, payMethod, price, date, location) {
+            const pass = prompt("تعديل الفاتورة يتطلب إذن المدير. أدخل رمز المدير:");
+            if (pass !== currentAdminPass) {
+                if (pass !== null) alert("رمز المدير غير صحيح!");
+                return;
+            }
+
+            document.getElementById('editInvId').value = id;
+            document.getElementById('editInvSerial').value = serial;
+            document.getElementById('editInvPay').value = payMethod;
+            document.getElementById('editInvPrice').value = price;
+            document.getElementById('editInvDate').value = date;
+            document.getElementById('editInvLocation').value = location;
+            
+            document.getElementById('editInvoiceModal').classList.add('active');
+        }
+
+        async function submitEditInvoice() {
+            const id = document.getElementById('editInvId').value;
+            const payment_method = document.getElementById('editInvPay').value;
+            const price = parseFloat(document.getElementById('editInvPrice').value) || 0;
+            const date = document.getElementById('editInvDate').value;
+            const location = document.getElementById('editInvLocation').value;
+
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('invoices').update({ payment_method, price, date, location }).eq('id', id);
+                if (error) {
+                    alert("خطأ أثناء التعديل: " + error.message);
+                } else {
+                    alert("تم تعديل الفاتورة بنجاح وتحديث التقارير.");
+                    closeModal('editInvoiceModal');
+                    loadReports();
+                }
             }
         }
 
-        function submitEditInvoice() {
-            const id = parseInt(document.getElementById('editInvId').value);
-            const newPrice = parseFloat(document.getElementById('editInvPrice').value);
-            const inv = db.invoices.find(i => i.id === id);
-            if(inv) {
-                inv.price = newPrice;
-                saveData();
-                closeModal('editInvoiceModal');
-                loadReports();
-                alert('تم تعديل الفاتورة بنجاح.');
+        async function cancelInvoice(id) {
+            const pass = prompt("حذف/إلغاء الفاتورة يتطلب إذن المدير. أدخل رمز المدير:");
+            if (pass !== currentAdminPass) {
+                if (pass !== null) alert("رمز المدير غير صحيح!");
+                return;
+            }
+
+            if (confirm("هل أنت متأكد من رغبتك في إلغاء وحذف هذه الفاتورة نهائياً؟")) {
+                if (supabaseClient) {
+                    const { error } = await supabaseClient.from('invoices').delete().eq('id', id);
+                    if (error) {
+                        alert("حدث خطأ أثناء الحذف: " + error.message);
+                    } else {
+                        alert("تم إلغاء الفاتورة بنجاح.");
+                        loadReports();
+                    }
+                }
             }
         }
 
-        // الإدارة والمالك
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function openAdminModal() { document.getElementById('adminModal').classList.add('active'); }
+        function openDeveloperModal() { document.getElementById('devModal').classList.add('active'); }
+
         function checkAdmin() {
             const pass = document.getElementById('adminPass').value;
-            if(pass === db.adminPass) {
+            if (pass === currentAdminPass) {
                 document.getElementById('loginSec').style.display = 'none';
                 document.getElementById('adminControls').style.display = 'block';
+                renderAdminLists();
             } else {
-                alert('رمز الدخول غير صحيح!');
+                alert('رمز الدخول غير صحيح');
             }
         }
 
         function checkDeveloper() {
             const pass = document.getElementById('devPassInput').value;
-            if(pass === '9999') {
+            if (pass === DEVELOPER_MASTER_PASS) {
                 document.getElementById('devLoginSec').style.display = 'none';
                 document.getElementById('devControls').style.display = 'block';
+                document.getElementById('devPassInput').value = '';
             } else {
-                alert('رمز المبرمج غير صحيح!');
+                alert('رمز المبرمج السري غير صحيح!');
             }
         }
 
         function updateAdminPassword() {
-            const newPass = document.getElementById('newAdminPasswordVal').value;
-            if(newPass.trim()) {
-                db.adminPass = newPass;
-                saveData();
-                alert('تم تحديث كلمة مرور المدير بنجاح.');
+            const newPass = document.getElementById('newAdminPasswordVal').value.trim();
+            if (newPass.length > 0) {
+                currentAdminPass = newPass;
+                localStorage.setItem('haiba_admin_pass', newPass);
+                alert(`تم تحديث كلمة مرور المدير بنجاح إلى: (${newPass})\nيمكنك الآن إعطاؤها للمدير.`);
+                document.getElementById('newAdminPasswordVal').value = '';
                 closeModal('devModal');
             } else {
-                alert('الرجاء إدخال كلمة مرور صحيحة.');
+                alert('يرجى إدخال كلمة مرور صحيحة.');
             }
         }
 
         function renderAdminLists() {
-            const staffListUI = document.getElementById('staffListUI');
-            staffListUI.innerHTML = '';
-            db.staff.forEach((s, idx) => {
-                staffListUI.innerHTML += `<li style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid #eee;"><span>${s}</span> <button class="btn btn-danger btn-sm" onclick="removeStaff(${idx})">حذف</button></li>`;
-            });
+            const staffUI = document.getElementById('staffListUI');
+            const serviceUI = document.getElementById('serviceListUI');
 
-            const serviceListUI = document.getElementById('serviceListUI');
-            serviceListUI.innerHTML = '';
-            db.services.forEach((srv, idx) => {
-                serviceListUI.innerHTML += `<li style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid #eee;"><span>${srv.name} (${srv.price} ر.س)</span> <button class="btn btn-danger btn-sm" onclick="removeService(${idx})">حذف</button></li>`;
-            });
+            staffUI.innerHTML = staffList.map((s, idx) => `
+                <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid #F1F5F9; padding-bottom:4px;">
+                    <span><strong>${s.name}</strong></span>
+                    <button class="btn btn-danger btn-sm" onclick="removeStaff(${idx})">حذف</button>
+                </li>
+            `).join('');
+
+            serviceUI.innerHTML = servicesList.map((srv) => `
+                <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid #F1F5F9; padding-bottom:4px;">
+                    <span>${srv.name} (${srv.price} SAR)</span>
+                    <button class="btn btn-danger btn-sm" onclick="removeService(${srv.id})">حذف</button>
+                </li>
+            `).join('');
         }
 
         function addStaff() {
             const name = document.getElementById('newStaffName').value.trim();
-            if(name && !db.staff.includes(name)) {
-                db.staff.push(name);
-                saveData();
+            if (name) {
+                staffList.push({ name });
+                localStorage.setItem('haiba_staff_list', JSON.stringify(staffList));
                 document.getElementById('newStaffName').value = '';
-                renderAdminLists();
                 populateDropdowns();
+                renderAdminLists();
+                loadReports();
             }
         }
 
         function removeStaff(idx) {
-            db.staff.splice(idx, 1);
-            saveData();
-            renderAdminLists();
+            staffList.splice(idx, 1);
+            localStorage.setItem('haiba_staff_list', JSON.stringify(staffList));
             populateDropdowns();
+            renderAdminLists();
+            loadReports();
         }
 
-        function addService() {
+        async function addService() {
             const name = document.getElementById('newServiceName').value.trim();
-            const price = parseFloat(document.getElementById('newServicePrice').value);
-            if(name && !isNaN(price)) {
-                db.services.push({name, price});
-                saveData();
-                document.getElementById('newServiceName').value = '';
-                document.getElementById('newServicePrice').value = '';
-                renderAdminLists();
-                populateDropdowns();
+            const price = parseFloat(document.getElementById('newServicePrice').value) || 0;
+            if (name && supabaseClient) {
+                const { error } = await supabaseClient.from('services').insert([{ name, price }]);
+                if (error) alert('خطأ في الإضافة: ' + error.message);
+                else {
+                    document.getElementById('newServiceName').value = '';
+                    document.getElementById('newServicePrice').value = '';
+                    await fetchCloudMasterData();
+                    renderAdminLists();
+                }
             }
         }
 
-        function removeService(idx) {
-            db.services.splice(idx, 1);
-            saveData();
-            renderAdminLists();
-            populateDropdowns();
+        async function removeService(id) {
+            if (supabaseClient && id) {
+                await supabaseClient.from('services').delete().eq('id', id);
+                await fetchCloudMasterData();
+                renderAdminLists();
+            }
         }
 
         function printElement(elemId) {
-            window.print();
+            const content = document.getElementById(elemId).innerHTML;
+            const printWindow = window.open('', '_blank', 'width=350,height=500');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>طباعة فاتورة</title>
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body {
+                            font-family: 'Tajawal', 'Courier New', monospace;
+                            width: 58mm;
+                            max-width: 58mm;
+                            margin: 0 auto;
+                            padding: 2mm;
+                            font-size: 12px;
+                            font-weight: 700;
+                            line-height: 1.4;
+                            color: #000;
+                            background: #fff;
+                            direction: rtl;
+                            text-align: right;
+                        }
+                        .thermal-header {
+                            text-align: center;
+                            border-bottom: 1px dashed #000;
+                            padding-bottom: 6px;
+                            margin-bottom: 4px;
+                        }
+                        .thermal-header h3 { font-size: 13px; font-weight: 900; margin-bottom: 3px; }
+                        .thermal-row { display: flex; justify-content: space-between; padding: 3px 0; width: 100%; font-size: 12px; font-weight: 700; }
+                        .thermal-divider { border-top: 1px dashed #000; margin: 4px 0; width: 100%; }
+                        .thermal-total {
+                            border-top: 2px solid #000;
+                            border-bottom: 2px solid #000;
+                            padding: 5px 0;
+                            font-weight: 900;
+                            font-size: 13px;
+                            margin-top: 4px;
+                            width: 100%;
+                        }
+                        @page { size: 58mm auto; margin: 0; }
+                        @media print { body { width: 58mm; margin: 0; padding: 1mm; } }
+                    </style>
+                </head>
+                <body>
+                    ${content}
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                                window.close();
+                            }, 300);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
         }
+
+        function printReports() { window.print(); }
 
         function exportPDF(elemId, filename) {
             const element = document.getElementById(elemId);
-            html2pdf().from(element).save(filename + '.pdf');
+            const opt = {
+                margin:       2,
+                filename:     `${filename}_${Date.now()}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
+                jsPDF:        { unit: 'mm', format: [58, 150], orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
         }
-
-        // التشغيل التلقائي عند تحميل الصفحة
-        window.addEventListener('DOMContentLoaded', () => {
-            initApp();
-        });
     </script>
 </body>
 </html>
