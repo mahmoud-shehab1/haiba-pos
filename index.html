@@ -109,6 +109,7 @@
         .btn-accent:hover { background: var(--accent-hover); }
         .btn-print { background: #0284C7; color: white; }
         .btn-danger { background: #EF4444; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; }
+        .btn-warning { background: #F59E0B; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; }
         .btn-sm { padding: 4px 8px; font-size: 0.8rem; }
 
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 1rem 0; }
@@ -149,7 +150,6 @@
         .modal.active { display: flex !important; }
         .modal-content { background: white; width: 100%; max-width: 500px; padding: 1.5rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
 
-        /* إعدادات الطباعة العادية (للتقارير فقط) */
         @media print {
             .no-print { display: none !important; }
         }
@@ -165,9 +165,10 @@
                 <p>فرع جدة - المساج والحمام المغربي والبدي كير</p>
             </div>
         </div>
-        <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap: wrap;">
             <div class="cloud-badge"><span class="cloud-dot"></span> <span>متصل بالسحابة (مباشر)</span></div>
             <button class="btn btn-accent" onclick="openAdminModal()"><i class="fa-solid fa-user-shield"></i> <span>لوحة المدير</span></button>
+            <button class="btn" style="background:#0F172A; color:#FFF;" onclick="openDeveloperModal()"><i class="fa-solid fa-code"></i> <span>لوحة المالك (المبرمج)</span></button>
         </div>
     </header>
 
@@ -182,13 +183,17 @@
             <div class="pos-split-container">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title"><i class="fa-solid fa-receipt"></i> <span>إنشاء فاتورة جديدة</span></div>
+                        <div class="card-title"><i class="fa-solid fa-receipt"></i> <span>إنشاء فاتورة جديدة (تدعم الأيام السابقة)</span></div>
                     </div>
                     <form id="invoiceForm" onsubmit="saveInvoice(event)">
                         <div class="grid-form">
                             <div class="form-group">
                                 <label>رقم الفاتورة (تسلسلي)</label>
                                 <input type="text" id="invSerial" readonly style="background: #E2E8F0; font-weight:700;">
+                            </div>
+                            <div class="form-group">
+                                <label>تاريخ الفاتورة (اليوم أو أيام سابقة)</label>
+                                <input type="date" id="invDateInput" required onchange="updateLivePreview()">
                             </div>
                             <div class="form-group">
                                 <label>اسم العامل / العاملة</label>
@@ -230,7 +235,7 @@
                         </div>
                         <div style="margin-top: 1.25rem;">
                             <button type="submit" id="saveBtn" class="btn btn-primary" style="width:100%; font-size:1rem;">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> <span>حفظ سحابياً وإصدار وطباعة الفاتورة تلقائياً</span>
+                                <i class="fa-solid fa-cloud-arrow-up"></i> <span>حفظ سحابياً والطباعة التلقائية الفورية</span>
                             </button>
                         </div>
                     </form>
@@ -360,19 +365,18 @@
 
                 <!-- SECTION: ALL INVOICES DETAIL -->
                 <div style="margin-top: 1.5rem;">
-                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> تفاصيل الفواتير المسجلة وإلغائها:</h3>
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> تفاصيل الفواتير المسجلة (مع إمكانية التعديل والإلغاء):</h3>
                     <div class="table-responsive">
                         <table>
                             <thead>
                                 <tr>
                                     <th>رقم الفاتورة</th>
-                                    <th>الوقت</th>
-                                    <th>التاريخ</th>
+                                    <th>الوقت والتاريخ</th>
                                     <th>العامل/ة</th>
                                     <th>الخدمة / العرض</th>
                                     <th>طريقة الدفع</th>
                                     <th>المبلغ</th>
-                                    <th class="no-print">إجراء</th>
+                                    <th class="no-print">إجراءات المدير</th>
                                 </tr>
                             </thead>
                             <tbody id="reportsTableBody"></tbody>
@@ -393,11 +397,15 @@
             
             <div id="loginSec" class="form-group">
                 <label>أدخل رمز الدخول الخاص بالمدير</label>
-                <input type="password" id="adminPass" placeholder="الرمز الافتراضي (1234)">
+                <input type="password" id="adminPass" placeholder="رمز المدير الحالي">
                 <button class="btn btn-primary" style="margin-top:10px;" onclick="checkAdmin()">تسجيل الدخول</button>
             </div>
 
             <div id="adminControls" style="display:none;">
+                <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:8px; border-radius:8px; margin-bottom:12px; color:#166534; font-size:0.85rem;">
+                    <i class="fa-solid fa-circle-check"></i> تم تسجيل دخول المدير بنجاح. يمكنك الآن تعديل بيانات الفواتير من جدول التقارير بالأسفل، وإدارة الكادر والخدمات:
+                </div>
+
                 <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-users"></i> <span>إدارة كادر العمل (سحابياً):</span></h4>
                 <div class="form-group">
                     <input type="text" id="newStaffName" placeholder="اسم العامل / العاملة جديد">
@@ -422,6 +430,66 @@
         </div>
     </div>
 
+    <!-- MODAL: DEVELOPER / OWNER PANEL -->
+    <div id="devModal" class="modal">
+        <div class="modal-content">
+            <div class="card-header">
+                <div class="card-title"><i class="fa-solid fa-code" style="color:#0F172A;"></i> <span>لوحة المالك (المبرمج) الخاصة بك</span></div>
+                <button onclick="closeModal('devModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="devLoginSec" class="form-group">
+                <label>أدخل رمز مرور المبرمج (الخاص بك)</label>
+                <input type="password" id="devPassInput" placeholder="رمز المبرمج السري">
+                <button class="btn" style="background:#0F172A; color:#FFF; margin-top:10px;" onclick="checkDeveloper()">دخول لوحة المالك</button>
+            </div>
+
+            <div id="devControls" style="display:none;">
+                <div style="background:#EFF6FF; border:1px solid #BFDBFE; padding:10px; border-radius:8px; margin-bottom:12px; color:#1E40AF; font-size:0.85rem;">
+                    <i class="fa-solid fa-shield-halved"></i> أهلاً بك يا مالك البرنامج. من هنا يمكنك تغيير كلمة مرور لوحة المدير وإعطائه إياها متى شئت.
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور الجديدة للمدير</label>
+                    <input type="text" id="newAdminPasswordVal" placeholder="أدخل كلمة المرور الجديدة">
+                    <button class="btn btn-primary" style="margin-top:8px;" onclick="updateAdminPassword()">حفظ وتحديث كلمة مرور المدير</button>
+                </div>
+                <button class="btn" style="width:100%; margin-top:1rem; background:#CBD5E1; color:#0F172A;" onclick="closeModal('devModal')">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT INVOICE (ADMIN) -->
+    <div id="editInvoiceModal" class="modal">
+        <div class="modal-content">
+            <div class="card-header">
+                <div class="card-title"><i class="fa-solid fa-pen-to-square"></i> <span>تعديل بيانات الفاتورة (صلاحية المدير)</span></div>
+                <button onclick="closeModal('editInvoiceModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="hidden" id="editInvId">
+            <div class="form-group" style="margin-bottom:10px;">
+                <label>رقم الفاتورة</label>
+                <input type="text" id="editInvSerial" readonly style="background:#E2E8F0;">
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label>طريقة الدداد / السداد</label>
+                <select id="editInvPay">
+                    <option value="كاش">كاش</option>
+                    <option value="صرافة (شبكة)">صرافة (شبكة)</option>
+                    <option value="تحويل بنكي">تحويل بنكي</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label>المبلغ (ر.س)</label>
+                <input type="number" id="editInvPrice" step="0.01">
+            </div>
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>تاريخ الفاتورة</label>
+                <input type="date" id="editInvDate">
+            </div>
+            <button class="btn btn-primary" style="width:100%;" onclick="submitEditInvoice()">حفظ التعديلات سحابياً</button>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://pkhgmcdfvvbtdouqnrom.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBraGdtY2RmdnZidGRvdXFucm9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2ODYzMTgsImV4cCI6MjEwNDI2MjMxOH0._Vj4P5L5ZjEyZfenWVKMgNnVa3PJ0g_hjoxNwSslNuc';
@@ -433,9 +501,16 @@
 
         let staffList = [];
         let servicesList = [];
+        
+        // كلمة مرور المدير الافتراضية تخزن في LocalStorage أو الافتراضي 1234
+        let currentAdminPass = localStorage.getItem('haiba_admin_pass') || '1234';
+        const DEVELOPER_MASTER_PASS = 'shehab2026'; // كلمة مرورك الخاصة بك كمالك للبرنامج
 
         document.addEventListener('DOMContentLoaded', async () => {
-            document.getElementById('filterDate').valueAsDate = new Date();
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('filterDate').value = todayStr;
+            document.getElementById('invDateInput').value = todayStr;
+
             generateNextSerial();
             await fetchCloudMasterData();
             loadReports();
@@ -493,7 +568,7 @@
                 serviceSelect.add(opt);
             });
 
-            if (servicesList.length > 0) {
+            if (servicesList.length > 0 && !document.getElementById('price').value) {
                 document.getElementById('price').value = servicesList[0].price || 0;
             }
         }
@@ -514,12 +589,12 @@
 
         function updateLivePreview() {
             const now = new Date();
-            const dateStr = now.toLocaleDateString('ar-SA');
+            const dateVal = document.getElementById('invDateInput').value || now.toISOString().split('T')[0];
             const timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
 
-            document.getElementById('r-date').innerText = dateStr;
+            document.getElementById('r-date').innerText = `${dateVal} | ${timeStr}`;
             document.getElementById('r-serial').innerText = document.getElementById('invSerial').value;
-            document.getElementById('r-time').innerText = `${dateStr} ${timeStr}`;
+            document.getElementById('r-time').innerText = `${dateVal} ${timeStr}`;
             document.getElementById('r-staff').innerText = document.getElementById('staffSelect').value || '--';
             document.getElementById('r-service').innerText = document.getElementById('serviceSelect').value || '--';
             document.getElementById('r-duration').innerText = document.getElementById('duration').value || '--';
@@ -533,6 +608,8 @@
         async function saveInvoice(e) {
             e.preventDefault();
             const now = new Date();
+            const invDate = document.getElementById('invDateInput').value || now.toISOString().split('T')[0];
+            
             const newInv = {
                 serial: document.getElementById('invSerial').value,
                 staff: document.getElementById('staffSelect').value,
@@ -542,7 +619,7 @@
                 payment_method: document.getElementById('paymentMethod').value,
                 location: document.getElementById('serviceLocation').value,
                 created_at: now.toISOString(),
-                date: document.getElementById('filterDate').value || now.toISOString().split('T')[0],
+                date: invDate,
                 time: now.toTimeString().split(' ')[0].substring(0, 5)
             };
 
@@ -550,12 +627,12 @@
                 try {
                     const { error } = await supabaseClient.from('invoices').insert([newInv]);
                     if (error) alert('خطأ أثناء الحفظ: ' + error.message);
-                    else alert('تم حفظ الفاتورة بنجاح في السحابة وجاري طباعتها تلقائياً!');
+                    else {
+                        // طباعة تلقائية فورية بالمقاس الصحيح 58مم
+                        printElement('thermal-receipt');
+                    }
                 } catch (err) { console.error("Supabase error:", err); }
             }
-
-            // طباعة الفاتورة بالطريقة الجديدة (نافذة نظيفة)
-            printElement('thermal-receipt');
 
             generateNextSerial();
             updateLivePreview();
@@ -614,13 +691,15 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong>${inv.serial}</strong></td>
-                    <td>${inv.time}</td>
-                    <td>${inv.date}</td>
+                    <td>${inv.date} <br><small style="color:var(--text-muted);">${inv.time}</small></td>
                     <td>${inv.staff}</td>
                     <td>${inv.service}</td>
-                    <td>${inv.payment_method}</td>
+                    <td><span class="chip" style="background:#E2E8F0;">${inv.payment_method}</span></td>
                     <td><strong>${inv.price.toFixed(2)} SAR</strong></td>
-                    <td class="no-print"><button class="btn btn-danger btn-sm" onclick="cancelInvoice('${inv.id}')"><i class="fa-solid fa-ban"></i> إلغاء</button></td>
+                    <td class="no-print" style="display:flex; gap:4px;">
+                        <button class="btn btn-warning btn-sm" onclick="openEditInvoice('${inv.id}', '${inv.serial}', '${inv.payment_method}', ${inv.price}, '${inv.date}')"><i class="fa-solid fa-pen"></i> تعديل</button>
+                        <button class="btn btn-danger btn-sm" onclick="cancelInvoice('${inv.id}')"><i class="fa-solid fa-ban"></i> حذف</button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -644,9 +723,44 @@
             document.getElementById('totalBank').innerText = `${totalBank.toFixed(2)} SAR`;
         }
 
+        // فتح مودال تعديل الفاتورة للمدير
+        function openEditInvoice(id, serial, payMethod, price, date) {
+            const pass = prompt("تعديل الفاتورة يتطلب إذن المدير. أدخل رمز المدير:");
+            if (pass !== currentAdminPass) {
+                if (pass !== null) alert("رمز المدير غير صحيح!");
+                return;
+            }
+
+            document.getElementById('editInvId').value = id;
+            document.getElementById('editInvSerial').value = serial;
+            document.getElementById('editInvPay').value = payMethod;
+            document.getElementById('editInvPrice').value = price;
+            document.getElementById('editInvDate').value = date;
+            
+            document.getElementById('editInvoiceModal').classList.add('active');
+        }
+
+        async function submitEditInvoice() {
+            const id = document.getElementById('editInvId').value;
+            const payment_method = document.getElementById('editInvPay').value;
+            const price = parseFloat(document.getElementById('editInvPrice').value) || 0;
+            const date = document.getElementById('editInvDate').value;
+
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('invoices').update({ payment_method, price, date }).eq('id', id);
+                if (error) {
+                    alert("خطأ أثناء التعديل: " + error.message);
+                } else {
+                    alert("تم تعديل الفاتورة بنجاح وتحديث التقارير.");
+                    closeModal('editInvoiceModal');
+                    loadReports();
+                }
+            }
+        }
+
         async function cancelInvoice(id) {
-            const pass = prompt("إلغاء الفاتورة يتطلب إذن المدير. أدخل رمز المدير:");
-            if (pass !== "1234") {
+            const pass = prompt("حذف/إلغاء الفاتورة يتطلب إذن المدير. أدخل رمز المدير:");
+            if (pass !== currentAdminPass) {
                 if (pass !== null) alert("رمز المدير غير صحيح!");
                 return;
             }
@@ -657,7 +771,7 @@
                     if (error) {
                         alert("حدث خطأ أثناء الحذف: " + error.message);
                     } else {
-                        alert("تم إلغاء وحذف الفاتورة بنجاح وتحديث التقارير.");
+                        alert("تم إلغاء الفاتورة بنجاح.");
                         loadReports();
                     }
                 }
@@ -666,15 +780,39 @@
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
         function openAdminModal() { document.getElementById('adminModal').classList.add('active'); }
+        function openDeveloperModal() { document.getElementById('devModal').classList.add('active'); }
 
         function checkAdmin() {
             const pass = document.getElementById('adminPass').value;
-            if (pass === '1234') {
+            if (pass === currentAdminPass) {
                 document.getElementById('loginSec').style.display = 'none';
                 document.getElementById('adminControls').style.display = 'block';
                 renderAdminLists();
             } else {
                 alert('رمز الدخول غير صحيح');
+            }
+        }
+
+        function checkDeveloper() {
+            const pass = document.getElementById('devPassInput').value;
+            if (pass === DEVELOPER_MASTER_PASS) {
+                document.getElementById('devLoginSec').style.display = 'none';
+                document.getElementById('devControls').style.display = 'block';
+            } else {
+                alert('رمز المبرمج السري غير صحيح!');
+            }
+        }
+
+        function updateAdminPassword() {
+            const newPass = document.getElementById('newAdminPasswordVal').value.trim();
+            if (newPass.length > 0) {
+                currentAdminPass = newPass;
+                localStorage.setItem('haiba_admin_pass', newPass);
+                alert(`تم تحديث كلمة مرور المدير بنجاح إلى: (${newPass})\nيمكنك الآن إعطاؤها للمدير.`);
+                document.getElementById('newAdminPasswordVal').value = '';
+                closeModal('devModal');
+            } else {
+                alert('يرجى إدخال كلمة مرور صحيحة.');
             }
         }
 
@@ -741,7 +879,7 @@
             }
         }
 
-        // ===== طريقة الطباعة الجديدة (نافذة نظيفة بدون فراغ) =====
+        // الطباعة الآمنة المباشرة بالمقاس الصحيح 58مم
         function printElement(elemId) {
             const content = document.getElementById(elemId).innerHTML;
 
@@ -753,19 +891,15 @@
                     <meta charset="UTF-8">
                     <title>طباعة فاتورة</title>
                     <style>
-                        * {
-                            margin: 0;
-                            padding: 0;
-                            box-sizing: border-box;
-                        }
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
                         body {
                             font-family: 'Tajawal', Arial, sans-serif;
                             width: 58mm;
                             max-width: 58mm;
                             margin: 0;
                             padding: 2mm;
-                            font-size: 12px;
-                            line-height: 1.3;
+                            font-size: 11px;
+                            line-height: 1.2;
                             color: #000;
                             background: #fff;
                         }
@@ -775,38 +909,18 @@
                             padding-bottom: 4px;
                             margin-bottom: 4px;
                         }
-                        .thermal-header h3 {
-                            font-size: 14px;
-                            font-weight: 800;
-                            margin-bottom: 2px;
-                        }
-                        .thermal-row {
-                            display: flex;
-                            justify-content: space-between;
-                            padding: 2px 0;
-                        }
-                        .thermal-divider {
-                            border-top: 1px dashed #000;
-                            margin: 4px 0;
-                        }
+                        .thermal-header h3 { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
+                        .thermal-row { display: flex; justify-content: space-between; padding: 2px 0; }
+                        .thermal-divider { border-top: 1px dashed #000; margin: 4px 0; }
                         .thermal-total {
                             border-top: 1.5px solid #000;
                             border-bottom: 1.5px solid #000;
                             padding: 4px 0;
                             font-weight: 800;
-                            font-size: 13px;
+                            font-size: 12px;
                         }
-                        @page {
-                            size: 58mm auto;
-                            margin: 0;
-                        }
-                        @media print {
-                            body {
-                                width: 58mm;
-                                margin: 0;
-                                padding: 1.5mm 2mm;
-                            }
-                        }
+                        @page { size: 58mm auto; margin: 0; }
+                        @media print { body { width: 58mm; margin: 0; padding: 1mm 2mm; } }
                     </style>
                 </head>
                 <body>
@@ -816,7 +930,7 @@
                             setTimeout(function() {
                                 window.print();
                                 window.close();
-                            }, 400);
+                            }, 300);
                         };
                     <\/script>
                 </body>
@@ -825,9 +939,7 @@
             printWindow.document.close();
         }
 
-        function printReports() {
-            window.print();
-        }
+        function printReports() { window.print(); }
 
         function exportPDF(elemId, filename) {
             const element = document.getElementById(elemId);
