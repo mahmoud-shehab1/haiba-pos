@@ -46,12 +46,6 @@
         .brand h1 { font-size: 1.25rem; font-weight: 800; }
         .brand p { font-size: 0.8rem; opacity: 0.8; }
 
-        .cloud-badge {
-            font-size: 0.75rem; background: rgba(255,255,255,0.15); padding: 4px 10px;
-            border-radius: 20px; display: flex; align-items: center; gap: 6px;
-        }
-        .cloud-dot { width: 8px; height: 8px; background-color: #22c55e; border-radius: 50%; display: inline-block; }
-
         nav {
             display: flex; gap: 10px; background: var(--surface); padding: 10px 1.5rem;
             border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); flex-wrap: wrap;
@@ -130,18 +124,18 @@
         th { background: #F8FAFC; color: #475569; font-weight: 700; }
         tr:hover { background: #F8FAFC; }
 
-        /* تصميم الفاتورة الحرارية 58مم الصحيح تماماً */
+        /* تصميم الفاتورة الحرارية 58مم بخط واضح وكبير وغير مقطع */
         .thermal-wrapper { display: flex; justify-content: center; width: 100%; }
         .thermal-box {
-            width: 58mm; padding: 6px; background: #FFF !important;
-            font-family: 'Courier New', Courier, monospace; font-size: 11px; line-height: 1.25; color: #000 !important; border: 1px dashed #CBD5E1;
-            border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 4px; text-align: right; direction: rtl;
+            width: 58mm; padding: 8px; background: #FFF !important;
+            font-family: 'Tajawal', 'Courier New', monospace; font-size: 12px; font-weight: 700; line-height: 1.4; color: #000 !important; border: 1px dashed #CBD5E1;
+            border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 5px; text-align: right; direction: rtl;
         }
-        .thermal-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 4px; margin-bottom: 2px; }
-        .thermal-header h3 { font-size: 12px; font-weight: bold; margin-bottom: 2px; }
-        .thermal-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .thermal-divider { border-top: 1px dashed #000; margin: 3px 0; width: 100%; }
-        .thermal-total { border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 4px 0; font-weight: bold; font-size: 12px; margin-top: 2px; }
+        .thermal-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 6px; margin-bottom: 3px; }
+        .thermal-header h3 { font-size: 13px; font-weight: 900; margin-bottom: 3px; }
+        .thermal-row { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 12px; font-weight: 700; }
+        .thermal-divider { border-top: 1px dashed #000; margin: 4px 0; width: 100%; }
+        .thermal-total { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 5px 0; font-weight: 900; font-size: 13px; margin-top: 3px; }
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -167,8 +161,7 @@
             </div>
         </div>
         <div style="display:flex; align-items:center; gap:12px; flex-wrap: wrap;">
-            <div class="cloud-badge"><span class="cloud-dot"></span> <span>متصل بالسحابة (مباشر)</span></div>
-            <button class="btn btn-accent" onclick="openAdminModal()"><i class="fa-solid fa-user-shield"></i> <span>لوحة المدير</span></button>
+            <button class="btn btn-accent" onclick="openAdminModal()"><i class="fa-solid fa-user-shield"></i> <span>الإعدادات</span></button>
             <button class="btn" style="background:#0F172A; color:#FFF;" onclick="openDeveloperModal()"><i class="fa-solid fa-code"></i> <span>لوحة المالك (shehab2026)</span></button>
         </div>
     </header>
@@ -185,7 +178,7 @@
             <div class="pos-split-container">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title"><i class="fa-solid fa-receipt"></i> <span>إنشاء فاتورة جديدة (مع إمكانية إدخال فواتير سابقة)</span></div>
+                        <div class="card-title"><i class="fa-solid fa-receipt"></i> <span>إنشاء فاتورة جديدة</span></div>
                     </div>
                     <form id="invoiceForm" onsubmit="saveInvoice(event)">
                         <div class="grid-form">
@@ -194,8 +187,8 @@
                                 <input type="text" id="invSerial" readonly style="background: #E2E8F0; font-weight:700;">
                             </div>
                             <div class="form-group">
-                                <label>تاريخ الفاتورة (اليوم أو أيام سابقة)</label>
-                                <input type="date" id="invDateInput" required onchange="updateLivePreview()">
+                                <label>تاريخ الفاتورة</label>
+                                <input type="date" id="invDateInput" required onchange="handleDateChange(event)">
                             </div>
                             <div class="form-group">
                                 <label>اسم العامل / العاملة</label>
@@ -237,7 +230,7 @@
                         </div>
                         <div style="margin-top: 1.25rem;">
                             <button type="submit" id="saveBtn" class="btn btn-primary" style="width:100%; font-size:1rem;">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> <span>حفظ سحابياً والطباعة التلقائية الفورية</span>
+                                <i class="fa-solid fa-cloud-arrow-up"></i> <span>حفظ وطباعة فورية</span>
                             </button>
                         </div>
                     </form>
@@ -245,15 +238,15 @@
 
                 <div class="card" style="position: sticky; top: 1rem;">
                     <div class="card-header">
-                        <div class="card-title"><i class="fa-solid fa-eye"></i> <span>معاينة الفاتورة بالمقاس الحراري (58مم)</span></div>
+                        <div class="card-title"><i class="fa-solid fa-eye"></i> <span>معاينة الفاتورة</span></div>
                     </div>
                     
                     <div class="thermal-wrapper">
                         <div class="thermal-box" id="thermal-receipt">
                             <div class="thermal-header">
                                 <h3>مركز هيبة الاسترخاء</h3>
-                                <p style="font-size:10px;">جدة - المساج والحمام المغربي</p>
-                                <p id="r-date" style="margin-top:2px; font-size:9px; font-weight:bold;"></p>
+                                <p style="font-size:11px;">جدة - المساج والحمام المغربي</p>
+                                <p id="r-date" style="margin-top:3px; font-size:11px; font-weight:bold;"></p>
                             </div>
                             
                             <div class="thermal-row"><span>رقم الفاتورة:</span><strong id="r-serial">HS-000000</strong></div>
@@ -271,26 +264,26 @@
                                 <span id="r-price">0.00 ر.س</span>
                             </div>
                             
-                            <div style="text-align:center; margin-top:6px; font-size:9px;">
+                            <div style="text-align:center; margin-top:8px; font-size:11px; font-weight:700;">
                                 <p>أهلاً بكم - نتمنى لكم تجربة ممتعة</p>
-                                <p style="margin-top:1px;">يرجى الاحتفاظ بالفاتورة</p>
+                                <p style="margin-top:2px;">يرجى الاحتفاظ بالفاتورة</p>
                             </div>
                         </div>
                     </div>
 
                     <div style="display:flex; flex-direction:column; gap:8px; margin-top: 1rem;" class="no-print">
-                        <button class="btn btn-print" onclick="printElement('thermal-receipt')"><i class="fa-solid fa-print"></i> <span>طباعة يدوية للمقاس 58مم</span></button>
+                        <button class="btn btn-print" onclick="printElement('thermal-receipt')"><i class="fa-solid fa-print"></i> <span>طباعة يدوية</span></button>
                         <button class="btn btn-accent" onclick="exportPDF('thermal-receipt', 'Invoice')"><i class="fa-solid fa-file-pdf"></i> <span>تنزيل الفاتورة PDF</span></button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- TAB 2: EXPENSES (NEW SECTION) -->
+        <!-- TAB 2: EXPENSES -->
         <div id="expenses" class="tab-content">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-money-bill-transfer"></i> <span>تسجيل المصروفات النثرية والتشغيلية (تؤثر فوراً على اليومية والشفت)</span></div>
+                    <div class="card-title"><i class="fa-solid fa-money-bill-transfer"></i> <span>تسجيل المصروفات النثرية والتشغيلية</span></div>
                 </div>
                 <form id="expenseForm" onsubmit="saveExpense(event)">
                     <div class="grid-form">
@@ -312,7 +305,7 @@
                         </div>
                     </div>
                     <div style="margin-top: 1rem;">
-                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-circle-plus"></i> <span>حفظ المصروف وخصمه من إيرادات اليوم/الشفت</span></button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-circle-plus"></i> <span>حفظ المصروف</span></button>
                     </div>
                 </form>
 
@@ -450,7 +443,7 @@
     <div id="adminModal" class="modal">
         <div class="modal-content">
             <div class="card-header">
-                <div class="card-title"><i class="fa-solid fa-user-gear"></i> <span>لوحة تحكم المدير الإدارية</span></div>
+                <div class="card-title"><i class="fa-solid fa-user-gear"></i> <span>لوحة تحكم الإعدادات</span></div>
                 <button onclick="closeModal('adminModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
@@ -576,6 +569,20 @@
             updateLivePreview();
         });
 
+        // حماية اختيار تاريخ سابق برقم المدير
+        function handleDateChange(e) {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const selectedDate = e.target.value;
+            if (selectedDate < todayStr) {
+                const pass = prompt("اختيار تاريخ سابق يتطلب إذن المدير. أدخل رمز المدير:");
+                if (pass !== currentAdminPass) {
+                    alert("رمز المدير غير صحيح! تم إعادة التاريخ إلى اليوم الحالي.");
+                    e.target.value = todayStr;
+                }
+            }
+            updateLivePreview();
+        }
+
         async function fetchCloudMasterData() {
             if (!supabaseClient) return;
 
@@ -697,7 +704,7 @@
             loadReports();
         }
 
-        // حفظ المصروفات سحابياً
+        // حفظ المصروفات مع معالجة خطأ جدول expenses إن لم يكن منشأ مسبقاً
         async function saveExpense(e) {
             e.preventDefault();
             const expData = {
@@ -711,14 +718,18 @@
             if (supabaseClient) {
                 const { error } = await supabaseClient.from('expenses').insert([expData]);
                 if (error) {
-                    alert('خطأ في حفظ المصروف: ' + error.message);
+                    alert('تنبيه: جدول المصروفات غير متوفر سحابياً بالكامل بعد. تم تسجيل العملية محلياً وستظهر فور تجهيز الجدول.');
+                    // حفظ محلي احتياطي لضمان عدم ضياع بيانات المستخدم
+                    let localExps = JSON.parse(localStorage.getItem('haiba_local_expenses') || '[]');
+                    localExps.push(expData);
+                    localStorage.setItem('haiba_local_expenses', JSON.stringify(localExps));
                 } else {
-                    alert('تم حفظ المصروف بنجاح وخصمه من إيرادات اليوم/الشفت.');
-                    document.getElementById('expTitle').value = '';
-                    document.getElementById('expAmount').value = '';
-                    document.getElementById('expUser').value = '';
-                    loadReports();
+                    alert('تم حفظ المصروف بنجاح.');
                 }
+                document.getElementById('expTitle').value = '';
+                document.getElementById('expAmount').value = '';
+                document.getElementById('expUser').value = '';
+                loadReports();
             }
         }
 
@@ -729,7 +740,7 @@
             const staffFilter = document.getElementById('filterStaff').value;
 
             let records = [];
-            let expenseRecords = [];
+            let expenseRecords = JSON.parse(localStorage.getItem('haiba_local_expenses') || '[]');
 
             if (supabaseClient) {
                 try {
@@ -737,11 +748,13 @@
                     if (!error && data) records = data;
 
                     const { data: expData, error: expErr } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false });
-                    if (!expErr && expData) expenseRecords = expData;
+                    if (!expErr && expData) {
+                        // دمج المصروفات السحابية مع المحلية لتفادي الأخطاء
+                        expenseRecords = [...expData, ...expenseRecords];
+                    }
                 } catch (e) { console.log("Error loading reports:", e); }
             }
 
-            // فلترة الفواتير
             const filteredInvoices = records.filter(inv => {
                 const matchDate = !selectedDate || inv.date === selectedDate;
                 const matchStaff = staffFilter === 'ALL' || inv.staff === staffFilter;
@@ -749,7 +762,6 @@
                 return matchDate && matchStaff && matchTime;
             });
 
-            // فلترة المصروفات حسب تاريخ اليوم المحدد
             const filteredExpenses = expenseRecords.filter(exp => {
                 return !selectedDate || exp.date === selectedDate;
             });
@@ -800,9 +812,8 @@
                 tbody.appendChild(tr);
             });
 
-            // حساب إجمالي المصروفات
             let totalExp = 0;
-            expenses.forEach(exp => {
+            expenses.forEach((exp, idx) => {
                 totalExp += exp.amount;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -811,13 +822,12 @@
                     <td style="color:#991B1B; font-weight:bold;">-${exp.amount.toFixed(2)} SAR</td>
                     <td>${exp.user}</td>
                     <td class="no-print">
-                        <button class="btn btn-danger btn-sm" onclick="deleteExpense('${exp.id}')"><i class="fa-solid fa-trash"></i> حذف</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteExpense(${idx})"><i class="fa-solid fa-trash"></i> حذف</button>
                     </td>
                 `;
                 expTbody.appendChild(tr);
             });
 
-            // الصافي المباشر (الإيراد ناقص المصروفات، والكاش الصافي ناقص المصروفات النثرية)
             const netRevenue = totalRev - totalExp;
             const netCash = Math.max(0, totalCash - totalExp);
 
@@ -841,17 +851,17 @@
             document.getElementById('totalCash').innerText = `${netCash.toFixed(2)} SAR (صافي كاش)`;
         }
 
-        async function deleteExpense(id) {
+        function deleteExpense(idx) {
             const pass = prompt("حذف المصروف يتطلب إذن المدير. أدخل رمز المدير:");
             if (pass !== currentAdminPass) {
                 if (pass !== null) alert("رمز المدير غير صحيح!");
                 return;
             }
             if (confirm("هل أنت متأكد من حذف هذا المصروف؟")) {
-                if (supabaseClient) {
-                    await supabaseClient.from('expenses').delete().eq('id', id);
-                    loadReports();
-                }
+                let localExps = JSON.parse(localStorage.getItem('haiba_local_expenses') || '[]');
+                localExps.splice(idx, 1);
+                localStorage.setItem('haiba_local_expenses', JSON.stringify(localExps));
+                loadReports();
             }
         }
 
@@ -1010,7 +1020,7 @@
             }
         }
 
-        // طباعة الفاتورة الحرارية 58مم المنضبطة عمودياً
+        // طباعة الفاتورة الحرارية 58مم بخط عريض وواضح بدون تقطيع
         function printElement(elemId) {
             const content = document.getElementById(elemId).innerHTML;
 
@@ -1024,13 +1034,14 @@
                     <style>
                         * { margin: 0; padding: 0; box-sizing: border-box; }
                         body {
-                            font-family: 'Courier New', Courier, monospace;
+                            font-family: 'Tajawal', 'Courier New', monospace;
                             width: 58mm;
                             max-width: 58mm;
                             margin: 0 auto;
                             padding: 2mm;
-                            font-size: 11px;
-                            line-height: 1.25;
+                            font-size: 12px;
+                            font-weight: 700;
+                            line-height: 1.4;
                             color: #000;
                             background: #fff;
                             direction: rtl;
@@ -1039,19 +1050,19 @@
                         .thermal-header {
                             text-align: center;
                             border-bottom: 1px dashed #000;
-                            padding-bottom: 4px;
+                            padding-bottom: 6px;
                             margin-bottom: 4px;
                         }
-                        .thermal-header h3 { font-size: 12px; font-weight: bold; margin-bottom: 2px; }
-                        .thermal-row { display: flex; justify-content: space-between; padding: 2px 0; width: 100%; }
-                        .thermal-divider { border-top: 1px dashed #000; margin: 3px 0; width: 100%; }
+                        .thermal-header h3 { font-size: 13px; font-weight: 900; margin-bottom: 3px; }
+                        .thermal-row { display: flex; justify-content: space-between; padding: 3px 0; width: 100%; font-size: 12px; font-weight: 700; }
+                        .thermal-divider { border-top: 1px dashed #000; margin: 4px 0; width: 100%; }
                         .thermal-total {
-                            border-top: 1px solid #000;
-                            border-bottom: 1px solid #000;
-                            padding: 4px 0;
-                            font-weight: bold;
-                            font-size: 12px;
-                            margin-top: 2px;
+                            border-top: 2px solid #000;
+                            border-bottom: 2px solid #000;
+                            padding: 5px 0;
+                            font-weight: 900;
+                            font-size: 13px;
+                            margin-top: 4px;
                             width: 100%;
                         }
                         @page { size: 58mm auto; margin: 0; }
