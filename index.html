@@ -124,7 +124,6 @@
         th { background: #F8FAFC; color: #475569; font-weight: 700; }
         tr:hover { background: #F8FAFC; }
 
-        /* تصميم الفاتورة الحرارية 58مم بخط واضح وكبير وغير مقطع */
         .thermal-wrapper { display: flex; justify-content: center; width: 100%; }
         .thermal-box {
             width: 58mm; padding: 8px; background: #FFF !important;
@@ -407,7 +406,7 @@
                                     <th>نسبة العامل (%)</th>
                                     <th>عدد الخدمات</th>
                                     <th>إجمالي مبيعات العامل</th>
-                                    <th>مستحق العامل (عملته)</th>
+                                    <th>مستحق العامل (عمولته)</th>
                                 </tr>
                             </thead>
                             <tbody id="staffPerformanceBody"></tbody>
@@ -462,7 +461,7 @@
                 <div class="form-group" style="gap:8px;">
                     <input type="text" id="newStaffName" placeholder="اسم العامل / العاملة جديد">
                     <input type="number" id="newStaffCommission" placeholder="نسبة العامل % (مثال: 40)" min="0" max="100">
-                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addStaff()">إضافة العامل سحابياً</button>
+                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addStaff()">إضافة العامل محلياً</button>
                 </div>
                 <ul id="staffListUI" style="list-style:none; margin: 10px 0; max-height:120px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
 
@@ -492,8 +491,8 @@
             </div>
 
             <div id="devLoginSec" class="form-group">
-                <label>أدخل رمز مرور المبرمج (0556375221)</label>
-                <!-- تم جعل الخانة فارغة ومحمية بنقاط سرية تماماً بناءً على طلبك -->
+                <label>أدخل رمز مرور المبرمج</label>
+                <!-- خانة فارغة ومحمية بنقاط سرية تماماً -->
                 <input type="password" id="devPassInput" placeholder="أدخل رمز المبرمج السري">
                 <button class="btn" style="background:#0F172A; color:#FFF; margin-top:10px;" onclick="checkDeveloper()">دخول لوحة المالك</button>
             </div>
@@ -553,11 +552,16 @@
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
-        let staffList = [];
-        let servicesList = [];
+        // تخزين العمال محلياً مع نسبهم لتجنب أي مشاكل في قاعدة البيانات السحابية
+        let staffList = JSON.parse(localStorage.getItem('haiba_staff_list') || JSON.stringify([
+            { name: "مني", commission: 0 },
+            { name: "ريان فلبيني", commission: 0 },
+            { name: "جون فلبيني", commission: 0 }
+        ]));
         
+        let servicesList = [];
         let currentAdminPass = localStorage.getItem('haiba_admin_pass') || '1234';
-        const DEVELOPER_MASTER_PASS = '0556375221'; // كلمة مرور المالك الجديدة
+        const DEVELOPER_MASTER_PASS = '0556375221'; // كلمة مرور المالك
 
         document.addEventListener('DOMContentLoaded', async () => {
             const todayStr = new Date().toISOString().split('T')[0];
@@ -585,18 +589,14 @@
         }
 
         async function fetchCloudMasterData() {
-            if (!supabaseClient) return;
-
-            try {
-                const { data: staffData } = await supabaseClient.from('staff').select('*');
-                if (staffData) staffList = staffData;
-
-                const { data: servicesData } = await supabaseClient.from('services').select('*');
-                if (servicesData) servicesList = servicesData;
-            } catch (e) {
-                console.error("Error fetching master data:", e);
+            if (supabaseClient) {
+                try {
+                    const { data: servicesData } = await supabaseClient.from('services').select('*');
+                    if (servicesData && servicesData.length > 0) servicesList = servicesData;
+                } catch (e) {
+                    console.error("Error fetching services:", e);
+                }
             }
-
             populateDropdowns();
         }
 
@@ -622,13 +622,13 @@
             serviceSelect.innerHTML = '';
 
             staffList.forEach(s => {
-                const sName = s.name || s;
+                const sName = s.name;
                 staffSelect.add(new Option(sName, sName));
                 filterStaff.add(new Option(sName, sName));
             });
 
             servicesList.forEach(srv => {
-                const srvName = srv.name || srv;
+                const srvName = srv.name;
                 const srvPrice = srv.price || 0;
                 const opt = new Option(`${srvName} (${srvPrice} SAR)`, srvName);
                 opt.dataset.price = srvPrice;
@@ -746,7 +746,6 @@
 
                     const { data: expData, error: expErr } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false });
                     if (!expErr && expData) {
-                        // دمج المصروفات السحابية مع المحلية بدون تكرار
                         expenseRecords = [...expData];
                     }
                 } catch (e) { console.log("Error loading reports:", e); }
@@ -778,11 +777,9 @@
             let totalRev = 0, totalCash = 0, totalBank = 0, totalStaffCommission = 0;
             const staffStats = {};
 
-            // خريطة نسب العمال من القائمة المحدثة
             const staffCommissionRates = {};
             staffList.forEach(s => {
-                const sName = s.name || s;
-                staffCommissionRates[sName] = parseFloat(s.commission) || 0;
+                staffCommissionRates[s.name] = parseFloat(s.commission) || 0;
             });
 
             invoices.forEach((inv) => {
@@ -839,11 +836,9 @@
                 expTbody.appendChild(tr);
             });
 
-            // حساب الصافي الصحيح (إجمالي الإيرادات - مستحقات العمال - المصروفات)
             const netRevenue = totalRev - totalStaffCommission - totalExp;
             const netCash = Math.max(0, totalCash - totalExp);
 
-            // عرض إحصائيات كل عامل في الجدول
             Object.keys(staffStats).forEach(st => {
                 const stat = staffStats[st];
                 const cRate = staffCommissionRates[st] !== undefined ? staffCommissionRates[st] : 0;
@@ -980,10 +975,10 @@
             const staffUI = document.getElementById('staffListUI');
             const serviceUI = document.getElementById('serviceListUI');
 
-            staffUI.innerHTML = staffList.map((s) => `
+            staffUI.innerHTML = staffList.map((s, idx) => `
                 <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid #F1F5F9; padding-bottom:4px;">
                     <span><strong>${s.name}</strong> (النسبة: ${s.commission || 0}%)</span>
-                    <button class="btn btn-danger btn-sm" onclick="removeStaff(${s.id})">حذف</button>
+                    <button class="btn btn-danger btn-sm" onclick="removeStaff(${idx})">حذف</button>
                 </li>
             `).join('');
 
@@ -995,27 +990,26 @@
             `).join('');
         }
 
-        async function addStaff() {
+        function addStaff() {
             const name = document.getElementById('newStaffName').value.trim();
             const commission = parseFloat(document.getElementById('newStaffCommission').value) || 0;
-            if (name && supabaseClient) {
-                const { error } = await supabaseClient.from('staff').insert([{ name, commission }]);
-                if (error) alert('خطأ في الإضافة: ' + error.message);
-                else {
-                    document.getElementById('newStaffName').value = '';
-                    document.getElementById('newStaffCommission').value = '';
-                    await fetchCloudMasterData();
-                    renderAdminLists();
-                }
+            if (name) {
+                staffList.push({ name, commission });
+                localStorage.setItem('haiba_staff_list', JSON.stringify(staffList));
+                document.getElementById('newStaffName').value = '';
+                document.getElementById('newStaffCommission').value = '';
+                populateDropdowns();
+                renderAdminLists();
+                loadReports();
             }
         }
 
-        async function removeStaff(id) {
-            if (supabaseClient && id) {
-                await supabaseClient.from('staff').delete().eq('id', id);
-                await fetchCloudMasterData();
-                renderAdminLists();
-            }
+        function removeStaff(idx) {
+            staffList.splice(idx, 1);
+            localStorage.setItem('haiba_staff_list', JSON.stringify(staffList));
+            populateDropdowns();
+            renderAdminLists();
+            loadReports();
         }
 
         async function addService() {
