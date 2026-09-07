@@ -116,7 +116,7 @@
         .metric-card.amber { background: #FFFBEB; border-color: #FDE68A; color: #92400E; }
         .metric-card.purple { background: #F3E8FF; border-color: #DDD6FE; color: #5B21B6; }
         .metric-card.red { background: #FEF2F2; border-color: #FECACA; color: #991B1B; }
-        .metric-value { font-size: 1.3rem; font-weight: 800; margin-top: 4px; }
+        .metric-value { font-size: 1.2rem; font-weight: 800; margin-top: 4px; }
 
         .table-responsive { overflow-x: auto; margin-top: 1rem; border-radius: 8px; border: 1px solid var(--border); }
         table { width: 100%; border-collapse: collapse; background: var(--surface); text-align: right; }
@@ -333,7 +333,7 @@
         <div id="reports" class="tab-content">
             <div class="card printable-target" id="report-main-card">
                 <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-chart-line"></i> <span>التقارير اليومية والشفت (شاملة الإيرادات، المصروفات، والصافي المباشر)</span></div>
+                    <div class="card-title"><i class="fa-solid fa-chart-line"></i> <span>التقارير اليومية والشفت (شاملة الإيرادات، نسب العمال، والمصروفات)</span></div>
                     <button class="btn btn-print no-print" onclick="printReports()"><i class="fa-solid fa-print"></i> <span>طباعة تقرير الشفت</span></button>
                 </div>
 
@@ -361,10 +361,17 @@
                 <div class="metrics-grid">
                     <div class="metric-card green">
                         <div>
-                            <span>إجمالي المبيعات (إيرادات)</span>
+                            <span>إجمالي المبيعات (إيرادات المركز)</span>
                             <div class="metric-value" id="totalRevenue">0.00 SAR</div>
                         </div>
                         <i class="fa-solid fa-wallet fa-2x" style="opacity:0.3"></i>
+                    </div>
+                    <div class="metric-card purple">
+                        <div>
+                            <span>إجمالي مستحقات العمال (النسب)</span>
+                            <div class="metric-value" id="totalStaffCommission">0.00 SAR</div>
+                        </div>
+                        <i class="fa-solid fa-percent fa-2x" style="opacity:0.3"></i>
                     </div>
                     <div class="metric-card red">
                         <div>
@@ -373,41 +380,34 @@
                         </div>
                         <i class="fa-solid fa-money-bill-transfer fa-2x" style="opacity:0.3"></i>
                     </div>
-                    <div class="metric-card purple">
+                    <div class="metric-card blue">
                         <div>
-                            <span>صافي الإيراد (بعد المصروفات)</span>
+                            <span>صافي إيراد المركز (بعد العمال والمصروفات)</span>
                             <div class="metric-value" id="netRevenueMetric">0.00 SAR</div>
                         </div>
                         <i class="fa-solid fa-scale-balanced fa-2x" style="opacity:0.3"></i>
                     </div>
-                    <div class="metric-card blue">
-                        <div>
-                            <span>عدد الفواتير</span>
-                            <div class="metric-value" id="totalOps">0</div>
-                        </div>
-                        <i class="fa-solid fa-receipt fa-2x" style="opacity:0.3"></i>
-                    </div>
                     <div class="metric-card amber">
                         <div>
-                            <span>تحصيل الكاش (الصافي بالكاش)</span>
+                            <span>تحصيل الكاش (الصافي)</span>
                             <div class="metric-value" id="totalCash">0.00 SAR</div>
                         </div>
                         <i class="fa-solid fa-money-bill-wave fa-2x" style="opacity:0.3"></i>
                     </div>
                 </div>
 
-                <!-- SECTION: STAFF PERFORMANCE SUMMARY -->
+                <!-- SECTION: STAFF PERFORMANCE & COMMISSIONS SUMMARY -->
                 <div style="margin-top: 1.5rem;">
-                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> ملخص إنتاجية وتقارير العمال في الفترة المحددة:</h3>
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> ملخص إنتاجية وعمولات العمال (حسب النسبة المحددة لكل عامل):</h3>
                     <div class="table-responsive">
                         <table>
-                            <thead>
+                     <thead>
                                 <tr>
                                     <th>اسم العامل / العاملة</th>
-                                    <th>عدد الخدمات والمشتركين</th>
-                                    <th>تحصيل كاش</th>
-                                    <th>تحصيل شبكة / تحويل</th>
+                                    <th>نسبة العامل (%)</th>
+                                    <th>عدد الخدمات</th>
                                     <th>إجمالي مبيعات العامل</th>
+                                    <th>مستحق العامل (عملته)</th>
                                 </tr>
                             </thead>
                             <tbody id="staffPerformanceBody"></tbody>
@@ -417,7 +417,7 @@
 
                 <!-- SECTION: ALL INVOICES DETAIL -->
                 <div style="margin-top: 1.5rem;">
-                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> تفاصيل الفواتير المسجلة (مع إمكانية التعديل والإلغاء):</h3>
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> تفاصيل الفواتير المسجلة:</h3>
                     <div class="table-responsive">
                         <table>
                             <thead>
@@ -455,15 +455,16 @@
 
             <div id="adminControls" style="display:none;">
                 <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:8px; border-radius:8px; margin-bottom:12px; color:#166534; font-size:0.85rem;">
-                    <i class="fa-solid fa-circle-check"></i> تم تسجيل دخول المدير بنجاح. يمكنك تعديل الفواتير أو الحذف وإدارة الخدمات والكادر:
+                    <i class="fa-solid fa-circle-check"></i> تم تسجيل دخول المدير بنجاح. يمكنك ضبط نسب العمال والخدمات وإدارة العمليات:
                 </div>
 
-                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-users"></i> <span>إدارة كادر العمل (سحابياً):</span></h4>
-                <div class="form-group">
+                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-users"></i> <span>إدارة كادر العمل ونسبهم (%):</span></h4>
+                <div class="form-group" style="gap:8px;">
                     <input type="text" id="newStaffName" placeholder="اسم العامل / العاملة جديد">
+                    <input type="number" id="newStaffCommission" placeholder="نسبة العامل % (مثال: 40)" min="0" max="100">
                     <button class="btn btn-accent" style="margin-top:6px;" onclick="addStaff()">إضافة العامل سحابياً</button>
                 </div>
-                <ul id="staffListUI" style="list-style:none; margin: 10px 0; max-height:100px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
+                <ul id="staffListUI" style="list-style:none; margin: 10px 0; max-height:120px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
 
                 <hr style="margin: 1.25rem 0; border:0; border-top:1px solid var(--border);">
                 
@@ -486,7 +487,7 @@
     <div id="devModal" class="modal">
         <div class="modal-content">
             <div class="card-header">
-                <div class="card-title"><i class="fa-solid fa-code" style="color:#0F172A;"></i> <span>لوحة المالك </span></div>
+                <div class="card-title"><i class="fa-solid fa-code" style="color:#0F172A;"></i> <span>لوحة المالك</span></div>
                 <button onclick="closeModal('devModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
@@ -498,7 +499,7 @@
 
             <div id="devControls" style="display:none;">
                 <div style="background:#EFF6FF; border:1px solid #BFDBFE; padding:10px; border-radius:8px; margin-bottom:12px; color:#1E40AF; font-size:0.85rem;">
-                    <i class="fa-solid fa-shield-halved"></i> أهلاً بك يا محمود شهاب. من هنا يمكنك تغيير كلمة مرور لوحة المدير متى شئت.
+                    <i class="fa-solid fa-shield-halved"></i> أهلاً بك يا محمود. من هنا يمكنك تغيير كلمة مرور لوحة المدير متى شئت.
                 </div>
                 <div class="form-group">
                     <label>كلمة المرور الجديدة للمدير</label>
@@ -523,7 +524,7 @@
                 <input type="text" id="editInvSerial" readonly style="background:#E2E8F0;">
             </div>
             <div class="form-group" style="margin-bottom:10px;">
-                <label>طريقة الدداد / السداد</label>
+                <label>طريقة الدفع</label>
                 <select id="editInvPay">
                     <option value="كاش">كاش</option>
                     <option value="صرافة (شبكة)">صرافة (شبكة)</option>
@@ -555,7 +556,7 @@
         let servicesList = [];
         
         let currentAdminPass = localStorage.getItem('haiba_admin_pass') || '1234';
-        const DEVELOPER_MASTER_PASS = 'shehab2026';
+        const DEVELOPER_MASTER_PASS = '0556375221'; // كلمة مرور المالك الجديدة
 
         document.addEventListener('DOMContentLoaded', async () => {
             const todayStr = new Date().toISOString().split('T')[0];
@@ -704,7 +705,6 @@
             loadReports();
         }
 
-        // حفظ المصروفات مع معالجة خطأ جدول expenses إن لم يكن منشأ مسبقاً
         async function saveExpense(e) {
             e.preventDefault();
             const expData = {
@@ -719,7 +719,6 @@
                 const { error } = await supabaseClient.from('expenses').insert([expData]);
                 if (error) {
                     alert('تنبيه: جدول المصروفات غير متوفر سحابياً بالكامل بعد. تم تسجيل العملية محلياً وستظهر فور تجهيز الجدول.');
-                    // حفظ محلي احتياطي لضمان عدم ضياع بيانات المستخدم
                     let localExps = JSON.parse(localStorage.getItem('haiba_local_expenses') || '[]');
                     localExps.push(expData);
                     localStorage.setItem('haiba_local_expenses', JSON.stringify(localExps));
@@ -749,7 +748,6 @@
 
                     const { data: expData, error: expErr } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false });
                     if (!expErr && expData) {
-                        // دمج المصروفات السحابية مع المحلية لتفادي الأخطاء
                         expenseRecords = [...expData, ...expenseRecords];
                     }
                 } catch (e) { console.log("Error loading reports:", e); }
@@ -778,8 +776,14 @@
             staffTbody.innerHTML = '';
             expTbody.innerHTML = '';
 
-            let totalRev = 0, totalCash = 0, totalBank = 0;
+            let totalRev = 0, totalCash = 0, totalBank = 0, totalStaffCommission = 0;
             const staffStats = {};
+
+            // تجهيز خريطة نسب العمال
+            const staffCommissionRates = {};
+            staffList.forEach(s => {
+                staffCommissionRates[s.name] = parseFloat(s.commission) || 0; // النسبة الافتراضية
+            });
 
             invoices.forEach((inv) => {
                 totalRev += inv.price;
@@ -789,10 +793,17 @@
 
                 const stName = inv.staff || 'غير محدد';
                 if (!staffStats[stName]) {
-                    staffStats[stName] = { count: 0, cash: 0, bank: 0, total: 0 };
+                    staffStats[stName] = { count: 0, cash: 0, bank: 0, total: 0, commissionTotal: 0 };
                 }
+                
+                const commissionRate = staffCommissionRates[stName] || 0; // النسبة المئوية للعامل
+                const itemCommission = (inv.price * commissionRate) / 100;
+                
                 staffStats[stName].count += 1;
                 staffStats[stName].total += inv.price;
+                staffStats[stName].commissionTotal += itemCommission;
+                totalStaffCommission += itemCommission;
+
                 if (isCash) staffStats[stName].cash += inv.price;
                 else staffStats[stName].bank += inv.price;
 
@@ -828,26 +839,28 @@
                 expTbody.appendChild(tr);
             });
 
-            const netRevenue = totalRev - totalExp;
+            // صافي إيراد المركز = إجمالي الإيرادات - مستحقات العمال - المصروفات
+            const netRevenue = totalRev - totalStaffCommission - totalExp;
             const netCash = Math.max(0, totalCash - totalExp);
 
             Object.keys(staffStats).forEach(st => {
                 const stat = staffStats[st];
+                const cRate = staffCommissionRates[st] || 0;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong>${st}</strong></td>
+                    <td><span class="chip" style="background:#F3E8FF; color:var(--primary);">${cRate}%</span></td>
                     <td><span class="chip">${stat.count} خدمات</span></td>
-                    <td>${stat.cash.toFixed(2)} SAR</td>
-                    <td>${stat.bank.toFixed(2)} SAR</td>
-                    <td><strong style="color:var(--primary);">${stat.total.toFixed(2)} SAR</strong></td>
+                    <td>${stat.total.toFixed(2)} SAR</td>
+                    <td><strong style="color:var(--accent-hover);">${stat.commissionTotal.toFixed(2)} SAR</strong></td>
                 `;
                 staffTbody.appendChild(tr);
             });
 
             document.getElementById('totalRevenue').innerText = `${totalRev.toFixed(2)} SAR`;
+            document.getElementById('totalStaffCommission').innerText = `${totalStaffCommission.toFixed(2)} SAR`;
             document.getElementById('totalExpensesMetric').innerText = `${totalExp.toFixed(2)} SAR`;
             document.getElementById('netRevenueMetric').innerText = `${netRevenue.toFixed(2)} SAR`;
-            document.getElementById('totalOps').innerText = invoices.length;
             document.getElementById('totalCash').innerText = `${netCash.toFixed(2)} SAR (صافي كاش)`;
         }
 
@@ -962,27 +975,29 @@
             const serviceUI = document.getElementById('serviceListUI');
 
             staffUI.innerHTML = staffList.map((s) => `
-                <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                    <span>${s.name}</span>
-                    <button class="btn btn-danger btn-sm" onclick="removeStaff(${s.id})">محي</button>
+                <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid #F1F5F9; padding-bottom:4px;">
+                    <span><strong>${s.name}</strong> (النسبة: ${s.commission || 0}%)</span>
+                    <button class="btn btn-danger btn-sm" onclick="removeStaff(${s.id})">حذف</button>
                 </li>
             `).join('');
 
             serviceUI.innerHTML = servicesList.map((srv) => `
-                <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid #F1F5F9; padding-bottom:4px;">
                     <span>${srv.name} (${srv.price} SAR)</span>
-                    <button class="btn btn-danger btn-sm" onclick="removeService(${srv.id})">محي</button>
+                    <button class="btn btn-danger btn-sm" onclick="removeService(${srv.id})">حذف</button>
                 </li>
             `).join('');
         }
 
         async function addStaff() {
-            const val = document.getElementById('newStaffName').value.trim();
-            if (val && supabaseClient) {
-                const { error } = await supabaseClient.from('staff').insert([{ name: val }]);
+            const name = document.getElementById('newStaffName').value.trim();
+            const commission = parseFloat(document.getElementById('newStaffCommission').value) || 0;
+            if (name && supabaseClient) {
+                const { error } = await supabaseClient.from('staff').insert([{ name, commission }]);
                 if (error) alert('خطأ في الإضافة: ' + error.message);
                 else {
                     document.getElementById('newStaffName').value = '';
+                    document.getElementById('newStaffCommission').value = '';
                     await fetchCloudMasterData();
                     renderAdminLists();
                 }
@@ -1020,10 +1035,8 @@
             }
         }
 
-        // طباعة الفاتورة الحرارية 58مم بخط عريض وواضح بدون تقطيع
         function printElement(elemId) {
             const content = document.getElementById(elemId).innerHTML;
-
             const printWindow = window.open('', '_blank', 'width=350,height=500');
             printWindow.document.write(`
                 <!DOCTYPE html>
