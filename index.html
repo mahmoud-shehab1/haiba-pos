@@ -397,16 +397,15 @@
 
                 <!-- SECTION: STAFF PERFORMANCE & COMMISSIONS SUMMARY -->
                 <div style="margin-top: 1.5rem;">
-                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> ملخص إنتاجية وعمولات العمال (حسب النسبة المحددة لكل عامل):</h3>
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> ملخص إنتاجية وعمولات العمال (حسب القواعد المعتمدة):</h3>
                     <div class="table-responsive">
                         <table>
                             <thead>
                                 <tr>
                                     <th>اسم العامل / العاملة</th>
-                                    <th>نسبة العامل (%)</th>
                                     <th>عدد الخدمات</th>
                                     <th>إجمالي مبيعات العامل</th>
-                                    <th>مستحق العامل (عمولته)</th>
+                                    <th>مستحق العامل (العمولة المحسوبة)</th>
                                 </tr>
                             </thead>
                             <tbody id="staffPerformanceBody"></tbody>
@@ -425,6 +424,7 @@
                                     <th>الوقت والتاريخ</th>
                                     <th>العامل/ة</th>
                                     <th>الخدمة / العرض</th>
+                                    <th>الموقع (مركز / منزلي)</th>
                                     <th>طريقة الدفع</th>
                                     <th>المبلغ</th>
                                     <th class="no-print">إجراءات المدير</th>
@@ -454,14 +454,13 @@
 
             <div id="adminControls" style="display:none;">
                 <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:8px; border-radius:8px; margin-bottom:12px; color:#166534; font-size:0.85rem;">
-                    <i class="fa-solid fa-circle-check"></i> تم تسجيل دخول المدير بنجاح. يمكنك ضبط نسب العمال والخدمات وإدارة العمليات:
+                    <i class="fa-solid fa-circle-check"></i> تم تسجيل دخول المدير بنجاح. إدارة كادر العمل والخدمات:
                 </div>
 
-                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-users"></i> <span>إدارة كادر العمل ونسبهم (%):</span></h4>
+                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);"><i class="fa-solid fa-users"></i> <span>إدارة كادر العمل:</span></h4>
                 <div class="form-group" style="gap:8px;">
                     <input type="text" id="newStaffName" placeholder="اسم العامل / العاملة جديد">
-                    <input type="number" id="newStaffCommission" placeholder="نسبة العامل % (مثال: 40)" min="0" max="100">
-                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addStaff()">إضافة العامل محلياً</button>
+                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addStaff()">إضافة عامل جديد</button>
                 </div>
                 <ul id="staffListUI" style="list-style:none; margin: 10px 0; max-height:120px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
 
@@ -492,7 +491,7 @@
 
             <div id="devLoginSec" class="form-group">
                 <label>أدخل رمز مرور المبرمج</label>
-                <!-- خانة فارغة ومحمية بنقاط سرية تماماً -->
+                <!-- خانة محمية ونظيفة تماماً -->
                 <input type="password" id="devPassInput" placeholder="أدخل رمز المبرمج السري">
                 <button class="btn" style="background:#0F172A; color:#FFF; margin-top:10px;" onclick="checkDeveloper()">دخول لوحة المالك</button>
             </div>
@@ -524,6 +523,13 @@
                 <input type="text" id="editInvSerial" readonly style="background:#E2E8F0;">
             </div>
             <div class="form-group" style="margin-bottom:10px;">
+                <label>مكان تقديم الخدمة</label>
+                <select id="editInvLocation">
+                    <option value="حضور بالمركز">حضور بالمركز</option>
+                    <option value="زيارة منزلية">زيارة منزلية</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
                 <label>طريقة الدفع</label>
                 <select id="editInvPay">
                     <option value="كاش">كاش</option>
@@ -552,11 +558,11 @@
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
 
-        // تخزين العمال محلياً مع نسبهم لتجنب أي مشاكل في قاعدة البيانات السحابية
+        // عمال المركز الافتراضيون
         let staffList = JSON.parse(localStorage.getItem('haiba_staff_list') || JSON.stringify([
-            { name: "مني", commission: 0 },
-            { name: "ريان فلبيني", commission: 0 },
-            { name: "جون فلبيني", commission: 0 }
+            { name: "مني" },
+            { name: "ريان فلبيني" },
+            { name: "جون فلبيني" }
         ]));
         
         let servicesList = [];
@@ -672,6 +678,22 @@
             document.getElementById('r-price').innerText = `${priceVal.toFixed(2)} ر.س`;
         }
 
+        // دالة حساب عمولة العامل بناءً على القاعدة المعتمدة
+        function calculateCommission(staffName, location, price) {
+            const isHome = location && location.includes('منزلية');
+            if (isHome) {
+                // إذا كان العامل ريان (سواء كاتب ريان أو ريان فلبيني)
+                if (staffName.includes('ريان')) {
+                    return 20; // 20 ريال ثابتة
+                } else {
+                    return 50; // 50 ريال ثابتة لبقية العمالة في الزيارة المنزلية
+                }
+            } else {
+                // داخل المركز: 30% للجميع
+                return (price * 30) / 100;
+            }
+        }
+
         async function saveInvoice(e) {
             e.preventDefault();
             const now = new Date();
@@ -777,11 +799,6 @@
             let totalRev = 0, totalCash = 0, totalBank = 0, totalStaffCommission = 0;
             const staffStats = {};
 
-            const staffCommissionRates = {};
-            staffList.forEach(s => {
-                staffCommissionRates[s.name] = parseFloat(s.commission) || 0;
-            });
-
             invoices.forEach((inv) => {
                 totalRev += inv.price;
                 const isCash = inv.payment_method && inv.payment_method.includes('كاش');
@@ -793,8 +810,8 @@
                     staffStats[stName] = { count: 0, cash: 0, bank: 0, total: 0, commissionTotal: 0 };
                 }
                 
-                const commissionRate = staffCommissionRates[stName] !== undefined ? staffCommissionRates[stName] : 0;
-                const itemCommission = (inv.price * commissionRate) / 100;
+                // حساب العمولة تلقائياً حسب القواعد الجديدة
+                const itemCommission = calculateCommission(stName, inv.location, inv.price);
                 
                 staffStats[stName].count += 1;
                 staffStats[stName].total += inv.price;
@@ -810,10 +827,11 @@
                     <td>${inv.date} <br><small style="color:var(--text-muted);">${inv.time}</small></td>
                     <td>${inv.staff}</td>
                     <td>${inv.service}</td>
+                    <td><span class="chip" style="background:${inv.location && inv.location.includes('منزلية') ? '#FEF3C7' : '#F1F5F9'};">${inv.location || 'حضور بالمركز'}</span></td>
                     <td><span class="chip" style="background:#E2E8F0;">${inv.payment_method}</span></td>
                     <td><strong>${inv.price.toFixed(2)} SAR</strong></td>
                     <td class="no-print" style="display:flex; gap:4px;">
-                        <button class="btn btn-warning btn-sm" onclick="openEditInvoice('${inv.id}', '${inv.serial}', '${inv.payment_method}', ${inv.price}, '${inv.date}')"><i class="fa-solid fa-pen"></i> تعديل</button>
+                        <button class="btn btn-warning btn-sm" onclick="openEditInvoice('${inv.id}', '${inv.serial}', '${inv.payment_method}', ${inv.price}, '${inv.date}', '${inv.location || 'حضور بالمركز'}')"><i class="fa-solid fa-pen"></i> تعديل</button>
                         <button class="btn btn-danger btn-sm" onclick="cancelInvoice('${inv.id}')"><i class="fa-solid fa-ban"></i> حذف</button>
                     </td>
                 `;
@@ -841,11 +859,9 @@
 
             Object.keys(staffStats).forEach(st => {
                 const stat = staffStats[st];
-                const cRate = staffCommissionRates[st] !== undefined ? staffCommissionRates[st] : 0;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong>${st}</strong></td>
-                    <td><span class="chip" style="background:#F3E8FF; color:var(--primary);">${cRate}%</span></td>
                     <td><span class="chip">${stat.count} خدمات</span></td>
                     <td>${stat.total.toFixed(2)} SAR</td>
                     <td><strong style="color:var(--accent-hover);">${stat.commissionTotal.toFixed(2)} SAR</strong></td>
@@ -878,7 +894,7 @@
             }
         }
 
-        function openEditInvoice(id, serial, payMethod, price, date) {
+        function openEditInvoice(id, serial, payMethod, price, date, location) {
             const pass = prompt("تعديل الفاتورة يتطلب إذن المدير. أدخل رمز المدير:");
             if (pass !== currentAdminPass) {
                 if (pass !== null) alert("رمز المدير غير صحيح!");
@@ -890,6 +906,7 @@
             document.getElementById('editInvPay').value = payMethod;
             document.getElementById('editInvPrice').value = price;
             document.getElementById('editInvDate').value = date;
+            document.getElementById('editInvLocation').value = location;
             
             document.getElementById('editInvoiceModal').classList.add('active');
         }
@@ -899,9 +916,10 @@
             const payment_method = document.getElementById('editInvPay').value;
             const price = parseFloat(document.getElementById('editInvPrice').value) || 0;
             const date = document.getElementById('editInvDate').value;
+            const location = document.getElementById('editInvLocation').value;
 
             if (supabaseClient) {
-                const { error } = await supabaseClient.from('invoices').update({ payment_method, price, date }).eq('id', id);
+                const { error } = await supabaseClient.from('invoices').update({ payment_method, price, date, location }).eq('id', id);
                 if (error) {
                     alert("خطأ أثناء التعديل: " + error.message);
                 } else {
@@ -977,7 +995,7 @@
 
             staffUI.innerHTML = staffList.map((s, idx) => `
                 <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid #F1F5F9; padding-bottom:4px;">
-                    <span><strong>${s.name}</strong> (النسبة: ${s.commission || 0}%)</span>
+                    <span><strong>${s.name}</strong></span>
                     <button class="btn btn-danger btn-sm" onclick="removeStaff(${idx})">حذف</button>
                 </li>
             `).join('');
@@ -992,12 +1010,10 @@
 
         function addStaff() {
             const name = document.getElementById('newStaffName').value.trim();
-            const commission = parseFloat(document.getElementById('newStaffCommission').value) || 0;
             if (name) {
-                staffList.push({ name, commission });
+                staffList.push({ name });
                 localStorage.setItem('haiba_staff_list', JSON.stringify(staffList));
                 document.getElementById('newStaffName').value = '';
-                document.getElementById('newStaffCommission').value = '';
                 populateDropdowns();
                 renderAdminLists();
                 loadReports();
