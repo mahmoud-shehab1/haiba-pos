@@ -1,1474 +1,1425 @@
-<style>
-    :root {
-        --primary: #5B21B6;
-        --primary-hover: #4C1D95;
-        --accent: #84CC16;
-        --accent-hover: #65A30D;
-        --bg: #F1F5F9;
-        --surface: #FFFFFF;
-        --text-main: #0F172A;
-        --text-muted: #64748B;
-        --border: #E2E8F0;
-        --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-        --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-        --radius: 12px;
-    }
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز هيبة الاسترخاء - جدة | Haiba Relaxation Center</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- html2pdf for Professional PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', 'Poppins', sans-serif; }
-    body { background-color: var(--bg); color: var(--text-main); padding-bottom: 50px; }
-    html[dir="ltr"] body { direction: ltr; text-align: left; }
-
-    header {
-        background: linear-gradient(135deg, #4C1D95, #2E1065);
-        color: white; padding: 1rem 1.5rem;
-        display: flex; justify-content: space-between; align-items: center;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.15); flex-wrap: wrap; gap: 10px;
-    }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand-icon {
-        width: 44px; height: 44px; background: rgba(255,255,255,0.1);
-        border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        font-size: 1.3rem; color: var(--accent); border: 1px solid rgba(255,255,255,0.2);
-    }
-    .brand h1 { font-size: 1.25rem; font-weight: 800; }
-    .brand p { font-size: 0.8rem; opacity: 0.8; }
-
-    nav {
-        display: flex; gap: 10px; background: var(--surface); padding: 10px 1.5rem;
-        border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); flex-wrap: wrap; justify-content: space-between; align-items: center;
-    }
-    .nav-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
-    .nav-btn {
-        padding: 8px 16px; border: none; background: transparent; cursor: pointer;
-        font-weight: 700; color: var(--text-muted); border-radius: 8px; transition: all 0.2s;
-        display: flex; align-items: center; gap: 8px; font-size: 0.9rem;
-    }
-    .nav-btn.active, .nav-btn:hover { background: #F3E8FF; color: var(--primary); }
-
-    .container { max-width: 1400px; margin: 1rem auto; padding: 0 1rem; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    .pos-split-container {
-        display: grid; grid-template-columns: 1fr 400px; gap: 1.25rem; align-items: start;
-    }
-    @media (max-width: 992px) {
-        .pos-split-container { grid-template-columns: 1fr; }
-    }
-
-    .card {
-        background: var(--surface); padding: 1.25rem; border-radius: var(--radius);
-        border: 1px solid var(--border); box-shadow: var(--shadow-md); margin-bottom: 1.25rem;
-    }
-    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; flex-wrap: wrap; gap: 8px; }
-    .card-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
-
-    .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 0.85rem; font-weight: 700; color: #334155; }
-    .form-group input, .form-group select {
-        padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; outline: none;
-        font-size: 0.9rem; font-weight: 500; transition: border 0.2s; background: #FAFAFA; width: 100%;
-    }
-    .form-group input:focus, .form-group select:focus { border-color: var(--primary); background: #FFF; }
-
-    .presets { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
-    .chip {
-        padding: 3px 8px; font-size: 0.75rem; background: #E2E8F0; border-radius: 20px;
-        cursor: pointer; font-weight: 600; color: #334155; transition: 0.2s;
-    }
-    .chip:hover { background: var(--primary); color: white; }
-
-    .btn {
-        padding: 9px 16px; border: none; border-radius: 8px; cursor: pointer;
-        font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
-        gap: 8px; transition: all 0.2s; font-size: 0.9rem;
-    }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: var(--primary-hover); }
-    .btn-accent { background: var(--accent); color: #1A2E05; }
-    .btn-accent:hover { background: var(--accent-hover); }
-    .btn-print { background: #0284C7; color: white; }
-    .btn-danger { background: #EF4444; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; }
-    .btn-warning { background: #F59E0B; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; }
-
-    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 1rem 0; }
-    .metric-card {
-        padding: 1rem; border-radius: 10px; border: 1px solid var(--border);
-        display: flex; align-items: center; justify-content: space-between;
-    }
-    .metric-card.green { background: #F0FDF4; border-color: #BBF7D0; color: #166534; }
-    .metric-card.blue { background: #EFF6FF; border-color: #BFDBFE; color: #1E40AF; }
-    .metric-card.amber { background: #FFFBEB; border-color: #FDE68A; color: #92400E; }
-    .metric-card.purple { background: #F3E8FF; border-color: #DDD6FE; color: #5B21B6; }
-    .metric-card.red { background: #FEF2F2; border-color: #FECACA; color: #991B1B; }
-    .metric-value { font-size: 1.2rem; font-weight: 800; margin-top: 4px; }
-
-    .table-responsive { overflow-x: auto; margin-top: 1rem; border-radius: 8px; border: 1px solid var(--border); }
-    table { width: 100%; border-collapse: collapse; background: var(--surface); text-align: inherit; }
-    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
-    th { background: #F8FAFC; color: #475569; font-weight: 700; }
-    tr:hover { background: #F8FAFC; }
-
-    .empty-row td { text-align: center; color: var(--text-muted); padding: 18px 12px; font-weight: 600; }
-
-    .thermal-wrapper { display: flex; justify-content: center; width: 100%; }
-    .thermal-box {
-        width: 72mm; padding: 10px; background: #FFF !important;
-        font-family: 'Tajawal', 'Courier New', monospace; font-size: 13px; font-weight: 700; line-height: 1.5; color: #000 !important; border: 1px dashed #CBD5E1;
-        border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 6px; text-align: inherit;
-    }
-    .thermal-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 3px; }
-    .thermal-header h3 { font-size: 15px; font-weight: 900; margin-bottom: 3px; }
-    .thermal-row { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 13px; font-weight: 700; }
-    .thermal-divider { border-top: 1px dashed #000; margin: 4px 0; width: 100%; }
-    .thermal-total { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 6px 0; font-weight: 900; font-size: 15px; margin-top: 3px; }
-
-    .modal {
-        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
-        align-items: center; justify-content: center; z-index: 1000; padding: 10px;
-    }
-    .modal.active { display: flex !important; }
-    .modal-content { background: white; width: 100%; max-width: 500px; padding: 1.5rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; text-align: inherit; }
-
-    #loadingOverlay {
-        position: fixed; inset: 0; background: var(--bg); z-index: 3000;
-        display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px;
-    }
-    #loadingOverlay.hidden { display: none; }
-    .spinner {
-        width: 42px; height: 42px; border: 4px solid #DDD6FE; border-top-color: var(--primary);
-        border-radius: 50%; animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #loadingText { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
-
-    .storage-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
-
-    /* منطقة الطباعة الخفية: تُستخدم فقط لطباعة تبويب التقارير كصفحة كاملة نظيفة */
-    #printArea { display: none; }
-
-    @media print {
-        .no-print { display: none !important; }
-        body.print-report-mode * { visibility: hidden; }
-        body.print-report-mode #printArea,
-        body.print-report-mode #printArea * { visibility: visible !important; }
-        body.print-report-mode #printArea {
-            display: block !important; position: absolute; top: 0; left: 0; width: 100%; padding: 12px;
+    <style>
+        :root {
+            --primary: #5B21B6;
+            --primary-hover: #4C1D95;
+            --accent: #84CC16;
+            --accent-hover: #65A30D;
+            --bg: #F1F5F9;
+            --surface: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --radius: 12px;
         }
-        body.print-report-mode #printArea .no-print { display: none !important; }
-    }
-</style>
 
-```
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', 'Poppins', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); padding-bottom: 50px; }
+        html[dir="ltr"] body { direction: ltr; text-align: left; }
 
-```
-<!-- شاشة تحميل قصيرة أثناء تهيئة التطبيق وقراءة البيانات المحفوظة -->
-<div id="loadingOverlay">
-    <div class="spinner"></div>
-    <p id="loadingText">جاري تحميل البيانات...</p>
-</div>
+        header {
+            background: linear-gradient(135deg, #4C1D95, #2E1065);
+            color: white; padding: 1rem 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15); flex-wrap: wrap; gap: 10px;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-icon {
+            width: 44px; height: 44px; background: rgba(255,255,255,0.1);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; color: var(--accent); border: 1px solid rgba(255,255,255,0.2);
+        }
+        .brand h1 { font-size: 1.25rem; font-weight: 800; }
+        .brand p { font-size: 0.8rem; opacity: 0.8; }
 
-<!-- منطقة مخفية تُستخدم فقط عند طباعة تبويب التقارير -->
-<div id="printArea"></div>
+        nav {
+            display: flex; gap: 10px; background: var(--surface); padding: 10px 1.5rem;
+            border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); flex-wrap: wrap; justify-content: space-between; align-items: center;
+        }
+        .nav-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+        .nav-btn {
+            padding: 8px 16px; border: none; background: transparent; cursor: pointer;
+            font-weight: 700; color: var(--text-muted); border-radius: 8px; transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px; font-size: 0.9rem;
+        }
+        .nav-btn.active, .nav-btn:hover { background: #F3E8FF; color: var(--primary); }
 
-<header class="no-print">
-    <div class="brand">
-        <div class="brand-icon"><i class="fa-solid fa-spa"></i></div>
-        <div>
-            <h1 data-i18n="centerTitle">مركز هيبة الاسترخاء</h1>
-            <p data-i18n="centerSub">فرع جدة - المساج والحمام المغربي والبدي كير</p>
+        .container { max-width: 1400px; margin: 1rem auto; padding: 0 1rem; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .pos-split-container {
+            display: grid; grid-template-columns: 1fr 400px; gap: 1.25rem; align-items: start;
+        }
+        @media (max-width: 992px) {
+            .pos-split-container { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--surface); padding: 1.25rem; border-radius: var(--radius);
+            border: 1px solid var(--border); box-shadow: var(--shadow-md); margin-bottom: 1.25rem;
+        }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; flex-wrap: wrap; gap: 8px; }
+        .card-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+
+        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 0.85rem; font-weight: 700; color: #334155; }
+        .form-group input, .form-group select {
+            padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; outline: none;
+            font-size: 0.9rem; font-weight: 500; transition: border 0.2s; background: #FAFAFA; width: 100%;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary); background: #FFF; }
+
+        .presets { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap; }
+        .chip {
+            padding: 3px 8px; font-size: 0.75rem; background: #E2E8F0; border-radius: 20px;
+            cursor: pointer; font-weight: 600; color: #334155; transition: 0.2s;
+        }
+        .chip:hover { background: var(--primary); color: white; }
+
+        .btn {
+            padding: 9px 16px; border: none; border-radius: 8px; cursor: pointer;
+            font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+            gap: 8px; transition: all 0.2s; font-size: 0.9rem;
+        }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-accent { background: var(--accent); color: #1A2E05; }
+        .btn-accent:hover { background: var(--accent-hover); }
+        .btn-print { background: #0284C7; color: white; }
+        .btn-danger { background: #EF4444; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; }
+        .btn-warning { background: #F59E0B; color: white; padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 1rem 0; }
+        .metric-card {
+            padding: 1rem; border-radius: 10px; border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .metric-card.green { background: #F0FDF4; border-color: #BBF7D0; color: #166534; }
+        .metric-card.blue { background: #EFF6FF; border-color: #BFDBFE; color: #1E40AF; }
+        .metric-card.amber { background: #FFFBEB; border-color: #FDE68A; color: #92400E; }
+        .metric-card.purple { background: #F3E8FF; border-color: #DDD6FE; color: #5B21B6; }
+        .metric-card.red { background: #FEF2F2; border-color: #FECACA; color: #991B1B; }
+        .metric-value { font-size: 1.2rem; font-weight: 800; margin-top: 4px; }
+
+        .table-responsive { overflow-x: auto; margin-top: 1rem; border-radius: 8px; border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; background: var(--surface); text-align: inherit; }
+        th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+        th { background: #F8FAFC; color: #475569; font-weight: 700; }
+        tr:hover { background: #F8FAFC; }
+
+        .empty-row td { text-align: center; color: var(--text-muted); padding: 18px 12px; font-weight: 600; }
+
+        .thermal-wrapper { display: flex; justify-content: center; width: 100%; }
+        .thermal-box {
+            width: 72mm; padding: 10px; background: #FFF !important;
+            font-family: 'Tajawal', 'Courier New', monospace; font-size: 13px; font-weight: 700; line-height: 1.5; color: #000 !important; border: 1px dashed #CBD5E1;
+            border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 6px; text-align: inherit;
+        }
+        .thermal-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 3px; }
+        .thermal-header h3 { font-size: 15px; font-weight: 900; margin-bottom: 3px; }
+        .thermal-row { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 13px; font-weight: 700; }
+        .thermal-divider { border-top: 1px dashed #000; margin: 4px 0; width: 100%; }
+        .thermal-total { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 6px 0; font-weight: 900; font-size: 15px; margin-top: 3px; }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            align-items: center; justify-content: center; z-index: 1000; padding: 10px;
+        }
+        .modal.active { display: flex !important; }
+        .modal-content { background: white; width: 100%; max-width: 500px; padding: 1.5rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; text-align: inherit; }
+
+        #loadingOverlay {
+            position: fixed; inset: 0; background: var(--bg); z-index: 3000;
+            display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+        }
+        #loadingOverlay.hidden { display: none; }
+        .spinner {
+            width: 42px; height: 42px; border: 4px solid #DDD6FE; border-top-color: var(--primary);
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #loadingText { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
+
+        .storage-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+
+        #printArea { display: none; }
+
+        @media print {
+            .no-print { display: none !important; }
+            body.print-report-mode * { visibility: hidden; }
+            body.print-report-mode #printArea,
+            body.print-report-mode #printArea * { visibility: visible !important; }
+            body.print-report-mode #printArea {
+                display: block !important; position: absolute; top: 0; left: 0; width: 100%; padding: 12px;
+            }
+            body.print-report-mode #printArea .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p id="loadingText">جاري تحميل البيانات...</p>
+    </div>
+
+    <div id="printArea"></div>
+
+    <header class="no-print">
+        <div class="brand">
+            <div class="brand-icon"><i class="fa-solid fa-spa"></i></div>
+            <div>
+                <h1 data-i18n="centerTitle">مركز هيبة الاسترخاء</h1>
+                <p data-i18n="centerSub">فرع جدة - المساج والحمام المغربي والبدي كير</p>
+            </div>
         </div>
-    </div>
-    <div style="display:flex; align-items:center; gap:12px; flex-wrap: wrap;">
-        <div class="form-group" style="margin:0;">
-            <select id="langSelect" onchange="changeLanguage(this.value)" style="padding: 6px 10px; border-radius: 6px; font-weight: bold; background: rgba(255,255,255,0.9); color:#0F172A;">
-                <option value="ar">العربية (Arabic)</option>
-                <option value="en">English</option>
-                <option value="fil">Filipino</option>
-                <option value="bn">বাংলা (Bengali)</option>
-            </select>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap: wrap;">
+            <div class="form-group" style="margin:0;">
+                <select id="langSelect" onchange="changeLanguage(this.value)" style="padding: 6px 10px; border-radius: 6px; font-weight: bold; background: rgba(255,255,255,0.9); color:#0F172A;">
+                    <option value="ar">العربية (Arabic)</option>
+                    <option value="en">English</option>
+                    <option value="fil">Filipino</option>
+                    <option value="bn">বাংলা (Bengali)</option>
+                </select>
+            </div>
+            <button class="btn btn-accent" onclick="openAdminModal()"><i class="fa-solid fa-user-shield"></i> <span data-i18n="settingsBtn">الإعدادات</span></button>
+            <button class="btn" style="background:#0F172A; color:#FFF;" onclick="openDeveloperModal()"><i class="fa-solid fa-code"></i> <span data-i18n="ownerBtn">لوحة المالك</span></button>
         </div>
-        <button class="btn btn-accent" onclick="openAdminModal()"><i class="fa-solid fa-user-shield"></i> <span data-i18n="settingsBtn">الإعدادات</span></button>
-        <button class="btn" style="background:#0F172A; color:#FFF;" onclick="openDeveloperModal()"><i class="fa-solid fa-code"></i> <span data-i18n="ownerBtn">لوحة المالك</span></button>
-    </div>
-</header>
+    </header>
 
-<nav class="no-print">
-    <div class="nav-tabs">
-        <button class="nav-btn active" id="btn-tab-pos" onclick="switchTab('pos')"><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="tabPos">إصدار فاتورة</span></button>
-        <button class="nav-btn" id="btn-tab-expenses" onclick="switchTab('expenses')"><i class="fa-solid fa-money-bill-transfer"></i> <span data-i18n="tabExpenses">إدارة المصروفات</span></button>
-        <button class="nav-btn" id="btn-tab-reports" onclick="switchTab('reports')"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="tabReports">التقارير والشفتات واليومية</span></button>
-    </div>
-</nav>
+    <nav class="no-print">
+        <div class="nav-tabs">
+            <button class="nav-btn active" id="btn-tab-pos" onclick="switchTab('pos')"><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="tabPos">إصدار فاتورة</span></button>
+            <button class="nav-btn" id="btn-tab-expenses" onclick="switchTab('expenses')"><i class="fa-solid fa-money-bill-transfer"></i> <span data-i18n="tabExpenses">إدارة المصروفات</span></button>
+            <button class="nav-btn" id="btn-tab-reports" onclick="switchTab('reports')"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="tabReports">التقارير والشفتات واليومية</span></button>
+        </div>
+    </nav>
 
-<div class="container">
-    <!-- TAB 1: POS -->
-    <div id="pos" class="tab-content active">
-        <div class="pos-split-container">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-receipt"></i> <span data-i18n="newInvoiceTitle">إنشاء فاتورة جديدة</span></div>
-                </div>
-                <form id="invoiceForm" onsubmit="saveInvoice(event)">
-                    <div class="grid-form">
-                        <div class="form-group">
-                            <label data-i18n="invSerialLbl">رقم الفاتورة (تسلسلي)</label>
-                            <input type="text" id="invSerial" readonly style="background: #E2E8F0; font-weight:700;">
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="invDateLbl">تاريخ الفاتورة</label>
-                            <input type="date" id="invDateInput" required onchange="updateLivePreview()">
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="invStaffLbl">اسم العامل / العاملة</label>
-                            <select id="staffSelect" required onchange="updateLivePreview()"></select>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="invServiceLbl">الخدمة / العرض المقدم</label>
-                            <select id="serviceSelect" required onchange="onServiceSelectChange()"></select>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="invDurationLbl">المدة</label>
-                            <input type="text" id="duration" placeholder="مثال: 60 دقيقة" required oninput="updateLivePreview()">
-                            <div class="presets">
-                                <span class="chip" onclick="setDuration('30 دقيقة')">30د</span>
-                                <span class="chip" onclick="setDuration('45 دقيقة')">45د</span>
-                                <span class="chip" onclick="setDuration('60 دقيقة')">60د</span>
-                                <span class="chip" onclick="setDuration('90 دقيقة')">90د</span>
+    <div class="container">
+        <!-- TAB 1: POS -->
+        <div id="pos" class="tab-content active">
+            <div class="pos-split-container">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fa-solid fa-receipt"></i> <span data-i18n="newInvoiceTitle">إنشاء فاتورة جديدة</span></div>
+                    </div>
+                    <form id="invoiceForm" onsubmit="saveInvoice(event)">
+                        <div class="grid-form">
+                            <div class="form-group">
+                                <label data-i18n="invSerialLbl">رقم الفاتورة (تسلسلي)</label>
+                                <input type="text" id="invSerial" readonly style="background: #E2E8F0; font-weight:700;">
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="invDateLbl">تاريخ الفاتورة</label>
+                                <input type="date" id="invDateInput" required onchange="updateLivePreview()">
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="invStaffLbl">اسم العامل / العاملة</label>
+                                <select id="staffSelect" required onchange="updateLivePreview()"></select>
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="invServiceLbl">الخدمة / العرض المقدم</label>
+                                <select id="serviceSelect" required onchange="onServiceSelectChange()"></select>
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="invDurationLbl">المدة</label>
+                                <input type="text" id="duration" placeholder="مثال: 60 دقيقة" required oninput="updateLivePreview()">
+                                <div class="presets">
+                                    <span class="chip" onclick="setDuration('30 دقيقة')">30د</span>
+                                    <span class="chip" onclick="setDuration('45 دقيقة')">45د</span>
+                                    <span class="chip" onclick="setDuration('60 دقيقة')">60د</span>
+                                    <span class="chip" onclick="setDuration('90 دقيقة')">90د</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="invPriceLbl">السعر (ر.س)</label>
+                                <input type="number" id="price" min="0" step="0.01" placeholder="0.00" required oninput="updateLivePreview()">
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="invPayLbl">طريقة الدفع</label>
+                                <select id="paymentMethod" onchange="updateLivePreview()">
+                                    <option value="كاش" data-i18n="payCash">كاش</option>
+                                    <option value="صرافة (شبكة)" data-i18n="payCard">صرافة (شبكة)</option>
+                                    <option value="تحويل بنكي" data-i18n="payTransfer">تحويل بنكي</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="invLocLbl">مكان تقديم الخدمة</label>
+                                <select id="serviceLocation" onchange="updateLivePreview()">
+                                    <option value="حضور بالمركز" data-i18n="locCenter">حضور بالمركز</option>
+                                    <option value="زيارة منزلية" data-i18n="locHome">زيارة منزلية</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label data-i18n="invPriceLbl">السعر (ر.س)</label>
-                            <input type="number" id="price" min="0" step="0.01" placeholder="0.00" required oninput="updateLivePreview()">
+                        <div style="margin-top: 1.25rem;">
+                            <button type="submit" id="saveBtn" class="btn btn-primary" style="width:100%; font-size:1rem;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> <span data-i18n="savePrintBtn">حفظ وطباعة فورية</span>
+                            </button>
                         </div>
-                        <div class="form-group">
-                            <label data-i18n="invPayLbl">طريقة الدفع</label>
-                            <select id="paymentMethod" onchange="updateLivePreview()">
-                                <option value="كاش" data-i18n="payCash">كاش</option>
-                                <option value="صرافة (شبكة)" data-i18n="payCard">صرافة (شبكة)</option>
-                                <option value="تحويل بنكي" data-i18n="payTransfer">تحويل بنكي</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label data-i18n="invLocLbl">مكان تقديم الخدمة</label>
-                            <select id="serviceLocation" onchange="updateLivePreview()">
-                                <option value="حضور بالمركز" data-i18n="locCenter">حضور بالمركز</option>
-                                <option value="زيارة منزلية" data-i18n="locHome">زيارة منزلية</option>
-                            </select>
+                    </form>
+                </div>
+
+                <div class="card" style="position: sticky; top: 1rem;">
+                    <div class="card-header">
+                        <div class="card-title"><i class="fa-solid fa-eye"></i> <span data-i18n="previewTitle">معاينة الفاتورة</span></div>
+                    </div>
+                    
+                    <div class="thermal-wrapper">
+                        <div class="thermal-box" id="thermal-receipt">
+                            <div class="thermal-header">
+                                <h3 data-i18n="centerTitle">مركز هيبة الاسترخاء</h3>
+                                <p style="font-size:12px;" data-i18n="centerSubShort">جدة - المساج والحمام المغربي</p>
+                                <p id="r-date" style="margin-top:3px; font-size:12px; font-weight:bold;"></p>
+                            </div>
+                            
+                            <div class="thermal-row"><span data-i18n="rSerial">رقم الفاتورة:</span><strong id="r-serial">HS-000001</strong></div>
+                            <div class="thermal-row"><span data-i18n="rTime">الوقت والتاريخ:</span><span id="r-time">--:--</span></div>
+                            <div class="thermal-row"><span data-i18n="rStaff">الموظف/ة:</span><span id="r-staff">--</span></div>
+                            <div class="thermal-divider"></div>
+                            
+                            <div class="thermal-row"><span data-i18n="rService">الخدمة:</span><strong id="r-service">--</strong></div>
+                            <div class="thermal-row"><span data-i18n="rDuration">المدة:</span><span id="r-duration">--</span></div>
+                            <div class="thermal-row"><span data-i18n="rLoc">الموقع:</span><span id="r-type">--</span></div>
+                            <div class="thermal-row"><span data-i18n="rPay">طريقة الدفع:</span><span id="r-pay">--</span></div>
+                            
+                            <div class="thermal-row thermal-total">
+                                <span data-i18n="rTotal">المبلغ الإجمالي:</span>
+                                <span id="r-price">0.00 ر.س</span>
+                            </div>
+                            
+                            <div style="text-align:center; margin-top:8px; font-size:12px; font-weight:700;">
+                                <p data-i18n="rFooter1">أهلاً بكم - نتمنى لكم تجربة ممتعة</p>
+                                <p style="margin-top:2px;" data-i18n="rFooter2">يرجى الاحتفاظ بالفاتورة</p>
+                            </div>
                         </div>
                     </div>
-                    <div style="margin-top: 1.25rem;">
-                        <button type="submit" id="saveBtn" class="btn btn-primary" style="width:100%; font-size:1rem;">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> <span data-i18n="savePrintBtn">حفظ وطباعة فورية</span>
-                        </button>
+
+                    <div style="display:flex; flex-direction:column; gap:8px; margin-top: 1rem;" class="no-print">
+                        <button class="btn btn-print" onclick="printElement('thermal-receipt')"><i class="fa-solid fa-print"></i> <span data-i18n="manualPrintBtn">طباعة يدوية</span></button>
+                        <button class="btn btn-accent" onclick="exportPDF('thermal-receipt', 'Invoice')"><i class="fa-solid fa-file-pdf"></i> <span data-i18n="downloadPdfBtn">تنزيل الفاتورة PDF</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: EXPENSES -->
+        <div id="expenses" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title"><i class="fa-solid fa-money-bill-transfer"></i> <span data-i18n="expensesHeader">تسجيل المصروفات النثرية والتشغيلية</span></div>
+                </div>
+                <form id="expenseForm" onsubmit="saveExpense(event)">
+                    <div class="grid-form">
+                        <div class="form-group">
+                            <label data-i18n="expDateLbl">تاريخ المصروف</label>
+                            <input type="date" id="expDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="expTitleLbl">بند المصروف (مثال: ضيافة، أدوات نظافة)</label>
+                            <input type="text" id="expTitle" placeholder="أدخل اسم المصروف" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="expAmountLbl">المبلغ (ر.س)</label>
+                            <input type="number" id="expAmount" min="0" step="0.01" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="expUserLbl">المسؤول / القائم بالصرف</label>
+                            <input type="text" id="expUser" placeholder="اسم المسؤول">
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-circle-plus"></i> <span data-i18n="saveExpBtn">حفظ المصروف</span></button>
                     </div>
                 </form>
-            </div>
 
-            <div class="card" style="position: sticky; top: 1rem;">
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;" data-i18n="expTableTitle">سجل المصروفات المسجلة:</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="thDate">التاريخ</th>
+                                    <th data-i18n="thItem">بند المصروف</th>
+                                    <th data-i18n="thAmount">المبلغ</th>
+                                    <th data-i18n="thResponsible">المسؤول</th>
+                                    <th class="no-print" data-i18n="thAction">إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expensesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: REPORTS -->
+        <div id="reports" class="tab-content">
+            <div class="card">
                 <div class="card-header">
-                    <div class="card-title"><i class="fa-solid fa-eye"></i> <span data-i18n="previewTitle">معاينة الفاتورة</span></div>
+                    <div class="card-title"><i class="fa-solid fa-chart-line"></i> <span data-i18n="reportsHeader">التقارير اليومية والشفت (الإيرادات، نسب العمال، والمصروفات)</span></div>
+                    <button class="btn btn-print no-print" onclick="printElement('reports')"><i class="fa-solid fa-print"></i> <span data-i18n="printReportBtn">طباعة التقرير</span></button>
                 </div>
-                
-                <div class="thermal-wrapper">
-                    <div class="thermal-box" id="thermal-receipt">
-                        <div class="thermal-header">
-                            <h3 data-i18n="centerTitle">مركز هيبة الاسترخاء</h3>
-                            <p style="font-size:12px;" data-i18n="centerSubShort">جدة - المساج والحمام المغربي</p>
-                            <p id="r-date" style="margin-top:3px; font-size:12px; font-weight:bold;"></p>
-                        </div>
-                        
-                        <div class="thermal-row"><span data-i18n="rSerial">رقم الفاتورة:</span><strong id="r-serial">HS-000001</strong></div>
-                        <div class="thermal-row"><span data-i18n="rTime">الوقت والتاريخ:</span><span id="r-time">--:--</span></div>
-                        <div class="thermal-row"><span data-i18n="rStaff">الموظف/ة:</span><span id="r-staff">--</span></div>
-                        <div class="thermal-divider"></div>
-                        
-                        <div class="thermal-row"><span data-i18n="rService">الخدمة:</span><strong id="r-service">--</strong></div>
-                        <div class="thermal-row"><span data-i18n="rDuration">المدة:</span><span id="r-duration">--</span></div>
-                        <div class="thermal-row"><span data-i18n="rLoc">الموقع:</span><span id="r-type">--</span></div>
-                        <div class="thermal-row"><span data-i18n="rPay">طريقة الدفع:</span><span id="r-pay">--</span></div>
-                        
-                        <div class="thermal-row thermal-total">
-                            <span data-i18n="rTotal">المبلغ الإجمالي:</span>
-                            <span id="r-price">0.00 ر.س</span>
-                        </div>
-                        
-                        <div style="text-align:center; margin-top:8px; font-size:12px; font-weight:700;">
-                            <p data-i18n="rFooter1">أهلاً بكم - نتمنى لكم تجربة ممتعة</p>
-                            <p style="margin-top:2px;" data-i18n="rFooter2">يرجى الاحتفاظ بالفاتورة</p>
-                        </div>
+
+                <div class="grid-form no-print" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="form-group">
+                        <label data-i18n="filterDateLbl">التاريخ</label>
+                        <input type="date" id="filterDate" onchange="loadReports()">
+                        <span class="chip" onclick="clearDateFilter()"><span data-i18n="clearDateFilter">عرض كل الفواتير (كل التواريخ)</span></span>
+                        <span class="storage-note" data-i18n="filterDateHint">اتركه فارغاً لعرض فواتير كل الأيام معاً</span>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="filterStaffLbl">تصفية حسب العامل/ة</label>
+                        <select id="filterStaff" onchange="loadReports()">
+                            <option value="ALL" data-i18n="allStaff">جميع العاملين</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="filterLocLbl">مكان الخدمة</label>
+                        <select id="filterLocation" onchange="loadReports()">
+                            <option value="ALL" data-i18n="allLocations">جميع الأماكن</option>
+                            <option value="حضور بالمركز" data-i18n="locCenter">حضور بالمركز</option>
+                            <option value="زيارة منزلية" data-i18n="locHome">زيارة منزلية</option>
+                        </select>
                     </div>
                 </div>
 
-                <div style="display:flex; flex-direction:column; gap:8px; margin-top: 1rem;" class="no-print">
-                    <button class="btn btn-print" onclick="printElement('thermal-receipt')"><i class="fa-solid fa-print"></i> <span data-i18n="manualPrintBtn">طباعة يدوية</span></button>
-                    <button class="btn btn-accent" onclick="exportPDF('thermal-receipt', 'Invoice')"><i class="fa-solid fa-file-pdf"></i> <span data-i18n="downloadPdfBtn">تنزيل الفاتورة PDF</span></button>
+                <div class="metrics-grid">
+                    <div class="metric-card green">
+                        <div>
+                            <span data-i18n="mTotalSales">إجمالي المبيعات (إيرادات المركز)</span>
+                            <div class="metric-value" id="totalRevenue">0.00 SAR</div>
+                        </div>
+                        <i class="fa-solid fa-wallet fa-2x" style="opacity:0.3"></i>
+                    </div>
+                    <div class="metric-card purple">
+                        <div>
+                            <span data-i18n="mStaffComm">إجمالي مستحقات العمال (النسب)</span>
+                            <div class="metric-value" id="totalStaffCommission">0.00 SAR</div>
+                        </div>
+                        <i class="fa-solid fa-percent fa-2x" style="opacity:0.3"></i>
+                    </div>
+                    <div class="metric-card red">
+                        <div>
+                            <span data-i18n="mExpenses">إجمالي المصروفات</span>
+                            <div class="metric-value" id="totalExpensesMetric">0.00 SAR</div>
+                        </div>
+                        <i class="fa-solid fa-money-bill-transfer fa-2x" style="opacity:0.3"></i>
+                    </div>
+                    <div class="metric-card blue">
+                        <div>
+                            <span data-i18n="mNetRev">صافي إيراد المركز</span>
+                            <div class="metric-value" id="netRevenueMetric">0.00 SAR</div>
+                        </div>
+                        <i class="fa-solid fa-scale-balanced fa-2x" style="opacity:0.3"></i>
+                    </div>
+                    <div class="metric-card amber">
+                        <div>
+                            <span data-i18n="mCash">تحصيل الكاش (الصافي)</span>
+                            <div class="metric-value" id="totalCash">0.00 SAR</div>
+                        </div>
+                        <i class="fa-solid fa-money-bill-wave fa-2x" style="opacity:0.3"></i>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> <span data-i18n="staffProdHeader">ملخص إنتاجية وعمولات العمال:</span></h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="thStaffName">اسم العامل / العاملة</th>
+                                    <th data-i18n="thServiceCount">عدد الخدمات</th>
+                                    <th data-i18n="thStaffSales">إجمالي مبيعات العامل</th>
+                                    <th data-i18n="thStaffDue">مستحق العامل (العمولة 30%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="staffPerformanceBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> <span data-i18n="invLogHeader">سجل الفواتير المصدرة:</span></h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="thSerial">رقم الفاتورة</th>
+                                    <th data-i18n="thDate">التاريخ</th>
+                                    <th data-i18n="thStaffName">الموظف/ة</th>
+                                    <th data-i18n="thService">الخدمة</th>
+                                    <th data-i18n="thAmount">السعر</th>
+                                    <th data-i18n="thPay">الدفع</th>
+                                    <th data-i18n="thLoc">الموقع</th>
+                                    <th class="no-print" data-i18n="thAction">إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoicesTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- TAB 2: EXPENSES -->
-    <div id="expenses" class="tab-content">
-        <div class="card">
+    <!-- Modals for Settings & Developer -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
             <div class="card-header">
-                <div class="card-title"><i class="fa-solid fa-money-bill-transfer"></i> <span data-i18n="expensesHeader">تسجيل المصروفات النثرية والتشغيلية</span></div>
+                <div class="card-title"><i class="fa-solid fa-gear"></i> <span data-i18n="settingsTitle">إعدادات النظام والعمال والخدمات</span></div>
+                <button class="btn btn-danger" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form id="expenseForm" onsubmit="saveExpense(event)">
-                <div class="grid-form">
-                    <div class="form-group">
-                        <label data-i18n="expDateLbl">تاريخ المصروف</label>
-                        <input type="date" id="expDate" required>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <div>
+                    <h4 style="font-size:0.95rem; color:var(--primary); margin-bottom:8px;" data-i18n="manageStaffTitle">إدارة العمال والعاملات (النسبة ثابتة 30%)</h4>
+                    <div style="display:flex; gap:8px; margin-bottom:8px;">
+                        <input type="text" id="newStaffName" placeholder="اسم العامل الجديد" style="padding:8px; border:1px solid var(--border); border-radius:8px; flex:1;">
+                        <button class="btn btn-primary" onclick="addNewStaff()"><i class="fa-solid fa-plus"></i> <span data-i18n="addBtn">إضافة</span></button>
                     </div>
-                    <div class="form-group">
-                        <label data-i18n="expTitleLbl">بند المصروف (مثال: ضيافة، أدوات نظافة)</label>
-                        <input type="text" id="expTitle" placeholder="أدخل اسم المصروف" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="expAmountLbl">المبلغ (ر.س)</label>
-                        <input type="number" id="expAmount" min="0" step="0.01" placeholder="0.00" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="expUserLbl">المسؤول / القائم بالصرف</label>
-                        <input type="text" id="expUser" placeholder="اسم المسؤول">
-                    </div>
+                    <div id="staffListConfig" style="display:flex; flex-direction:column; gap:6px; max-height:150px; overflow-y:auto;"></div>
                 </div>
-                <div style="margin-top: 1rem;">
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-circle-plus"></i> <span data-i18n="saveExpBtn">حفظ المصروف</span></button>
+                <hr style="border:0; border-top:1px solid var(--border);">
+                <div>
+                    <h4 style="font-size:0.95rem; color:var(--primary); margin-bottom:8px;" data-i18n="manageServicesTitle">إدارة الخدمات والأسعار</h4>
+                    <div style="display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+                        <input type="text" id="newServiceName" placeholder="اسم الخدمة" style="padding:8px; border:1px solid var(--border); border-radius:8px; flex:2; min-width:140px;">
+                        <input type="number" id="newServicePrice" placeholder="السعر" style="padding:8px; border:1px solid var(--border); border-radius:8px; flex:1; min-width:80px;">
+                        <button class="btn btn-primary" onclick="addNewService()"><i class="fa-solid fa-plus"></i> <span data-i18n="addBtn">إضافة</span></button>
+                    </div>
+                    <div id="servicesListConfig" style="display:flex; flex-direction:column; gap:6px; max-height:150px; overflow-y:auto;"></div>
                 </div>
-            </form>
-
-            <div style="margin-top: 1.5rem;">
-                <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;" data-i18n="expTableTitle">سجل المصروفات المسجلة:</h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-i18n="thDate">التاريخ</th>
-                                <th data-i18n="thItem">بند المصروف</th>
-                                <th data-i18n="thAmount">المبلغ</th>
-                                <th data-i18n="thResponsible">المسؤول</th>
-                                <th class="no-print" data-i18n="thAction">إجراء</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expensesTableBody"></tbody>
-                    </table>
+                <hr style="border:0; border-top:1px solid var(--border);">
+                <div>
+                    <h4 style="font-size:0.95rem; color:var(--primary); margin-bottom:8px;" data-i18n="backupTitle">النسخ الاحتياطي واستعادة البيانات</h4>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn btn-accent" onclick="exportDataJSON()"><i class="fa-solid fa-download"></i> <span data-i18n="exportDataBtn">تصدير النسخة</span></button>
+                        <label class="btn btn-print" style="cursor:pointer; margin:0;">
+                            <i class="fa-solid fa-upload"></i> <span data-i18n="importDataBtn">استعادة النسخة</span>
+                            <input type="file" id="importFile" accept=".json" onchange="importDataJSON(event)" style="display:none;">
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- TAB 3: REPORTS -->
-    <div id="reports" class="tab-content">
-        <div class="card">
+    <div id="developerModal" class="modal">
+        <div class="modal-content">
             <div class="card-header">
-                <div class="card-title"><i class="fa-solid fa-chart-line"></i> <span data-i18n="reportsHeader">التقارير اليومية والشفت (الإيرادات، نسب العمال، والمصروفات)</span></div>
-                <button class="btn btn-print no-print" onclick="printElement('reports')"><i class="fa-solid fa-print"></i> <span data-i18n="printReportBtn">طباعة التقرير</span></button>
+                <div class="card-title"><i class="fa-solid fa-code"></i> <span data-i18n="ownerTitle">لوحة المالك والمطور</span></div>
+                <button class="btn btn-danger" onclick="closeDeveloperModal()"><i class="fa-solid fa-xmark"></i></button>
             </div>
-
-            <div class="grid-form no-print" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-                <div class="form-group">
-                    <label data-i18n="filterDateLbl">التاريخ</label>
-                    <input type="date" id="filterDate" onchange="loadReports()">
-                    <span class="chip" onclick="clearDateFilter()"><span data-i18n="clearDateFilter">عرض كل الفواتير (كل التواريخ)</span></span>
-                    <span class="storage-note" data-i18n="filterDateHint">اتركه فارغاً لعرض فواتير كل الأيام معاً</span>
-                </div>
-                <div class="form-group">
-                    <label data-i18n="filterStaffLbl">تصفية حسب العامل/ة</label>
-                    <select id="filterStaff" onchange="loadReports()">
-                        <option value="ALL" data-i18n="allStaff">جميع العاملين</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label data-i18n="filterLocLbl">مكان الخدمة</label>
-                    <select id="filterLocation" onchange="loadReports()">
-                        <option value="ALL" data-i18n="allLocations">جميع الأماكن</option>
-                        <option value="حضور بالمركز" data-i18n="locCenter">حضور بالمركز</option>
-                        <option value="زيارة منزلية" data-i18n="locHome">زيارة منزلية</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="metrics-grid">
-                <div class="metric-card green">
-                    <div>
-                        <span data-i18n="mTotalSales">إجمالي المبيعات (إيرادات المركز)</span>
-                        <div class="metric-value" id="totalRevenue">0.00 SAR</div>
-                    </div>
-                    <i class="fa-solid fa-wallet fa-2x" style="opacity:0.3"></i>
-                </div>
-                <div class="metric-card purple">
-                    <div>
-                        <span data-i18n="mStaffComm">إجمالي مستحقات العمال (النسب)</span>
-                        <div class="metric-value" id="totalStaffCommission">0.00 SAR</div>
-                    </div>
-                    <i class="fa-solid fa-percent fa-2x" style="opacity:0.3"></i>
-                </div>
-                <div class="metric-card red">
-                    <div>
-                        <span data-i18n="mExpenses">إجمالي المصروفات</span>
-                        <div class="metric-value" id="totalExpensesMetric">0.00 SAR</div>
-                    </div>
-                    <i class="fa-solid fa-money-bill-transfer fa-2x" style="opacity:0.3"></i>
-                </div>
-                <div class="metric-card blue">
-                    <div>
-                        <span data-i18n="mNetRev">صافي إيراد المركز</span>
-                        <div class="metric-value" id="netRevenueMetric">0.00 SAR</div>
-                    </div>
-                    <i class="fa-solid fa-scale-balanced fa-2x" style="opacity:0.3"></i>
-                </div>
-                <div class="metric-card amber">
-                    <div>
-                        <span data-i18n="mCash">تحصيل الكاش (الصافي)</span>
-                        <div class="metric-value" id="totalCash">0.00 SAR</div>
-                    </div>
-                    <i class="fa-solid fa-money-bill-wave fa-2x" style="opacity:0.3"></i>
-                </div>
-            </div>
-
-            <div style="margin-top: 1.5rem;">
-                <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> <span data-i18n="staffProdHeader">ملخص إنتاجية وعمولات العمال:</span></h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-i18n="thStaffName">اسم العامل / العاملة</th>
-                                <th data-i18n="thServiceCount">عدد الخدمات</th>
-                                <th data-i18n="thStaffSales">إجمالي مبيعات العامل</th>
-                                <th data-i18n="thStaffDue">مستحق العامل (العمولة)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="staffPerformanceBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div style="margin-top: 1.5rem;">
-                <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> <span data-i18n="invoiceDetailsHeader">تفاصيل الفواتير المسجلة:</span></h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th data-i18n="thInvNo">رقم الفاتورة</th>
-                                <th data-i18n="thDateTime">التاريخ والوقت</th>
-                                <th data-i18n="thStaff">العامل/ة</th>
-                                <th data-i18n="thService">الخدمة</th>
-                                <th data-i18n="thLocation">الموقع</th>
-                                <th data-i18n="thPayMethod">الدفع</th>
-                                <th data-i18n="thAmountVal">المبلغ</th>
-                                <th class="no-print" data-i18n="thAction">إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="reportsTableBody"></tbody>
-                    </table>
-                </div>
+            <div style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; line-height:1.6;">
+                <p><strong>مركز هيبة الاسترخاء - جدة</strong></p>
+                <p data-i18n="devDesc">نظام متكامل لإدارة صالونات ومراكز المساج، إصدار الفواتير الحرارية، حساب إيرادات المركز ونسب العمال بدقة عالية (30%).</p>
+                <p><i class="fa-solid fa-shield-halved text-success"></i> <span data-i18n="devSec">جميع البيانات محمية ومخزنة محلياً في متصفحك (LocalStorage).</span></p>
             </div>
         </div>
     </div>
-</div>
 
-<!-- MODAL: ADMIN PANEL -->
-<div id="adminModal" class="modal">
-    <div class="modal-content">
-        <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-user-gear"></i> <span data-i18n="adminPanelTitle">لوحة تحكم الإعدادات</span></div>
-            <button onclick="closeModal('adminModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        
-        <div id="loginSec" class="form-group">
-            <label data-i18n="adminPassPrompt">أدخل رمز الدخول الخاص بالمدير</label>
-            <input type="password" id="adminPass" placeholder="رمز المدير (الافتراضي: 1234)">
-            <button class="btn btn-primary" style="margin-top:10px;" onclick="checkAdmin()" data-i18n="loginBtn">تسجيل الدخول</button>
-        </div>
-
-        <div id="adminControls" style="display:none;">
-            <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:8px; border-radius:8px; margin-bottom:12px; color:#166534; font-size:0.85rem;" data-i18n="adminLoggedMsg">
-                تم تسجيل الدخول بنجاح. إدارة كادر العمل والخدمات:
-            </div>
-
-            <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);" data-i18n="manageStaffHeader">إدارة كادر العمل (إضافة وتعديل الأَسماء):</h4>
-            <div class="form-group" style="gap:8px;">
-                <input type="text" id="newStaffName" placeholder="اسم العامل / العاملة جديد">
-                <button class="btn btn-accent" style="margin-top:6px;" onclick="addStaff()" data-i18n="addStaffBtn">إضافة عامل جديد</button>
-            </div>
-            <ul id="staffListUI" style="list-style:none; margin: 10px 0; max-height:160px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
-
-            <hr style="margin: 1.25rem 0; border:0; border-top:1px solid var(--border);">
-            
-            <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);" data-i18n="manageServiceHeader">إضافة خدمات أو عروض جديدة:</h4>
-            <div class="form-group" style="gap:8px;">
-                <input type="text" id="newServiceName" placeholder="اسم الخدمة أو العرض">
-                <input type="number" id="newServicePrice" placeholder="السعر الافتراضي">
-                <button class="btn btn-primary" style="margin-top:6px;" onclick="addService()" data-i18n="addServiceBtn">إضافة الخدمة</button>
-            </div>
-            <ul id="serviceListUI" style="list-style:none; margin: 10px 0; max-height:160px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
-
-            <hr style="margin: 1.25rem 0; border:0; border-top:1px solid var(--border);">
-            <button class="btn btn-danger" onclick="resetAllData()" style="width:100%;"><i class="fa-solid fa-triangle-exclamation"></i> <span data-i18n="resetDataBtn">تصفير كافة بيانات النظام (حذف الكل)</span></button>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL: DEVELOPER PANEL -->
-<div id="developerModal" class="modal">
-    <div class="modal-content">
-        <div class="card-header">
-            <div class="card-title"><i class="fa-solid fa-code"></i> <span data-i18n="devPanelTitle">لوحة المالك / المطور</span></div>
-            <button onclick="closeModal('developerModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div style="font-size:0.9rem; line-height:1.6; color:#334155;">
-            <p><strong>اسم النظام:</strong> مركز هيبة الاسترخاء - نظام المبيعات والإدارة المتكامل</p>
-            <p><strong>الإصدار:</strong> 3.5 (مخصص لفرع جدة)</p>
-            <p style="margin-top:10px;" data-i18n="devDesc">هذا النظام مصمم خصيصاً لإدارة فواتير المساج، الحمام المغربي، ومتابعة عمولات العمال والمصروفات بدقة متناهية مع دعم الطباعة الحرارية وتصدير ملفات PDF.</p>
-            <div style="margin-top:15px; background:#F8FAFC; padding:10px; border-radius:8px; border:1px solid var(--border);">
-                <p style="font-size:0.85rem; color:var(--text-muted);">حالة التخزين المحلي: <span id="storageStatus" style="color:var(--accent); font-weight:bold;">متصل (LocalStorage Active)</span></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // الترجمات المتعددة اللغات
-    const translations = {
-        ar: {
-            centerTitle: "مركز هيبة الاسترخاء",
-            centerSub: "فرع جدة - المساج والحمام المغربي والبدي كير",
-            centerSubShort: "جدة - المساج والحمام المغربي",
-            settingsBtn: "الإعدادات",
-            ownerBtn: "لوحة المالك",
-            tabPos: "إصدار فاتورة",
-            tabExpenses: "إدارة المصروفات",
-            tabReports: "التقارير والشفتات واليومية",
-            newInvoiceTitle: "إنشاء فاتورة جديدة",
-            invSerialLbl: "رقم الفاتورة (تسلسلي)",
-            invDateLbl: "تاريخ الفاتورة",
-            invStaffLbl: "اسم العامل / العاملة",
-            invServiceLbl: "الخدمة / العرض المقدم",
-            invDurationLbl: "المدة",
-            invPriceLbl: "السعر (ر.س)",
-            invPayLbl: "طريقة الدفع",
-            invLocLbl: "مكان تقديم الخدمة",
-            payCash: "كاش",
-            payCard: "صرافة (شبكة)",
-            payTransfer: "تحويل بنكي",
-            locCenter: "حضور بالمركز",
-            locHome: "زيارة منزلية",
-            savePrintBtn: "حفظ وطباعة فورية",
-            previewTitle: "معاينة الفاتورة",
-            rSerial: "رقم الفاتورة:",
-            rTime: "الوقت والتاريخ:",
-            rStaff: "الموظف/ة:",
-            rService: "الخدمة:",
-            rDuration: "المدة:",
-            rLoc: "الموقع:",
-            rPay: "طريقة الدفع:",
-            rTotal: "المبلغ الإجمالي:",
-            rFooter1: "أهلاً بكم - نتمنى لكم تجربة ممتعة",
-            rFooter2: "يرجى الاحتفاظ بالفاتورة",
-            manualPrintBtn: "طباعة يدوية",
-            downloadPdfBtn: "تنزيل الفاتورة PDF",
-            expensesHeader: "تسجيل المصروفات النثرية والتشغيلية",
-            expDateLbl: "تاريخ المصروف",
-            expTitleLbl: "بند المصروف (مثال: ضيافة، أدوات نظافة)",
-            expAmountLbl: "المبلغ (ر.س)",
-            expUserLbl: "المسؤول / القائم بالصرف",
-            saveExpBtn: "حفظ المصروف",
-            expTableTitle: "سجل المصروفات المسجلة:",
-            thDate: "التاريخ",
-            thItem: "بند المصروف",
-            thAmount: "المبلغ",
-            thResponsible: "المسؤول",
-            thAction: "إجراء",
-            reportsHeader: "التقارير اليومية والشفت (الإيرادات، نسب العمال، والمصروفات)",
-            printReportBtn: "طباعة التقرير",
-            filterDateLbl: "التاريخ",
-            clearDateFilter: "عرض كل الفواتير (كل التواريخ)",
-            filterDateHint: "اتركه فارغاً لعرض فواتير كل الأيام معاً",
-            filterStaffLbl: "تصفية حسب العامل/ة",
-            allStaff: "جميع العاملين",
-            filterLocLbl: "مكان الخدمة",
-            allLocations: "جميع الأماكن",
-            mTotalSales: "إجمالي المبيعات (إيرادات المركز)",
-            mStaffComm: "إجمالي مستحقات العمال (النسب)",
-            mExpenses: "إجمالي المصروفات",
-            mNetRev: "صافي إيراد المركز",
-            mCash: "تحصيل الكاش (الصافي)",
-            staffProdHeader: "ملخص إنتاجية وعمولات العمال:",
-            thStaffName: "اسم العامل / العاملة",
-            thServiceCount: "عدد الخدمات",
-            thStaffSales: "إجمالي مبيعات العامل",
-            thStaffDue: "مستحق العامل (العمولة)",
-            invoiceDetailsHeader: "تفاصيل الفواتير المسجلة:",
-            thInvNo: "رقم الفاتورة",
-            thDateTime: "التاريخ والوقت",
-            thStaff: "العامل/ة",
-            thService: "الخدمة",
-            thLocation: "الموقع",
-            thPayMethod: "الدفع",
-            thAmountVal: "المبلغ",
-            adminPanelTitle: "لوحة تحكم الإعدادات",
-            adminPassPrompt: "أدخل رمز الدخول الخاص بالمدير",
-            loginBtn: "تسجيل الدخول",
-            adminLoggedMsg: "تم تسجيل الدخول بنجاح. إدارة كادر العمل والخدمات:",
-            manageStaffHeader: "إدارة كادر العمل (إضافة وتعديل الأَسماء):",
-            addStaffBtn: "إضافة عامل جديد",
-            manageServiceHeader: "إضافة خدمات أو عروض جديدة:",
-            addServiceBtn: "إضافة الخدمة",
-            resetDataBtn: "تصفير كافة بيانات النظام (حذف الكل)",
-            devPanelTitle: "لوحة المالك / المطور",
-            devDesc: "هذا النظام مصمم خصيصاً لإدارة فواتير المساج، الحمام المغربي، ومتابعة عمولات العمال والمصروفات بدقة متناهية مع دعم الطباعة الحرارية وتصدير ملفات PDF."
-        },
-        en: {
-            centerTitle: "Haiba Relaxation Center",
-            centerSub: "Jeddah Branch - Massage, Moroccan Bath & Pedicure",
-            centerSubShort: "Jeddah - Massage & Moroccan Bath",
-            settingsBtn: "Settings",
-            ownerBtn: "Owner Panel",
-            tabPos: "New Invoice",
-            tabExpenses: "Expenses",
-            tabReports: "Reports & Shifts",
-            newInvoiceTitle: "Create New Invoice",
-            invSerialLbl: "Invoice Serial",
-            invDateLbl: "Invoice Date",
-            invStaffLbl: "Staff Name",
-            invServiceLbl: "Service / Offer",
-            invDurationLbl: "Duration",
-            invPriceLbl: "Price (SAR)",
-            invPayLbl: "Payment Method",
-            invLocLbl: "Service Location",
-            payCash: "Cash",
-            payCard: "Card (Network)",
-            payTransfer: "Bank Transfer",
-            locCenter: "At Center",
-            locHome: "Home Visit",
-            savePrintBtn: "Save & Print Instantly",
-            previewTitle: "Invoice Preview",
-            rSerial: "Invoice No:",
-            rTime: "Date & Time:",
-            rStaff: "Staff:",
-            rService: "Service:",
-            rDuration: "Duration:",
-            rLoc: "Location:",
-            rPay: "Payment:",
-            rTotal: "Total Amount:",
-            rFooter1: "Welcome - Enjoy Your Experience",
-            rFooter2: "Please Keep Your Receipt",
-            manualPrintBtn: "Manual Print",
-            downloadPdfBtn: "Download PDF",
-            expensesHeader: "Operational & Petty Expenses",
-            expDateLbl: "Expense Date",
-            expTitleLbl: "Expense Title (e.g. Hospitality)",
-            expAmountLbl: "Amount (SAR)",
-            expUserLbl: "Responsible Person",
-            saveExpBtn: "Save Expense",
-            expTableTitle: "Recorded Expenses:",
-            thDate: "Date",
-            thItem: "Item",
-            thAmount: "Amount",
-            thResponsible: "Responsible",
-            thAction: "Action",
-            reportsHeader: "Daily & Shift Reports (Sales, Staff Comm, Expenses)",
-            printReportBtn: "Print Report",
-            filterDateLbl: "Date",
-            clearDateFilter: "Show All Invoices",
-            filterDateHint: "Leave blank to show all days together",
-            filterStaffLbl: "Filter by Staff",
-            allStaff: "All Staff",
-            filterLocLbl: "Location",
-            allLocations: "All Locations",
-            mTotalSales: "Total Sales (Revenue)",
-            mStaffComm: "Total Staff Commissions",
-            mExpenses: "Total Expenses",
-            mNetRev: "Net Center Revenue",
-            mCash: "Cash Collection (Net)",
-            staffProdHeader: "Staff Productivity & Commissions Summary:",
-            thStaffName: "Staff Name",
-            thServiceCount: "Services Count",
-            thStaffSales: "Total Sales",
-            thStaffDue: "Staff Due (Commission)",
-            invoiceDetailsHeader: "Recorded Invoices Details:",
-            thInvNo: "Invoice #",
-            thDateTime: "Date & Time",
-            thStaff: "Staff",
-            thService: "Service",
-            thLocation: "Location",
-            thPayMethod: "Payment",
-            thAmountVal: "Amount",
-            adminPanelTitle: "Settings Control Panel",
-            adminPassPrompt: "Enter Admin Password",
-            loginBtn: "Login",
-            adminLoggedMsg: "Logged in successfully. Manage staff and services:",
-            manageStaffHeader: "Manage Staff (Add & Edit):",
-            addStaffBtn: "Add New Staff",
-            manageServiceHeader: "Manage Services & Offers:",
-            addServiceBtn: "Add Service",
-            resetDataBtn: "Reset All System Data",
-            devPanelTitle: "Owner / Developer Panel",
-            devDesc: "This system is custom-designed for managing massage and Moroccan bath invoices, tracking staff commissions and expenses precisely with thermal printing and PDF export."
-        },
-        fil: {
-            centerTitle: "Haiba Relaxation Center",
-            centerSub: "Jeddah Branch - Massage, Moroccan Bath & Pedicure",
-            centerSubShort: "Jeddah - Massage & Moroccan Bath",
-            settingsBtn: "Mga Setting",
-            ownerBtn: "Panel ng May-ari",
-            tabPos: "Bagong Invoice",
-            tabExpenses: "Mga Gastusin",
-            tabReports: "Mga Ulat",
-            newInvoiceTitle: "Lumikha ng Bagong Invoice",
-            invSerialLbl: "Serial ng Invoice",
-            invDateLbl: "Petsa ng Invoice",
-            invStaffLbl: "Pangalan ng Staff",
-            invServiceLbl: "Serbisyo / Alok",
-            invDurationLbl: "Tagal",
-            invPriceLbl: "Presyo (SAR)",
-            invPayLbl: "Paraan ng Pagbabayad",
-            invLocLbl: "Lokasyon ng Serbisyo",
-            payCash: "Cash",
-            payCard: "Card (Network)",
-            payTransfer: "Bank Transfer",
-            locCenter: "Sa Sentro",
-            locHome: "Bisita sa Bahay",
-            savePrintBtn: "I-save at I-print",
-            previewTitle: "Silipin ang Invoice",
-            rSerial: "Invoice No:",
-            rTime: "Petsa at Oras:",
-            rStaff: "Staff:",
-            rService: "Serbisyo:",
-            rDuration: "Tagal:",
-            rLoc: "Lokasyon:",
-            rPay: "Pagbabayad:",
-            rTotal: "Kabuuang Halaga:",
-            rFooter1: "Maligayang Pagdating",
-            rFooter2: "Mangyaring panatilihin ang resibo",
-            manualPrintBtn: "Manwal na Pag-print",
-            downloadPdfBtn: "I-download ang PDF",
-            expensesHeader: "Mga Gastusin sa Operasyon",
-            expDateLbl: "Petsa ng Gastusin",
-            expTitleLbl: "Pamagat ng Gastusin",
-            expAmountLbl: "Halaga (SAR)",
-            expUserLbl: "Responsableng Tao",
-            saveExpBtn: "I-save ang Gastusin",
-            expTableTitle: "Naitalang Gastusin:",
-            thDate: "Petsa",
-            thItem: "Item",
-            thAmount: "Halaga",
-            thResponsible: "Responsable",
-            thAction: "Aksyon",
-            reportsHeader: "Araw-araw at Shift na Ulat",
-            printReportBtn: "I-print ang Ulat",
-            filterDateLbl: "Petsa",
-            clearDateFilter: "Ipakita Lahat",
-            filterDateHint: "Iwanang bakante para sa lahat",
-            filterStaffLbl: "Salain ayon sa Staff",
-            allStaff: "Lahat ng Staff",
-            filterLocLbl: "Lokasyon",
-            allLocations: "Lahat ng Lokasyon",
-            mTotalSales: "Kabuuang Benta",
-            mStaffComm: "Komisyon ng Staff",
-            mExpenses: "Kabuuang Gastusin",
-            mNetRev: "Netong Kita",
-            mCash: "Koleksyon ng Cash",
-            staffProdHeader: "Buod ng Produktibidad ng Staff:",
-            thStaffName: "Pangalan ng Staff",
-            thServiceCount: "Bilang ng Serbisyo",
-            thStaffSales: "Kabuuang Benta",
-            thStaffDue: "Komisyon ng Staff",
-            invoiceDetailsHeader: "Mga Detalye ng Invoice:",
-            thInvNo: "Invoice #",
-            thDateTime: "Petsa at Oras",
-            thStaff: "Staff",
-            thService: "Serbisyo",
-            thLocation: "Lokasyon",
-            thPayMethod: "Pagbabayad",
-            thAmountVal: "Halaga",
-            adminPanelTitle: "Panel ng Admin",
-            adminPassPrompt: "Ilagay ang Password ng Admin",
-            loginBtn: "Mag-login",
-            adminLoggedMsg: "Matagumpay na naka-login:",
-            manageStaffHeader: "Pamahalaan ang Staff:",
-            addStaffBtn: "Magdagdag ng Staff",
-            manageServiceHeader: "Pamahalaan ang mga Serbisyo:",
-            addServiceBtn: "Magdagdag ng Serbisyo",
-            resetDataBtn: "I-reset ang Lahat ng Data",
-            devPanelTitle: "Panel ng Developer",
-            devDesc: "Custom na sistema para sa pamamahala ng spa."
-        },
-        bn: {
-            centerTitle: "হাইবা রিলাক্সেশন সেন্টার",
-            centerSub: "জেদ্দা শাখা - ম্যাসাজ, মরক্কান বাথ ও পেডিকিওর",
-            centerSubShort: "জেদ্দা - ম্যাসাজ ও মরক্কান বাথ",
-            settingsBtn: "সেটিংস",
-            ownerBtn: "মালিক প্যানেল",
-            tabPos: "নতুন চালান (ইনভয়েস)",
-            tabExpenses: "খরচ পরিচালনা",
-            tabReports: "প্রতিবেদন ও শিফট",
-            newInvoiceTitle: "নতুন ইনভয়েস তৈরি করুন",
-            invSerialLbl: "ইনভয়েস সিরিয়াল",
-            invDateLbl: "ইনভয়েসের তারিখ",
-            invStaffLbl: "স্টাফের নাম",
-            invServiceLbl: "সেবা / অফার",
-            invDurationLbl: "সময়কাল",
-            invPriceLbl: "মূল্য (SAR)",
-            invPayLbl: "পেমেন্ট পদ্ধতি",
-            invLocLoc: "সেবার স্থান",
-            payCash: "নগদ (ক্যাশ)",
-            payCard: "কার্ড (নেটওয়ার্ক)",
-            payTransfer: "ব্যাংক ট্রান্সফার",
-            locCenter: "সেন্টারে উপস্থিত",
-            locHome: "হোম ভিজিট",
-            savePrintBtn: "সংরক্ষণ করুন এবং প্রিন্ট করুন",
-            previewTitle: "ইনভয়েস পূর্বরূপ",
-            rSerial: "ইনভয়েস নং:",
-            rTime: "তারিখ ও সময়:",
-            rStaff: "স্টাফ:",
-            rService: "সেবা:",
-            rDuration: "সময়কাল:",
-            rLoc: "অবস্থান:",
-            rPay: "পেমেন্ট:",
-            rTotal: "মোট পরিমাণ:",
-            rFooter1: "স্বাগতম - আপনার অভিজ্ঞতা উপভোগ করুন",
-            rFooter2: "দয়া করে রসিদটি সংরক্ষণ করুন",
-            manualPrintBtn: "ম্যানুয়াল প্রিন্ট",
-            downloadPdfBtn: "PDF ডাউনলোড করুন",
-            expensesHeader: "দাপ্তরিক ও আনুষঙ্গিক খরচ",
-            expDateLbl: "খরচের তারিখ",
-            expTitleLbl: "খরচের খাত",
-            expAmountLbl: "পরিমাণ (SAR)",
-            expUserLbl: "দায়িত্বপ্রাপ্ত ব্যক্তি",
-            saveExpBtn: "খরচ সংরক্ষণ করুন",
-            expTableTitle: "নথিভুক্ত খরচ:",
-            thDate: "তারিখ",
-            thItem: "খাত",
-            thAmount: "পরিমাণ",
-            thResponsible: "দায়িত্বপ্রাপ্ত",
-            thAction: "কার্যক্রম",
-            reportsHeader: "দৈনিক ও শিফট রিপোর্ট (বিক্রয়, কমিশন, খরচ)",
-            printReportBtn: "রিপোর্ট প্রিন্ট করুন",
-            filterDateLbl: "তারিখ",
-            clearDateFilter: "সব ইনভয়েস দেখান",
-            filterDateHint: "সব দিনের জন্য ফাঁকা রাখুন",
-            filterStaffLbl: "স্টাফ দ্বারা ফিল্টার",
-            allStaff: "সকল স্টাফ",
-            filterLocLbl: "অবস্থান",
-            allLocations: "সকল স্থান",
-            mTotalSales: "মোট বিক্রয় (রাজস্ব)",
-            mStaffComm: "মোট স্টাফ কমিশন",
-            mExpenses: "মোট খরচ",
-            mNetRev: "নিট কেন্দ্র রাজস্ব",
-            mCash: "নগদ সংগ্রহ (নিট)",
-            staffProdHeader: "স্টাফ উৎপাদনশীলতা ও কমিশন সারসংক্ষেপ:",
-            thStaffName: "স্টাফের নাম",
-            thServiceCount: "সেবার সংখ্যা",
-            thStaffSales: "মোট বিক্রয়",
-            thStaffDue: "স্টাফের পাওনা (কমিশন)",
-            invoiceDetailsHeader: "নথিভুক্ত ইনভয়েসের বিবরণ:",
-            thInvNo: "ইনভয়েস #",
-            thDateTime: "তারিখ ও সময়",
-            thStaff: "স্টাফ",
-            thService: "সেবা",
-            thLocation: "অবস্থান",
-            thPayMethod: "পেমেন্ট",
-            thAmountVal: "পরিমাণ",
-            adminPanelTitle: "সেটিংস কন্ট্রোল প্যানেল",
-            adminPassPrompt: "অ্যাডমিন পাসওয়ার্ড লিখুন",
-            loginBtn: "লগইন",
-            adminLoggedMsg: "সফলভাবে লগইন হয়েছে। স্টাফ এবং সেবা পরিচালনা করুন:",
-            manageStaffHeader: "স্টাফ পরিচালনা (যোগ ও সম্পাদনা):",
-            addStaffBtn: "নতুন স্টাফ যোগ করুন",
-            manageServiceHeader: "সেবা বা অফার যোগ করুন:",
-            addServiceBtn: "সেবা যোগ করুন",
-            resetDataBtn: "সমস্ত সিস্টেম ডেটা রিসেট করুন",
-            devPanelTitle: "মালিক / ডেভেলপার প্যানেল",
-            devDesc: "এই সিস্টেমটি ম্যাসাজ এবং মরক্কান বাথের ইনভয়েস পরিচালনার জন্য বিশেষভাবে ডিজাইন করা হয়েছে।"
-        }
-    };
-
-    let currentLang = 'ar';
-
-    function changeLanguage(lang) {
-        currentLang = lang;
-        const root = document.getElementById('htmlRoot');
-        if (lang === 'ar') {
-            root.setAttribute('lang', 'ar');
-            root.setAttribute('dir', 'rtl');
-        } else {
-            root.setAttribute('lang', lang);
-            root.setAttribute('dir', 'ltr');
-        }
-        
-        const dict = translations[lang] || translations.ar;
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (dict[key]) {
-                el.textContent = dict[key];
+    <script>
+        // Translations Dictionary
+        const translations = {
+            ar: {
+                centerTitle: "مركز هيبة الاسترخاء",
+                centerSub: "فرع جدة - المساج والحمام المغربي والبدي كير",
+                centerSubShort: "جدة - المساج والحمام المغربي",
+                settingsBtn: "الإعدادات",
+                ownerBtn: "لوحة المالك",
+                tabPos: "إصدار فاتورة",
+                tabExpenses: "إدارة المصروفات",
+                tabReports: "التقارير والشفتات واليومية",
+                newInvoiceTitle: "إنشاء فاتورة جديدة",
+                invSerialLbl: "رقم الفاتورة (تسلسلي)",
+                invDateLbl: "تاريخ الفاتورة",
+                invStaffLbl: "اسم العامل / العاملة",
+                invServiceLbl: "الخدمة / العرض المقدم",
+                invDurationLbl: "المدة",
+                invPriceLbl: "السعر (ر.س)",
+                invPayLbl: "طريقة الدفع",
+                payCash: "كاش",
+                payCard: "صرافة (شبكة)",
+                payTransfer: "تحويل بنكي",
+                invLocLbl: "مكان تقديم الخدمة",
+                locCenter: "حضور بالمركز",
+                locHome: "زيارة منزلية",
+                savePrintBtn: "حفظ وطباعة فورية",
+                previewTitle: "معاينة الفاتورة",
+                rSerial: "رقم الفاتورة:",
+                rTime: "الوقت والتاريخ:",
+                rStaff: "الموظف/ة:",
+                rService: "الخدمة:",
+                rDuration: "المدة:",
+                rLoc: "الموقع:",
+                rPay: "طريقة الدفع:",
+                rTotal: "المبلغ الإجمالي:",
+                rFooter1: "أهلاً بكم - نتمنى لكم تجربة ممتعة",
+                rFooter2: "يرجى الاحتفاظ بالفاتورة",
+                manualPrintBtn: "طباعة يدوية",
+                downloadPdfBtn: "تنزيل الفاتورة PDF",
+                expensesHeader: "تسجيل المصروفات النثرية والتشغيلية",
+                expDateLbl: "تاريخ المصروف",
+                expTitleLbl: "بند المصروف (مثال: ضيافة، أدوات نظافة)",
+                expAmountLbl: "المبلغ (ر.س)",
+                expUserLbl: "المسؤول / القائم بالصرف",
+                saveExpBtn: "حفظ المصروف",
+                expTableTitle: "سجل المصروفات المسجلة:",
+                thDate: "التاريخ",
+                thItem: "بند المصروف",
+                thAmount: "المبلغ",
+                thResponsible: "المسؤول",
+                thAction: "إجراء",
+                reportsHeader: "التقارير اليومية والشفت (الإيرادات، نسب العمال، والمصروفات)",
+                printReportBtn: "طباعة التقرير",
+                filterDateLbl: "التاريخ",
+                clearDateFilter: "عرض كل الفواتير (كل التواريخ)",
+                filterDateHint: "اتركه فارغاً لعرض فواتير كل الأيام معاً",
+                filterStaffLbl: "تصفية حسب العامل/ة",
+                allStaff: "جميع العاملين",
+                filterLocLbl: "مكان الخدمة",
+                allLocations: "جميع الأماكن",
+                mTotalSales: "إجمالي المبيعات (إيرادات المركز)",
+                mStaffComm: "إجمالي مستحقات العمال (النسب)",
+                mExpenses: "إجمالي المصروفات",
+                mNetRev: "صافي إيراد المركز",
+                mCash: "تحصيل الكاش (الصافي)",
+                staffProdHeader: "ملخص إنتاجية وعمولات العمال:",
+                thStaffName: "اسم العامل / العاملة",
+                thServiceCount: "عدد الخدمات",
+                thStaffSales: "إجمالي مبيعات العامل",
+                thStaffDue: "مستحق العامل (العمولة 30%)",
+                invLogHeader: "سجل الفواتير المصدرة:",
+                thSerial: "رقم الفاتورة",
+                thService: "الخدمة",
+                thPay: "الدفع",
+                thLoc: "الموقع",
+                settingsTitle: "إعدادات النظام والعمال والخدمات",
+                manageStaffTitle: "إدارة العمال والعاملات (النسبة ثابتة 30%)",
+                addBtn: "إضافة",
+                manageServicesTitle: "إدارة الخدمات والأسعار",
+                backupTitle: "النسخ الاحتياطي واستعادة البيانات",
+                exportDataBtn: "تصدير النسخة",
+                importDataBtn: "استعادة النسخة",
+                ownerTitle: "لوحة المالك والمطور",
+                devDesc: "نظام متكامل لإدارة صالونات ومراكز المساج، إصدار الفواتير الحرارية، حساب إيرادات المركز ونسب العمال بدقة عالية (30%).",
+                devSec: "جميع البيانات محمية ومخزنة محلياً في متصفحك (LocalStorage)."
+            },
+            en: {
+                centerTitle: "Haiba Relaxation Center",
+                centerSub: "Jeddah Branch - Massage, Moroccan Bath & Pedicure",
+                centerSubShort: "Jeddah - Massage & Moroccan Bath",
+                settingsBtn: "Settings",
+                ownerBtn: "Owner Panel",
+                tabPos: "Issue Invoice",
+                tabExpenses: "Expenses",
+                tabReports: "Reports & Shifts",
+                newInvoiceTitle: "Create New Invoice",
+                invSerialLbl: "Invoice No. (Serial)",
+                invDateLbl: "Invoice Date",
+                invStaffLbl: "Staff Name",
+                invServiceLbl: "Service / Offer",
+                invDurationLbl: "Duration",
+                invPriceLbl: "Price (SAR)",
+                invPayLbl: "Payment Method",
+                payCash: "Cash",
+                payCard: "Card (POS)",
+                payTransfer: "Bank Transfer",
+                invLocLbl: "Service Location",
+                locCenter: "At Center",
+                locHome: "Home Visit",
+                savePrintBtn: "Save & Print Instantly",
+                previewTitle: "Invoice Preview",
+                rSerial: "Invoice No.:",
+                rTime: "Date & Time:",
+                rStaff: "Staff:",
+                rService: "Service:",
+                rDuration: "Duration:",
+                rLoc: "Location:",
+                rPay: "Payment:",
+                rTotal: "Total Amount:",
+                rFooter1: "Welcome - Enjoy Your Experience",
+                rFooter2: "Please Keep Your Receipt",
+                manualPrintBtn: "Manual Print",
+                downloadPdfBtn: "Download PDF",
+                expensesHeader: "Operational & Petty Expenses",
+                expDateLbl: "Expense Date",
+                expTitleLbl: "Expense Item (e.g. Hospitality)",
+                expAmountLbl: "Amount (SAR)",
+                expUserLbl: "Responsible Person",
+                saveExpBtn: "Save Expense",
+                expTableTitle: "Recorded Expenses:",
+                thDate: "Date",
+                thItem: "Item",
+                thAmount: "Amount",
+                thResponsible: "Responsible",
+                thAction: "Action",
+                reportsHeader: "Daily & Shift Reports",
+                printReportBtn: "Print Report",
+                filterDateLbl: "Date",
+                clearDateFilter: "Show All Invoices",
+                filterDateHint: "Leave blank to show all days together",
+                filterStaffLbl: "Filter by Staff",
+                allStaff: "All Staff",
+                filterLocLbl: "Location",
+                allLocations: "All Locations",
+                mTotalSales: "Total Sales (Revenue)",
+                mStaffComm: "Total Staff Dues (Commission)",
+                mExpenses: "Total Expenses",
+                mNetRev: "Net Center Revenue",
+                mCash: "Cash Collection (Net)",
+                staffProdHeader: "Staff Productivity & Commissions Summary:",
+                thStaffName: "Staff Name",
+                thServiceCount: "Services Count",
+                thStaffSales: "Total Sales",
+                thStaffDue: "Staff Due (30% Commission)",
+                invLogHeader: "Issued Invoices Log:",
+                thSerial: "Invoice No.",
+                thService: "Service",
+                thPay: "Payment",
+                thLoc: "Location",
+                settingsTitle: "System, Staff & Services Settings",
+                manageStaffTitle: "Manage Staff (Fixed 30% Commission)",
+                addBtn: "Add",
+                manageServicesTitle: "Manage Services & Prices",
+                backupTitle: "Backup & Restore Data",
+                exportDataBtn: "Export Backup",
+                importDataBtn: "Restore Backup",
+                ownerTitle: "Owner & Developer Panel",
+                devDesc: "Integrated system for massage centers management, thermal receipts, tracking revenue and staff commissions with high precision (30%).",
+                devSec: "All data is securely stored locally in your browser (LocalStorage)."
+            },
+            fil: {
+                centerTitle: "Haiba Relaxation Center",
+                centerSub: "Jeddah Branch - Massage, Moroccan Bath & Pedicure",
+                centerSubShort: "Jeddah - Massage & Moroccan Bath",
+                settingsBtn: "Mga Setting",
+                ownerBtn: "Panel ng May-ari",
+                tabPos: "Maglabas ng Invoice",
+                tabExpenses: "Mga Gastusin",
+                tabReports: "Mga Ulat",
+                newInvoiceTitle: "Gumawa ng Bagong Invoice",
+                invSerialLbl: "Invoice No. (Serial)",
+                invDateLbl: "Petsa ng Invoice",
+                invStaffLbl: "Pangalan ng Staff",
+                invServiceLbl: "Serbisyo / Alok",
+                invDurationLbl: "Tagal",
+                invPriceLbl: "Presyo (SAR)",
+                invPayLbl: "Paraan ng Pagbabayad",
+                payCash: "Cash",
+                payCard: "Card (POS)",
+                payTransfer: "Bank Transfer",
+                invLocLbl: "Lokasyon ng Serbisyo",
+                locCenter: "Sa Center",
+                locHome: "Home Visit",
+                savePrintBtn: "I-save at I-print",
+                previewTitle: "Preview ng Invoice",
+                rSerial: "Invoice No.:",
+                rTime: "Petsa at Oras:",
+                rStaff: "Staff:",
+                rService: "Serbisyo:",
+                rDuration: "Tagal:",
+                rLoc: "Lokasyon:",
+                rPay: "Bayad:",
+                rTotal: "Kabuuang Halaga:",
+                rFooter1: "Maligayang pagdating - Enjoy!",
+                rFooter2: "Mangyaring itabi ang resibo",
+                manualPrintBtn: "Manual Print",
+                downloadPdfBtn: "I-download ang PDF",
+                expensesHeader: "Mga Gastusin",
+                expDateLbl: "Petsa ng Gastusin",
+                expTitleLbl: "Uri ng Gastusin",
+                expAmountLbl: "Halaga (SAR)",
+                expUserLbl: "Namahala",
+                saveExpBtn: "I-save ang Gastusin",
+                expTableTitle: "Naitalang Gastusin:",
+                thDate: "Petsa",
+                thItem: "Aytem",
+                thAmount: "Halaga",
+                thResponsible: "Namahala",
+                thAction: "Aksyon",
+                reportsHeader: "Mga Ulat sa Araw at Shift",
+                printReportBtn: "I-print ang Ulat",
+                filterDateLbl: "Petsa",
+                clearDateFilter: "Ipakita Lahat ng Invoice",
+                filterDateHint: "Iwanang bakante para sa lahat ng araw",
+                filterStaffLbl: "Salain ayon sa Staff",
+                allStaff: "Lahat ng Staff",
+                filterLocLbl: "Lokasyon",
+                allLocations: "Lahat ng Lokasyon",
+                mTotalSales: "Kabuuang Benta",
+                mStaffComm: "Kabuuang Komisyon ng Staff",
+                mExpenses: "Kabuuang Gastusin",
+                mNetRev: "Netong Kita ng Center",
+                mCash: "Cash Collection",
+                staffProdHeader: "Buod ng Pagiging Produktibo at Komisyon:",
+                thStaffName: "Pangalan ng Staff",
+                thServiceCount: "Bilang ng Serbisyo",
+                thStaffSales: "Kabuuang Benta",
+                thStaffDue: "Bahagi ng Staff (30% Komisyon)",
+                invLogHeader: "Talaan ng mga Invoice:",
+                thSerial: "Invoice No.",
+                thService: "Serbisyo",
+                thPay: "Bayad",
+                thLoc: "Lokasyon",
+                settingsTitle: "Mga Setting ng Sistema at Staff",
+                manageStaffTitle: "Pamahalaan ang Staff (Fixed 30% Commission)",
+                addBtn: "Idagdag",
+                manageServicesTitle: "Pamahalaan ang mga Serbisyo",
+                backupTitle: "Backup at Restore",
+                exportDataBtn: "I-export ang Backup",
+                importDataBtn: "I-restore ang Backup",
+                ownerTitle: "Panel ng May-ari",
+                devDesc: "Pinagsama-samang sistema para sa pamamahala ng massage center at mga resibo.",
+                devSec: "Ang lahat ng data ay ligtas na nakaimbak sa browser (LocalStorage)."
+            },
+            bn: {
+                centerTitle: "হাইবা রিলাক্সেশন সেন্টার",
+                centerSub: "জেদ্দা শাখা - ম্যাসাজ, মরক্কান বাথ এবং পেডিকিউর",
+                centerSubShort: "জেদ্দা - ম্যাসাজ এবং মরক্কান বাথ",
+                settingsBtn: "সেটিংস",
+                ownerBtn: "মালিক প্যানেল",
+                tabPos: "ইনভয়েস ইস্যু",
+                tabExpenses: "খরচ ব্যবস্থাপনা",
+                tabReports: "প্রতিবেদন ও শিফট",
+                newInvoiceTitle: "নতুন ইনভয়েস তৈরি করুন",
+                invSerialLbl: "ইনভয়েস নং (সিরিয়াল)",
+                invDateLbl: "ইনভয়েসের তারিখ",
+                invStaffLbl: "কর্মচারীর নাম",
+                invServiceLbl: "সেবা / অফার",
+                invDurationLbl: "সময়কাল",
+                invPriceLbl: "মূল্য (SAR)",
+                invPayLbl: "পেমেন্ট পদ্ধতি",
+                payCash: "নগদ (Cash)",
+                payCard: "কার্ড (POS)",
+                payTransfer: "ব্যাংক ট্রান্সফার",
+                invLocLbl: "সেবার স্থান",
+                locCenter: "কেন্দ্রে",
+                locHome: "হোম ভিজিট",
+                savePrintBtn: "সংরক্ষণ করুন এবং প্রিন্ট করুন",
+                previewTitle: "ইনভয়েস প্রিভিউ",
+                rSerial: "ইনভয়েস নং:",
+                rTime: "তারিখ ও সময়:",
+                rStaff: "কর্মী:",
+                rService: "সেবা:",
+                rDuration: "সময়কাল:",
+                rLoc: "অবস্থান:",
+                rPay: "পেমেন্ট:",
+                rTotal: "মোট পরিমাণ:",
+                rFooter1: "স্বাগতম - আপনার অভিজ্ঞতা উপভোগ করুন",
+                rFooter2: "রসিদটি সংরক্ষণ করুন",
+                manualPrintBtn: "ম্যানুয়াল প্রিন্ট",
+                downloadPdfBtn: "PDF ডাউনলোড করুন",
+                expensesHeader: "দাপ্তরিক ও আনুষঙ্গিক খরচ",
+                expDateLbl: "খরচের তারিখ",
+                expTitleLbl: "খরচের বিবরণ",
+                expAmountLbl: "পরিমাণ (SAR)",
+                expUserLbl: "দায়িত্বপ্রাপ্ত ব্যক্তি",
+                saveExpBtn: "খরচ সংরক্ষণ করুন",
+                expTableTitle: "সংরক্ষিত খরচ:",
+                thDate: "তারিখ",
+                thItem: "বিবরণ",
+                thAmount: "পরিমাণ",
+                thResponsible: "দায়িত্বপ্রাপ্ত",
+                thAction: "পদক্ষেপ",
+                reportsHeader: "দৈনিক ও শিফট রিপোর্ট",
+                printReportBtn: "রিপোর্ট প্রিন্ট করুন",
+                filterDateLbl: "তারিখ",
+                clearDateFilter: "সকল ইনভয়েস দেখান",
+                filterDateHint: "সকল দিনের ইনভয়েস দেখতে খালি রাখুন",
+                filterStaffLbl: "কর্মী দ্বারা ফিল্টার",
+                allStaff: "সকল কর্মী",
+                filterLocLbl: "অবস্থান",
+                allLocations: "সকল অবস্থান",
+                mTotalSales: "মোট বিক্রয় (রাজস্ব)",
+                mStaffComm: "কর্মীদের মোট কমিশন",
+                mExpenses: "মোট খরচ",
+                mNetRev: "কেন্দ্রের নিট রাজস্ব",
+                mCash: "নগদ সংগ্রহ (নিট)",
+                staffProdHeader: "কর্মী উৎপাদনশীলতা এবং কমিশনের সারাংশ:",
+                thStaffName: "কর্মীর নাম",
+                thServiceCount: "সেবার সংখ্যা",
+                thStaffSales: "মোট বিক্রয়",
+                thStaffDue: "কর্মীর পাওনা (৩০% কমিশন)",
+                invLogHeader: "ইস্যুকৃত ইনভয়েসের তালিকা:",
+                thSerial: "ইনভয়েস নং",
+                thService: "সেবা",
+                thPay: "পেমেন্ট",
+                thLoc: "অবস্থান",
+                settingsTitle: "সিস্টেম, কর্মী ও সেবা সেটিংস",
+                manageStaffTitle: "কর্মী পরিচালনা (নির্ধারিত ৩০% কমিশন)",
+                addBtn: "যোগ করুন",
+                manageServicesTitle: "সেবা এবং মূল্য পরিচালনা",
+                backupTitle: "ব্যাকআপ এবং ডেটা পুনরুদ্ধার",
+                exportDataBtn: "ব্যাকআপ রপ্তানি",
+                importDataBtn: "ব্যাকআপ আমদানি",
+                ownerTitle: "মালিক ও ডেভেলপার প্যানেল",
+                devDesc: "ম্যাসাজ সেন্টার পরিচালনার জন্য একটি সমন্বিত সিস্টেম, থার্মাল রসিদ এবং নির্ভুল হিসাব (৩০%)।",
+                devSec: "সমস্ত ডেটা আপনার ব্রাউজারে সুরক্ষিতভাবে সংরক্ষিত (LocalStorage)।"
             }
-        });
+        };
 
-        // تحديث خيارات طرق الدفع والأماكن بناءً على اللغة
-        updateDropdownOptions(dict);
-        updateLivePreview();
-    }
+        let currentLang = 'ar';
 
-    function updateDropdownOptions(dict) {
-        const paySel = document.getElementById('paymentMethod');
-        paySel.options[0].text = dict.payCash || "كاش";
-        paySel.options[1].text = dict.payCard || "صرافة (شبكة)";
-        paySel.options[2].text = dict.payTransfer || "تحويل بنكي";
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('htmlRoot').setAttribute('lang', lang);
+            document.getElementById('htmlRoot').setAttribute('dir', (lang === 'ar' ? 'rtl' : 'ltr'));
+            localStorage.setItem('haiba_lang', lang);
 
-        const locSel = document.getElementById('serviceLocation');
-        locSel.options[0].text = dict.locCenter || "حضور بالمركز";
-        locSel.options[1].text = dict.locHome || "زيارة منزلية";
+            const dict = translations[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[key]) {
+                    el.textContent = dict[key];
+                }
+            });
 
-        const filterLoc = document.getElementById('filterLocation');
-        filterLoc.options[0].text = dict.allLocations || "جميع الأماكن";
-        filterLoc.options[1].text = dict.locCenter || "حضور بالمركز";
-        filterLoc.options[2].text = dict.locHome || "زيارة منزلية";
-    }
+            // Update select options that use i18n
+            document.querySelectorAll('select option[data-i18n]').forEach(opt => {
+                const key = opt.getAttribute('data-i18n');
+                if (dict[key]) {
+                    opt.textContent = dict[key];
+                }
+            });
 
-    // البيانات الافتراضية للخدمات وكادر العمل
-    const defaultStaff = [
-        "أحمد", "محمد", "خالد", "عبدالله", "سعيد", "محمود", 
-        "رامی", "إبراهيم", "حسن", "عمر", "علي", "يوسف"
-    ];
-
-    const defaultServices = [
-        { name: "مساج استرخائي 60 دقيقة", price: 150 },
-        { name: "مساج استرخائي 90 دقيقة", price: 220 },
-        { name: "حمام مغربي ملكي", price: 250 },
-        { name: "حمام مغربي أساسي", price: 180 },
-        { name: "بدي كير ومنايكير", price: 100 },
-        { name: "باقة العريس المتكاملة (مساج + حمام مغربي)", price: 400 },
-        { name: "عرض هيبة الخاص", price: 300 }
-    ];
-
-    // قراءة وحفظ البيانات في LocalStorage
-    let staffList = JSON.parse(localStorage.getItem('haiba_staff')) || defaultStaff;
-    let servicesList = JSON.parse(localStorage.getItem('haiba_services')) || defaultServices;
-    let invoices = JSON.parse(localStorage.getItem('haiba_invoices')) || [];
-    let expenses = JSON.parse(localStorage.getItem('haiba_expenses')) || [];
-
-    // نسبة عمولة العمال في كل المركز = 30%
-    const COMMISSION_RATE = 0.30;
-
-    window.addEventListener('DOMContentLoaded', () => {
-        // ضبط تاريخ اليوم في حقول الإدخال
-        const todayStr = new Date().toISOString().split('T')[0];
-        document.getElementById('invDateInput').value = todayStr;
-        document.getElementById('expDate').value = todayStr;
-
-        populateDropdowns();
-        generateNextSerial();
-        updateLivePreview();
-        loadExpensesTable();
-        loadReports();
-
-        // إخفاء شاشة التحميل بعد الاكتمال
-        setTimeout(() => {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }, 300);
-    });
-
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-        
-        document.getElementById(tabId).classList.add('active');
-        document.getElementById('btn-tab-' + tabId).classList.add('active');
-
-        if (tabId === 'reports') {
+            updateLivePreview();
             loadReports();
+            renderAdminConfig();
         }
-    }
 
-    function populateDropdowns() {
-        // قائمة العاملين في POS
-        const staffSel = document.getElementById('staffSelect');
-        staffSel.innerHTML = '';
-        staffList.forEach(s => {
-            const opt = document.createElement('option');
-            opt.value = s;
-            opt.textContent = s;
-            staffSel.appendChild(opt);
+        // Default Data State
+        let defaultStaff = ["أحمد", "محمد", "خالد", "سعيد", "عبدالله"];
+        let defaultServices = [
+            { name: "مساج استرخائي 60 دقيقة", price: 150 },
+            { name: "مساج مساج عيادي 60 دقيقة", price: 180 },
+            { name: "حمام مغربي ملكي", price: 200 },
+            { name: "بدي كير وماني كير", price: 100 },
+            { name: "باقة هيبة المتكاملة (مساج + مغربي)", price: 350 }
+        ];
+
+        let staffList = JSON.parse(localStorage.getItem('haiba_staff')) || defaultStaff;
+        let servicesList = JSON.parse(localStorage.getItem('haiba_services')) || defaultServices;
+        let invoices = JSON.parse(localStorage.getItem('haiba_invoices')) || [];
+        let expenses = JSON.parse(localStorage.getItem('haiba_expenses')) || [];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('haiba_lang') || 'ar';
+            document.getElementById('langSelect').value = savedLang;
+            changeLanguage(savedLang);
+
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invDateInput').value = today;
+            document.getElementById('expDate').value = today;
+
+            initSerial();
+            populateDropdowns();
+            updateLivePreview();
+            loadReports();
+            renderExpensesTable();
+
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 300);
         });
 
-        // قائمة العاملين في الفلتر
-        const filterStaffSel = document.getElementById('filterStaff');
-        const dict = translations[currentLang] || translations.ar;
-        filterStaffSel.innerHTML = `<option value="ALL">${dict.allStaff || "جميع العاملين"}</option>`;
-        staffList.forEach(s => {
-            const opt = document.createElement('option');
-            opt.value = s;
-            opt.textContent = s;
-            filterStaffSel.appendChild(opt);
-        });
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-tab-' + tabId).classList.add('active');
+            if(tabId === 'reports') {
+                loadReports();
+            }
+        }
 
-        // قائمة الخدمات في POS
-        const servSel = document.getElementById('serviceSelect');
-        servSel.innerHTML = '<option value="" disabled selected>اختر الخدمة أو العرض</option>';
-        servicesList.forEach((srv, idx) => {
-            const opt = document.createElement('option');
-            opt.value = idx;
-            opt.textContent = `${srv.name} (${srv.price} ر.س)`;
-            servSel.appendChild(opt);
-        });
-    }
+        function initSerial() {
+            const nextNum = invoices.length + 1;
+            const serialStr = 'HS-' + String(nextNum).padStart(6, '0');
+            document.getElementById('invSerial').value = serialStr;
+            document.getElementById('r-serial').textContent = serialStr;
+        }
 
-    function onServiceSelectChange() {
-        const idx = document.getElementById('serviceSelect').value;
-        if (idx !== "" && servicesList[idx]) {
-            const srv = servicesList[idx];
-            document.getElementById('price').value = srv.price;
-            
-            // تحديد المدة تلقائياً بناءً على اسم الخدمة إن وجدت
-            if (srv.name.includes('90')) {
-                document.getElementById('duration').value = '90 دقيقة';
-            } else if (srv.name.includes('60')) {
-                document.getElementById('duration').value = '60 دقيقة';
-            } else if (srv.name.includes('45')) {
-                document.getElementById('duration').value = '45 دقيقة';
-            } else if (srv.name.includes('30')) {
-                document.getElementById('duration').value = '30 دقيقة';
-            } else {
-                document.getElementById('duration').value = '60 دقيقة';
+        function populateDropdowns() {
+            // Staff selects
+            const staffSelect = document.getElementById('staffSelect');
+            staffSelect.innerHTML = '';
+            staffList.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s;
+                opt.textContent = s;
+                staffSelect.appendChild(opt);
+            });
+
+            const filterStaff = document.getElementById('filterStaff');
+            const currentFilterStaffVal = filterStaff.value;
+            filterStaff.innerHTML = `<option value="ALL" data-i18n="allStaff">${translations[currentLang].allStaff}</option>`;
+            staffList.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s;
+                opt.textContent = s;
+                filterStaff.appendChild(opt);
+            });
+            filterStaff.value = currentFilterStaffVal;
+
+            // Service select
+            const serviceSelect = document.getElementById('serviceSelect');
+            serviceSelect.innerHTML = '';
+            servicesList.forEach((srv, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.textContent = `${srv.name} (${srv.price} ر.س)`;
+                serviceSelect.appendChild(opt);
+            });
+
+            if(servicesList.length > 0) {
+                document.getElementById('price').value = servicesList[0].price;
+            }
+        }
+
+        function onServiceSelectChange() {
+            const idx = document.getElementById('serviceSelect').value;
+            if(servicesList[idx]) {
+                document.getElementById('price').value = servicesList[idx].price;
             }
             updateLivePreview();
         }
-    }
 
-    function setDuration(val) {
-        document.getElementById('duration').value = val;
-        updateLivePreview();
-    }
-
-    function generateNextSerial() {
-        const nextNum = invoices.length + 1;
-        const serialStr = 'HS-' + String(nextNum).padStart(6, '0');
-        document.getElementById('invSerial').value = serialStr;
-        document.getElementById('r-serial').textContent = serialStr;
-    }
-
-    function updateLivePreview() {
-        const serial = document.getElementById('invSerial').value;
-        const dateVal = document.getElementById('invDateInput').value;
-        const staff = document.getElementById('staffSelect').value || '--';
-        
-        const servIdx = document.getElementById('serviceSelect').value;
-        let serviceName = '--';
-        if (servIdx !== "" && servicesList[servIdx]) {
-            serviceName = servicesList[servIdx].name;
+        function setDuration(val) {
+            document.getElementById('duration').value = val;
+            updateLivePreview();
         }
 
-        const duration = document.getElementById('duration').value || '--';
-        const price = parseFloat(document.getElementById('price').value) || 0;
-        const payMethod = document.getElementById('paymentMethod').value;
-        const location = document.getElementById('serviceLocation').value;
+        function updateLivePreview() {
+            const serial = document.getElementById('invSerial').value;
+            const dateVal = document.getElementById('invDateInput').value;
+            const staff = document.getElementById('staffSelect').value;
+            const srvIdx = document.getElementById('serviceSelect').value;
+            const srvName = servicesList[srvIdx] ? servicesList[srvIdx].name : '--';
+            const duration = document.getElementById('duration').value || '--';
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            const payMethod = document.getElementById('paymentMethod').value;
+            const loc = document.getElementById('serviceLocation').value;
 
-        document.getElementById('r-serial').textContent = serial;
-        document.getElementById('r-date').textContent = dateVal;
-        document.getElementById('r-time').textContent = new Date().toLocaleTimeString('ar-SA', {hour: '2-digit', minute:'2-digit'});
-        document.getElementById('r-staff').textContent = staff;
-        document.getElementById('r-service').textContent = serviceName;
-        document.getElementById('r-duration').textContent = duration;
-        document.getElementById('r-type').textContent = location;
-        document.getElementById('r-pay').textContent = payMethod;
-        document.getElementById('r-price').textContent = price.toFixed(2) + ' ر.س';
-    }
+            document.getElementById('r-serial').textContent = serial;
+            document.getElementById('r-date').textContent = dateVal;
+            document.getElementById('r-time').textContent = new Date().toLocaleTimeString('ar-SA', {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('r-staff').textContent = staff || '--';
+            document.getElementById('r-service').textContent = srvName;
+            document.getElementById('r-duration').textContent = duration;
+            document.getElementById('r-type').textContent = loc;
+            document.getElementById('r-pay').textContent = payMethod;
+            document.getElementById('r-price').textContent = price.toFixed(2) + ' ر.س';
+        }
 
-    function saveInvoice(e) {
-        e.preventDefault();
-        const serial = document.getElementById('invSerial').value;
-        const date = document.getElementById('invDateInput').value;
-        const staff = document.getElementById('staffSelect').value;
-        const servIdx = document.getElementById('serviceSelect').value;
-        const serviceName = servicesList[servIdx] ? servicesList[servIdx].name : 'خدمة عامة';
-        const duration = document.getElementById('duration').value;
-        const price = parseFloat(document.getElementById('price').value) || 0;
-        const paymentMethod = document.getElementById('paymentMethod').value;
-        const location = document.getElementById('serviceLocation').value;
+        function saveInvoice(e) {
+            e.preventDefault();
+            const serial = document.getElementById('invSerial').value;
+            const dateVal = document.getElementById('invDateInput').value;
+            const staff = document.getElementById('staffSelect').value;
+            const srvIdx = document.getElementById('serviceSelect').value;
+            const srvName = servicesList[srvIdx] ? servicesList[srvIdx].name : 'خدمة خاصة';
+            const duration = document.getElementById('duration').value;
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            const payMethod = document.getElementById('paymentMethod').value;
+            const loc = document.getElementById('serviceLocation').value;
 
-        const newInv = {
-            id: Date.now(),
-            serial,
-            date,
-            time: new Date().toLocaleTimeString('ar-SA', {hour: '2-digit', minute:'2-digit'}),
-            staff,
-            service: serviceName,
-            duration,
-            price,
-            commission: price * COMMISSION_RATE, // 30% لكل العمال داخل المركز
-            paymentMethod,
-            location
-        };
+            // نسبة العامل ثابتة 30% لجميع العمال داخل المركز
+            const commissionRate = 0.30; 
+            const commission = price * commissionRate;
 
-        invoices.push(newInv);
-        localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
+            const newInv = {
+                id: Date.now(),
+                serial,
+                date: dateVal,
+                staff,
+                service: srvName,
+                duration,
+                price,
+                commission,
+                payMethod,
+                location: loc,
+                timestamp: new Date().toISOString()
+            };
 
-        // طباعة تلقائية فورية للفاتورة الحرارية
-        printElement('thermal-receipt');
+            invoices.push(newInv);
+            localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
 
-        // إعادة تعيين النموذج لفاتورة جديدة
-        document.getElementById('invoiceForm').reset();
-        const todayStr = new Date().toISOString().split('T')[0];
-        document.getElementById('invDateInput').value = todayStr;
-        generateNextSerial();
-        updateLivePreview();
-        loadReports();
-    }
+            // Instant print thermal receipt
+            printElement('thermal-receipt');
 
-    // إدارة المصروفات
-    function saveExpense(e) {
-        e.preventDefault();
-        const date = document.getElementById('expDate').value;
-        const title = document.getElementById('expTitle').value;
-        const amount = parseFloat(document.getElementById('expAmount').value) || 0;
-        const user = document.getElementById('expUser').value || 'الإدارة';
+            // Reset and re-init serial
+            initSerial();
+            document.getElementById('duration').value = '';
+            document.getElementById('price').value = servicesList[0] ? servicesList[0].price : 0;
+            updateLivePreview();
+            loadReports();
+        }
 
-        const newExp = {
-            id: Date.now(),
-            date,
-            title,
-            amount,
-            user
-        };
+        function deleteInvoice(id) {
+            if(confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) {
+                invoices = invoices.filter(inv => inv.id !== id);
+                localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
+                loadReports();
+            }
+        }
 
-        expenses.push(newExp);
-        localStorage.setItem('haiba_expenses', JSON.stringify(expenses));
+        // Expenses Management
+        function saveExpense(e) {
+            e.preventDefault();
+            const date = document.getElementById('expDate').value;
+            const title = document.getElementById('expTitle').value;
+            const amount = parseFloat(document.getElementById('expAmount').value) || 0;
+            const user = document.getElementById('expUser').value || 'الإدارة';
 
-        document.getElementById('expenseForm').reset();
-        document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
-        loadExpensesTable();
-        loadReports();
-    }
+            const newExp = {
+                id: Date.now(),
+                date,
+                title,
+                amount,
+                user
+            };
 
-    function deleteExpense(id) {
-        if (confirm('هل أنت متأكد من حذف هذا المصروف؟')) {
+            expenses.push(newExp);
+            localStorage.setItem('haiba_expenses', JSON.stringify(expenses));
+
+            document.getElementById('expTitle').value = '';
+            document.getElementById('expAmount').value = '';
+            document.getElementById('expUser').value = '';
+            renderExpensesTable();
+            loadReports();
+        }
+
+        function deleteExpense(id) {
             expenses = expenses.filter(ex => ex.id !== id);
             localStorage.setItem('haiba_expenses', JSON.stringify(expenses));
-            loadExpensesTable();
+            renderExpensesTable();
             loadReports();
         }
-    }
 
-    function loadExpensesTable() {
-        const tbody = document.getElementById('expensesTableBody');
-        tbody.innerHTML = '';
-
-        if (expenses.length === 0) {
-            tbody.innerHTML = `<tr class="empty-row"><td colspan="5">لا توجد مصروفات مسجلة حالياً</td></tr>`;
-            return;
-        }
-
-        expenses.slice().reverse().forEach(ex => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${ex.date}</td>
-                <td><strong>${ex.title}</strong></td>
-                <td style="color:#DC2626; font-weight:bold;">${ex.amount.toFixed(2)} ر.س</td>
-                <td>${ex.user}</td>
-                <td class="no-print"><button class="btn btn-danger" onclick="deleteExpense(${ex.id})"><i class="fa-solid fa-trash"></i> حذف</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    // حذف فاتورة فردية
-    function deleteInvoice(id) {
-        if (confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) {
-            invoices = invoices.filter(inv => inv.id !== id);
-            localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
-            generateNextSerial();
-            loadReports();
-        }
-    }
-
-    function clearDateFilter() {
-        document.getElementById('filterDate').value = '';
-        loadReports();
-    }
-
-    // التقارير والحسابات
-    function loadReports() {
-        const filterDate = document.getElementById('filterDate').value;
-        const filterStaff = document.getElementById('filterStaff').value;
-        const filterLocation = document.getElementById('filterLocation').value;
-
-        // فلترة الفواتير
-        let filteredInvoices = invoices.filter(inv => {
-            let matchDate = filterDate ? (inv.date === filterDate) : true;
-            let matchStaff = (filterStaff === 'ALL') ? true : (inv.staff === filterStaff);
-            let matchLoc = (filterLocation === 'ALL') ? true : (inv.location === filterLocation);
-            return matchDate && matchStaff && matchLoc;
-        });
-
-        // فلترة المصروفات (تطابق التاريخ إذا تم تحديده)
-        let filteredExpenses = expenses.filter(ex => {
-            let matchDate = filterDate ? (ex.date === filterDate) : true;
-            return matchDate;
-        });
-
-        // حساب المؤشرات الإجمالية
-        let totalSales = filteredInvoices.reduce((sum, inv) => sum + inv.price, 0);
-        let totalStaffComm = filteredInvoices.reduce((sum, inv) => sum + inv.commission, 0);
-        let totalExp = filteredExpenses.reduce((sum, ex) => sum + ex.amount, 0);
-        let netRev = totalSales - totalStaffComm - totalExp;
-
-        let totalCashCollection = filteredInvoices
-            .filter(inv => inv.paymentMethod === 'كاش')
-            .reduce((sum, inv) => sum + inv.price, 0);
-
-        document.getElementById('totalRevenue').textContent = totalSales.toFixed(2) + ' SAR';
-        document.getElementById('totalStaffCommission').textContent = totalStaffComm.toFixed(2) + ' SAR';
-        document.getElementById('totalExpensesMetric').textContent = totalExp.toFixed(2) + ' SAR';
-        document.getElementById('netRevenueMetric').textContent = netRev.toFixed(2) + ' SAR';
-        document.getElementById('totalCash').textContent = totalCashCollection.toFixed(2) + ' SAR';
-
-        // جدول إنتاجية العمال
-        const staffPerfBody = document.getElementById('staffPerformanceBody');
-        staffPerfBody.innerHTML = '';
-
-        // حساب إحصائيات كل عامل بناءً على الفلتر الحالي
-        let staffStats = {};
-        staffList.forEach(s => {
-            staffStats[s] = { count: 0, sales: 0, commission: 0 };
-        });
-
-        filteredInvoices.forEach(inv => {
-            if (!staffStats[inv.staff]) {
-                staffStats[inv.staff] = { count: 0, sales: 0, commission: 0 };
+        function renderExpensesTable() {
+            const tbody = document.getElementById('expensesTableBody');
+            tbody.innerHTML = '';
+            if(expenses.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="5">لا توجد مصروفات مسجلة حالياً</td></tr>`;
+                return;
             }
-            staffStats[inv.staff].count += 1;
-            staffStats[inv.staff].sales += inv.price;
-            staffStats[inv.staff].commission += inv.commission;
-        });
-
-        let activeStaffCount = 0;
-        for (let staffName in staffStats) {
-            let st = staffStats[staffName];
-            if (st.count > 0 || filterStaff === 'ALL') {
-                activeStaffCount++;
+            expenses.slice().reverse().forEach(ex => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><strong>${staffName}</strong></td>
-                    <td>${st.count} خدمات</td>
-                    <td>${st.sales.toFixed(2)} ر.س</td>
-                    <td style="color:var(--primary); font-weight:bold;">${st.commission.toFixed(2)} ر.س <span style="font-size:0.75rem; color:var(--text-muted);">(30%)</span></td>
+                    <td>${ex.date}</td>
+                    <td><strong>${ex.title}</strong></td>
+                    <td style="color:#DC2626; font-weight:bold;">${ex.amount.toFixed(2)} ر.س</td>
+                    <td>${ex.user}</td>
+                    <td class="no-print"><button class="btn btn-danger" onclick="deleteExpense(${ex.id})"><i class="fa-solid fa-trash"></i></button></td>
                 `;
-                staffPerfBody.appendChild(tr);
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Reports & Analytics
+        function loadReports() {
+            const filterDate = document.getElementById('filterDate').value;
+            const filterStaff = document.getElementById('filterStaff').value;
+            const filterLocation = document.getElementById('filterLocation').value;
+
+            let filteredInvoices = invoices;
+            if(filterDate) {
+                filteredInvoices = filteredInvoices.filter(inv => inv.date === filterDate);
+            }
+            if(filterStaff !== 'ALL') {
+                filteredInvoices = filteredInvoices.filter(inv => inv.staff === filterStaff);
+            }
+            if(filterLocation !== 'ALL') {
+                filteredInvoices = filteredInvoices.filter(inv => inv.location === filterLocation);
+            }
+
+            // Calculate totals
+            let totalRev = 0;
+            let totalStaffComm = 0;
+            let totalCashVal = 0;
+
+            let staffStats = {};
+            staffList.forEach(s => {
+                staffStats[s] = { count: 0, sales: 0, commission: 0 };
+            });
+
+            filteredInvoices.forEach(inv => {
+                totalRev += inv.price;
+                totalStaffComm += inv.commission;
+                if(inv.payMethod === 'كاش') {
+                    totalCashVal += inv.price;
+                }
+
+                if(!staffStats[inv.staff]) {
+                    staffStats[inv.staff] = { count: 0, sales: 0, commission: 0 };
+                }
+                staffStats[inv.staff].count += 1;
+                staffStats[inv.staff].sales += inv.price;
+                staffStats[inv.staff].commission += inv.commission;
+            });
+
+            // Filter expenses by date if date filter is active
+            let filteredExpenses = expenses;
+            if(filterDate) {
+                filteredExpenses = filteredExpenses.filter(ex => ex.date === filterDate);
+            }
+            let totalExpVal = 0;
+            filteredExpenses.forEach(ex => {
+                totalExpVal += ex.amount;
+            });
+
+            let netRev = totalRev - totalStaffComm - totalExpVal;
+
+            document.getElementById('totalRevenue').textContent = totalRev.toFixed(2) + ' SAR';
+            document.getElementById('totalStaffCommission').textContent = totalStaffComm.toFixed(2) + ' SAR';
+            document.getElementById('totalExpensesMetric').textContent = totalExpVal.toFixed(2) + ' SAR';
+            document.getElementById('netRevenueMetric').textContent = netRev.toFixed(2) + ' SAR';
+            document.getElementById('totalCash').textContent = totalCashVal.toFixed(2) + ' SAR';
+
+            // Render Staff Performance Body
+            const staffBody = document.getElementById('staffPerformanceBody');
+            staffBody.innerHTML = '';
+            let hasStaffData = false;
+            for(let staffName in staffStats) {
+                const stat = staffStats[staffName];
+                if(stat.count > 0 || filterStaff === 'ALL') {
+                    hasStaffData = true;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${staffName}</strong></td>
+                        <td>${stat.count}</td>
+                        <td>${stat.sales.toFixed(2)} ر.س</td>
+                        <td style="color:var(--primary); font-weight:bold;">${stat.commission.toFixed(2)} ر.س</td>
+                    `;
+                    staffBody.appendChild(tr);
+                }
+            }
+            if(!hasStaffData) {
+                staffBody.innerHTML = `<tr class="empty-row"><td colspan="4">لا توجد بيانات إنتاجية للفترة المحددة</td></tr>`;
+            }
+
+            // Render Invoices Table Body
+            const invBody = document.getElementById('invoicesTableBody');
+            invBody.innerHTML = '';
+            if(filteredInvoices.length === 0) {
+                invBody.innerHTML = `<tr class="empty-row"><td colspan="8">لا توجد فواتير مطابقة لخيارات البحث</td></tr>`;
+                return;
+            }
+            filteredInvoices.slice().reverse().forEach(inv => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${inv.serial}</strong></td>
+                    <td>${inv.date}</td>
+                    <td>${inv.staff}</td>
+                    <td>${inv.service} (${inv.duration})</td>
+                    <td style="font-weight:bold; color:var(--primary);">${inv.price.toFixed(2)} ر.س</td>
+                    <td>${inv.payMethod}</td>
+                    <td>${inv.location}</td>
+                    <td class="no-print">
+                        <button class="btn btn-danger" onclick="deleteInvoice(${inv.id})"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                invBody.appendChild(tr);
+            });
+        }
+
+        function clearDateFilter() {
+            document.getElementById('filterDate').value = '';
+            loadReports();
+        }
+
+        // Admin & Settings Modal
+        function openAdminModal() {
+            renderAdminConfig();
+            document.getElementById('adminModal').classList.add('active');
+        }
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.remove('active');
+            populateDropdowns();
+            loadReports();
+        }
+
+        function openDeveloperModal() {
+            document.getElementById('developerModal').classList.add('active');
+        }
+        function closeDeveloperModal() {
+            document.getElementById('developerModal').classList.remove('active');
+        }
+
+        function renderAdminConfig() {
+            // Staff config list
+            const staffListDiv = document.getElementById('staffListConfig');
+            staffListDiv.innerHTML = '';
+            staffList.forEach((s, idx) => {
+                const div = document.createElement('div');
+                div.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#F8FAFC; padding:6px 10px; border-radius:6px; border:1px solid var(--border);";
+                div.innerHTML = `<span><strong>${s}</strong> (النسبة: 30%)</span> <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="removeStaff(${idx})"><i class="fa-solid fa-xmark"></i></button>`;
+                staffListDiv.appendChild(div);
+            });
+
+            // Services config list
+            const srvListDiv = document.getElementById('servicesListConfig');
+            srvListDiv.innerHTML = '';
+            servicesList.forEach((srv, idx) => {
+                const div = document.createElement('div');
+                div.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#F8FAFC; padding:6px 10px; border-radius:6px; border:1px solid var(--border);";
+                div.innerHTML = `<span><strong>${srv.name}</strong> - ${srv.price} ر.س</span> <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="removeService(${idx})"><i class="fa-solid fa-xmark"></i></button>`;
+                srvListDiv.appendChild(div);
+            });
+        }
+
+        function addNewStaff() {
+            const name = document.getElementById('newStaffName').value.trim();
+            if(name && !staffList.includes(name)) {
+                staffList.push(name);
+                localStorage.setItem('haiba_staff', JSON.stringify(staffList));
+                document.getElementById('newStaffName').value = '';
+                renderAdminConfig();
             }
         }
 
-        if (activeStaffCount === 0) {
-            staffPerfBody.innerHTML = `<tr class="empty-row"><td colspan="4">لا توجد بيانات إنتاجية مسجلة للفترة المحددة</td></tr>`;
-        }
-
-        // جدول تفاصيل الفواتير
-        const reportsTableBody = document.getElementById('reportsTableBody');
-        reportsTableBody.innerHTML = '';
-
-        if (filteredInvoices.length === 0) {
-            reportsTableBody.innerHTML = `<tr class="empty-row"><td colspan="8">لا توجد فواتير مطابقة لخيارات البحث</td></tr>`;
-            return;
-        }
-
-        filteredInvoices.slice().reverse().forEach(inv => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><strong>${inv.serial}</strong></td>
-                <td>${inv.date} <span style="font-size:0.75rem; color:var(--text-muted);">${inv.time}</span></td>
-                <td>${inv.staff}</td>
-                <td>${inv.service}</td>
-                <td>${inv.location}</td>
-                <td><span class="chip" style="background:#E2E8F0;">${inv.paymentMethod}</span></td>
-                <td style="font-weight:bold; color:#166534;">${inv.price.toFixed(2)} ر.س</td>
-                <td class="no-print"><button class="btn btn-danger" onclick="deleteInvoice(${inv.id})"><i class="fa-solid fa-trash"></i></button></td>
-            `;
-            reportsTableBody.appendChild(tr);
-        });
-    }
-
-    // طباعة العناصر الحرارية أو التقارير
-    function printElement(elemId) {
-        if (elemId === 'reports') {
-            // نسخ محتوى التقارير إلى منطقة الطباعة الخفية لضمان تقرير نظيف
-            const reportContent = document.getElementById('reports').innerHTML;
-            const printArea = document.getElementById('printArea');
-            printArea.innerHTML = `
-                <div style="text-align:center; margin-bottom:15px; border-bottom:2px solid #000; padding-bottom:10px;">
-                    <h2 style="font-size:18px; font-weight:bold;">مركز هيبة الاسترخاء - تقرير الإيرادات والشفت</h2>
-                    <p style="font-size:12px; margin-top:4px;">تاريخ الطباعة: ${new Date().toLocaleString('ar-SA')}</p>
-                </div>
-            ` + reportContent;
-
-            document.body.classList.add('print-report-mode');
-            window.print();
-            document.body.classList.remove('print-report-mode');
-        } else if (elemId === 'thermal-receipt') {
-            const printContents = document.getElementById(elemId).innerHTML;
-            const originalContents = document.body.innerHTML;
-
-            document.body.innerHTML = `
-                <div style="display: flex; justify-content: center; align-items: flex-start; width: 100mm; margin: 0 auto; padding: 10px;">
-                    <div style="width: 72mm; font-family: 'Tajawal', monospace; font-size: 13px; font-weight:700; line-height: 1.5; color: #000;">
-                        ${printContents}
-                    </div>
-                </div>
-            `;
-            window.print();
-            document.body.innerHTML = originalContents;
-            window.location.reload(); // إعادة تحميل الصفحة لإعادة ربط الأحداث البرمجية
-        }
-    }
-
-    // تصدير PDF احترافي باستخدام html2pdf
-    function exportPDF(elemId, filenamePrefix) {
-        const element = document.getElementById(elemId);
-        const opt = {
-            margin:       5,
-            filename:     filenamePrefix + '_' + Date.now() + '.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: [80, 150], orientation: 'portrait' }
-        };
-
-        html2pdf().from(element).set(opt).save();
-    }
-
-    // لوحة الإدارة
-    function openAdminModal() {
-        document.getElementById('adminModal').classList.add('active');
-        document.getElementById('loginSec').style.display = 'block';
-        document.getElementById('adminControls').style.display = 'none';
-        document.getElementById('adminPass').value = '';
-    }
-
-    function checkAdmin() {
-        const pass = document.getElementById('adminPass').value;
-        if (pass === '1234' || pass === 'admin123' || pass === '0000') {
-            document.getElementById('loginSec').style.display = 'none';
-            document.getElementById('adminControls').style.display = 'block';
-            renderAdminStaffList();
-            renderAdminServiceList();
-        } else {
-            alert('رمز الدخول غير صحيح! الرمز الافتراضي هو: 1234');
-        }
-    }
-
-    function renderAdminStaffList() {
-        const ul = document.getElementById('staffListUI');
-        ul.innerHTML = '';
-        staffList.forEach((st, idx) => {
-            const li = document.createElement('li');
-            li.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #E2E8F0; font-size:0.85rem;";
-            li.innerHTML = `
-                <span>${st}</span>
-                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="removeStaff(${idx})"><i class="fa-solid fa-xmark"></i> حذف</button>
-            `;
-            ul.appendChild(li);
-        });
-    }
-
-    function addStaff() {
-        const nameInput = document.getElementById('newStaffName');
-        const name = nameInput.value.trim();
-        if (name && !staffList.includes(name)) {
-            staffList.push(name);
-            localStorage.setItem('haiba_staff', JSON.stringify(staffList));
-            nameInput.value = '';
-            renderAdminStaffList();
-            populateDropdowns();
-        } else {
-            alert('الاسم موجود مسبقاً أو الحقل فارغ.');
-        }
-    }
-
-    function removeStaff(idx) {
-        if (staffList.length <= 1) {
-            alert('يجب أن يبقى عامل واحد على الأقل في النظام.');
-            return;
-        }
-        if (confirm('هل أنت متأكد من حذف هذا العامل؟')) {
+        function removeStaff(idx) {
+            if(staffList.length <= 1) {
+                alert('يجب أن يكون هناك عامل واحد على الأقل في النظام.');
+                return;
+            }
             staffList.splice(idx, 1);
             localStorage.setItem('haiba_staff', JSON.stringify(staffList));
-            renderAdminStaffList();
-            populateDropdowns();
+            renderAdminConfig();
         }
-    }
 
-    function renderAdminServiceList() {
-        const ul = document.getElementById('serviceListUI');
-        ul.innerHTML = '';
-        servicesList.forEach((srv, idx) => {
-            const li = document.createElement('li');
-            li.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #E2E8F0; font-size:0.85rem;";
-            li.innerHTML = `
-                <span>${srv.name} - <strong>${srv.price} ر.س</strong></span>
-                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="removeService(${idx})"><i class="fa-solid fa-xmark"></i> حذف</button>
-            `;
-            ul.appendChild(li);
-        });
-    }
-
-    function addService() {
-        const nameInput = document.getElementById('newServiceName');
-        const priceInput = document.getElementById('newServicePrice');
-        const name = nameInput.value.trim();
-        const price = parseFloat(priceInput.value);
-
-        if (name && !isNaN(price)) {
-            servicesList.push({ name, price });
-            localStorage.setItem('haiba_services', JSON.stringify(servicesList));
-            nameInput.value = '';
-            priceInput.value = '';
-            renderAdminServiceList();
-            populateDropdowns();
-        } else {
-            alert('يرجى إدخال اسم الخدمة والسعر بشكل صحيح.');
+        function addNewService() {
+            const name = document.getElementById('newServiceName').value.trim();
+            const price = parseFloat(document.getElementById('newServicePrice').value);
+            if(name && !isNaN(price)) {
+                servicesList.push({ name, price });
+                localStorage.setItem('haiba_services', JSON.stringify(servicesList));
+                document.getElementById('newServiceName').value = '';
+                document.getElementById('newServicePrice').value = '';
+                renderAdminConfig();
+            }
         }
-    }
 
-    function removeService(idx) {
-        if (servicesList.length <= 1) {
-            alert('يجب أن تبقى خدمة واحدة على الأقل في النظام.');
-            return;
-        }
-        if (confirm('هل أنت متأكد من حذف هذه الخدمة؟')) {
+        function removeService(idx) {
+            if(servicesList.length <= 1) {
+                alert('يجب أن تكون هناك خدمة واحدة على الأقل في النظام.');
+                return;
+            }
             servicesList.splice(idx, 1);
             localStorage.setItem('haiba_services', JSON.stringify(servicesList));
-            renderAdminServiceList();
-            populateDropdowns();
+            renderAdminConfig();
         }
-    }
 
-    function resetAllData() {
-        if (confirm('تحذير خطير: هل أنت متأكد تماماً من رغبتك في حذف جميع الفواتير والمصروفات وتصفير النظام؟ لا يمكن التراجع عن هذا الإجراء.')) {
-            localStorage.removeItem('haiba_invoices');
-            localStorage.removeItem('haiba_expenses');
-            invoices = [];
-            expenses = [];
-            alert('تم تصفير كافة البيانات بنجاح.');
-            window.location.reload();
+        // Backup & Restore
+        function exportDataJSON() {
+            const backupObj = {
+                staff: staffList,
+                services: servicesList,
+                invoices: invoices,
+                expenses: expenses,
+                exportDate: new Date().toISOString()
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", `Haiba_Center_Backup_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
         }
-    }
 
-    function openDeveloperModal() {
-        document.getElementById('developerModal').classList.add('active');
-    }
+        function importDataJSON(e) {
+            const fileReader = new FileReader();
+            if(e.target.files[0]) {
+                fileReader.readAsText(e.target.files[0], "UTF-8");
+                fileReader.onload = function(event) {
+                    try {
+                        const parsed = JSON.parse(event.target.result);
+                        if(parsed.invoices && parsed.staff) {
+                            staffList = parsed.staff;
+                            servicesList = parsed.services || defaultServices;
+                            invoices = parsed.invoices;
+                            expenses = parsed.expenses || [];
 
-    function closeModal(modalId) {
-        document.getElementById(modalId).classList.remove('active');
-    }
+                            localStorage.setItem('haiba_staff', JSON.stringify(staffList));
+                            localStorage.setItem('haiba_services', JSON.stringify(servicesList));
+                            localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
+                            localStorage.setItem('haiba_expenses', JSON.stringify(expenses));
 
-    // إغلاق النوافذ عند النقر خارجها
-    window.onclick = function(event) {
-        if (event.target.classList.contains('modal')) {
-            event.target.classList.remove('active');
+                            alert('تم استعادة البيانات بنجاح!');
+                            closeAdminModal();
+                            populateDropdowns();
+                            updateLivePreview();
+                            loadReports();
+                            renderExpensesTable();
+                        } else {
+                            alert('ملف النسخ الاحتياطي غير صالح.');
+                        }
+                    } catch(err) {
+                        alert('حدث خطأ أثناء قراءة ملف النسخ الاحتياطي.');
+                    }
+                };
+            }
         }
-    }
-</script>
 
-```
+        // Print & PDF Functions
+        function printElement(elementId) {
+            if(elementId === 'reports') {
+                document.body.classList.add('print-report-mode');
+                const printArea = document.getElementById('printArea');
+                const reportsContent = document.querySelector('#reports .card').cloneNode(true);
+                printArea.innerHTML = '';
+                printArea.appendChild(reportsContent);
+
+                window.print();
+                document.body.classList.remove('print-report-mode');
+                printArea.innerHTML = '';
+            } else {
+                const el = document.getElementById(elementId);
+                const win = window.open('', '', 'height=700,width=450');
+                win.document.write('<html><head><title>طباعة الفاتورة - مركز هيبة الاسترخاء</title>');
+                win.document.write('<style>body { font-family: Tajawal, sans-serif; direction: rtl; text-align: right; padding: 10px; }</style>');
+                win.document.write('</head><body>');
+                win.document.write(el.innerHTML);
+                win.document.write('</body></html>');
+                win.document.close();
+                win.focus();
+                setTimeout(() => {
+                    win.print();
+                    win.close();
+                }, 300);
+            }
+        }
+
+        function exportPDF(elementId, filenamePrefix) {
+            const element = document.getElementById(elementId);
+            const opt = {
+                margin:       5,
+                filename:     `${filenamePrefix}_${Date.now()}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: [80, 150], orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
+        }
+    </script>
+</body>
+</html>
