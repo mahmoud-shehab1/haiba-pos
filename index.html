@@ -127,15 +127,15 @@
 
         .thermal-wrapper { display: flex; justify-content: center; width: 100%; }
         .thermal-box {
-            width: 58mm; padding: 8px; background: #FFF !important;
-            font-family: 'Tajawal', 'Courier New', monospace; font-size: 12px; font-weight: 700; line-height: 1.4; color: #000 !important; border: 1px dashed #CBD5E1;
-            border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 5px; text-align: inherit;
+            width: 72mm; padding: 10px; background: #FFF !important;
+            font-family: 'Tajawal', 'Courier New', monospace; font-size: 13px; font-weight: 700; line-height: 1.5; color: #000 !important; border: 1px dashed #CBD5E1;
+            border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 6px; text-align: inherit;
         }
-        .thermal-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 6px; margin-bottom: 3px; }
-        .thermal-header h3 { font-size: 13px; font-weight: 900; margin-bottom: 3px; }
-        .thermal-row { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 12px; font-weight: 700; }
+        .thermal-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 3px; }
+        .thermal-header h3 { font-size: 15px; font-weight: 900; margin-bottom: 3px; }
+        .thermal-row { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 13px; font-weight: 700; }
         .thermal-divider { border-top: 1px dashed #000; margin: 4px 0; width: 100%; }
-        .thermal-total { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 5px 0; font-weight: 900; font-size: 13px; margin-top: 3px; }
+        .thermal-total { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 6px 0; font-weight: 900; font-size: 15px; margin-top: 3px; }
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -156,25 +156,34 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         #loadingText { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
-        #loadingSubtext { font-weight: 500; color: var(--text-muted); font-size: 0.8rem; }
 
-        .storage-note {
-            font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;
-        }
+        .storage-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* منطقة الطباعة الخفية: تُستخدم فقط لطباعة تبويب التقارير كصفحة كاملة نظيفة */
+        #printArea { display: none; }
 
         @media print {
             .no-print { display: none !important; }
+            body.print-report-mode * { visibility: hidden; }
+            body.print-report-mode #printArea,
+            body.print-report-mode #printArea * { visibility: visible !important; }
+            body.print-report-mode #printArea {
+                display: block !important; position: absolute; top: 0; left: 0; width: 100%; padding: 12px;
+            }
+            body.print-report-mode #printArea .no-print { display: none !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- شاشة التحميل: تظهر أثناء تحميل البيانات المحفوظة، وتختفي بعد اكتمال التحميل -->
+    <!-- شاشة تحميل قصيرة أثناء تهيئة التطبيق وقراءة البيانات المحفوظة -->
     <div id="loadingOverlay">
         <div class="spinner"></div>
         <p id="loadingText">جاري تحميل البيانات...</p>
-        <p id="loadingSubtext">Loading your saved data</p>
     </div>
+
+    <!-- منطقة مخفية تُستخدم فقط عند طباعة تبويب التقارير -->
+    <div id="printArea"></div>
 
     <header class="no-print">
         <div class="brand">
@@ -279,8 +288,8 @@
                         <div class="thermal-box" id="thermal-receipt">
                             <div class="thermal-header">
                                 <h3 data-i18n="centerTitle">مركز هيبة الاسترخاء</h3>
-                                <p style="font-size:11px;" data-i18n="centerSubShort">جدة - المساج والحمام المغربي</p>
-                                <p id="r-date" style="margin-top:3px; font-size:11px; font-weight:bold;"></p>
+                                <p style="font-size:12px;" data-i18n="centerSubShort">جدة - المساج والحمام المغربي</p>
+                                <p id="r-date" style="margin-top:3px; font-size:12px; font-weight:bold;"></p>
                             </div>
                             
                             <div class="thermal-row"><span data-i18n="rSerial">رقم الفاتورة:</span><strong id="r-serial">HS-000001</strong></div>
@@ -298,7 +307,7 @@
                                 <span id="r-price">0.00 ر.س</span>
                             </div>
                             
-                            <div style="text-align:center; margin-top:8px; font-size:11px; font-weight:700;">
+                            <div style="text-align:center; margin-top:8px; font-size:12px; font-weight:700;">
                                 <p data-i18n="rFooter1">أهلاً بكم - نتمنى لكم تجربة ممتعة</p>
                                 <p style="margin-top:2px;" data-i18n="rFooter2">يرجى الاحتفاظ بالفاتورة</p>
                             </div>
@@ -966,11 +975,13 @@
             }
         };
 
-        // اللغة الافتراضية للجلسة الحالية (لا يتم حفظها بين الجلسات لتفادي أي استخدام لتخزين المتصفح)
+        // اللغة الافتراضية (تُحفظ محلياً على هذا الموقع فقط، ليست مشكلة على موقع منشور بعنوان ثابت)
         let currentLang = 'ar';
+        try { currentLang = localStorage.getItem('haiba_lang') || 'ar'; } catch (e) {}
 
         function changeLanguage(lang) {
             currentLang = lang;
+            try { localStorage.setItem('haiba_lang', lang); } catch (e) {}
             const html = document.getElementById('htmlRoot');
             html.setAttribute('lang', lang);
             if (lang === 'ar' || lang === 'bn') {
@@ -992,11 +1003,8 @@
             });
         }
 
-        // === طبقة البيانات ===
-        // مهم جداً: هذا التطبيق لا يستخدم أي تخزين متصفح (localStorage) لأنه غير موثوق داخل بيئة المعاينة
-        // وقد يفقد بياناتك بين الجلسات. بدلاً من ذلك يتم استخدام تخزين دائم مرتبط بحسابك (window.storage)
-        // بحيث تبقى فواتيرك ومصروفاتك محفوظة مهما أعدت فتح الصفحة أو غيّرت الجهاز.
-        const STORAGE_KEY = 'haiba_pos_data';
+        // === طبقة البيانات (localStorage - مناسب لموقع منشور بعنوان ثابت مثل GitHub Pages) ===
+        const STORAGE_KEY = 'haiba_pos_data_v2';
 
         function getDefaultDB() {
             return {
@@ -1014,42 +1022,69 @@
             };
         }
 
-        let db = getDefaultDB();
-
-        async function loadDB() {
-            try {
-                const result = await window.storage.get(STORAGE_KEY, false);
-                if (result && result.value) {
-                    const parsed = JSON.parse(result.value);
-                    db = Object.assign(getDefaultDB(), parsed);
-                } else {
-                    db = getDefaultDB();
+        function computeNextSerial(invoices) {
+            let max = 0;
+            (invoices || []).forEach(inv => {
+                const m = /HS-0*(\d+)/.exec(inv.serial || '');
+                if (m) {
+                    const n = parseInt(m[1], 10);
+                    if (n > max) max = n;
                 }
-            } catch (err) {
-                // لا توجد بيانات محفوظة بعد (أول استخدام) أو خطأ في القراءة -> نبدأ بقيم افتراضية وننشئ السجل
-                db = getDefaultDB();
-                try {
-                    await window.storage.set(STORAGE_KEY, JSON.stringify(db), false);
-                } catch (err2) {
-                    console.error('Initial save failed:', err2);
-                }
-            }
+            });
+            return max + 1;
         }
 
-        async function saveDB() {
+        // تحميل البيانات: يقرأ المفتاح الحالي، وإن لم يجده يحاول استرجاع بيانات
+        // محفوظة سابقاً تحت المفاتيح القديمة (من نسخة سابقة من التطبيق) حتى لا تُفقد أي فاتورة قديمة.
+        function loadDB() {
             try {
-                const result = await window.storage.set(STORAGE_KEY, JSON.stringify(db), false);
-                if (!result) {
-                    alert(currentLang === 'ar' ? 'تعذّر حفظ البيانات، يرجى المحاولة مرة أخرى.' : 'Failed to save data, please try again.');
-                    return false;
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    return Object.assign(getDefaultDB(), JSON.parse(raw));
                 }
+            } catch (e) {
+                console.error('Read error:', e);
+            }
+
+            try {
+                const legacyInvoices = localStorage.getItem('haiba_invoices');
+                const legacyExpenses = localStorage.getItem('haiba_expenses');
+                const legacyStaff = localStorage.getItem('haiba_staff');
+                const legacyServices = localStorage.getItem('haiba_services');
+                const legacyAdminPass = localStorage.getItem('haiba_admin_pass');
+
+                if (legacyInvoices || legacyExpenses || legacyStaff || legacyServices) {
+                    const migrated = getDefaultDB();
+                    if (legacyStaff) migrated.staff = JSON.parse(legacyStaff);
+                    if (legacyServices) migrated.services = JSON.parse(legacyServices);
+                    if (legacyInvoices) migrated.invoices = JSON.parse(legacyInvoices);
+                    if (legacyExpenses) migrated.expenses = JSON.parse(legacyExpenses);
+                    if (legacyAdminPass) migrated.adminPass = legacyAdminPass;
+                    migrated.nextSerial = computeNextSerial(migrated.invoices);
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+                    return migrated;
+                }
+            } catch (e) {
+                console.error('Migration error:', e);
+            }
+
+            const fresh = getDefaultDB();
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh)); } catch (e) {}
+            return fresh;
+        }
+
+        function saveDB() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
                 return true;
-            } catch (err) {
-                console.error('Save error:', err);
-                alert(currentLang === 'ar' ? 'حدث خطأ أثناء حفظ البيانات. تحقق من اتصالك وحاول مرة أخرى.' : 'An error occurred while saving data. Check your connection and try again.');
+            } catch (e) {
+                console.error('Save error:', e);
+                alert(currentLang === 'ar' ? 'تعذّر حفظ البيانات محلياً. قد تكون مساحة تخزين المتصفح ممتلئة.' : 'Failed to save data locally. Browser storage may be full.');
                 return false;
             }
         }
+
+        let db = loadDB();
 
         // التنقل بين التبويبات
         function switchTab(tabId) {
@@ -1071,20 +1106,18 @@
             document.getElementById('devModal').classList.add('active');
         }
 
-        // تهيئة الشاشة وتعبئة القوائم (تُستدعى مرة واحدة عند بدء التطبيق)
-        async function initApp() {
-            await loadDB();
-
+        // تهيئة الشاشة وتعبئة القوائم
+        function initApp() {
             document.getElementById('langSelect').value = currentLang;
             changeLanguage(currentLang);
 
+            resetInvoiceFormState();
+
             const today = new Date().toISOString().split('T')[0];
-            document.getElementById('invDateInput').value = today;
             document.getElementById('expDate').value = today;
-            // نترك تصفية التاريخ في التقارير فارغة افتراضياً لعرض كل الفواتير من كل الأيام
+            // تصفية التاريخ في التقارير تبقى فارغة افتراضياً لعرض فواتير كل الأيام معاً
             document.getElementById('filterDate').value = '';
 
-            resetInvoiceFormState();
             populateDropdowns();
             updateLivePreview();
 
@@ -1155,11 +1188,9 @@
             document.getElementById('r-time').innerText = new Date().toLocaleTimeString('ar-SA');
         }
 
-        // حفظ الفاتورة (يُحفظ الآن في التخزين الدائم بدل localStorage)
-        async function saveInvoice(e) {
+        // حفظ الفاتورة
+        function saveInvoice(e) {
             e.preventDefault();
-            const saveBtn = document.getElementById('saveBtn');
-            saveBtn.disabled = true;
 
             const newInv = {
                 id: Date.now(),
@@ -1177,22 +1208,19 @@
             db.invoices.push(newInv);
             db.nextSerial += 1;
 
-            const ok = await saveDB();
-            saveBtn.disabled = false;
-
+            const ok = saveDB();
             if (ok) {
                 alert(currentLang === 'ar' ? 'تم حفظ الفاتورة بنجاح!' : 'Invoice saved successfully!');
                 resetInvoiceFormState();
                 updateLivePreview();
             } else {
-                // فشل الحفظ: نتراجع عن التغييرات المحلية حتى لا يختلف العدّاد عمّا هو محفوظ فعلياً
                 db.invoices.pop();
                 db.nextSerial -= 1;
             }
         }
 
         // حفظ المصروف
-        async function saveExpense(e) {
+        function saveExpense(e) {
             e.preventDefault();
             const exp = {
                 id: Date.now(),
@@ -1202,7 +1230,7 @@
                 user: document.getElementById('expUser').value || 'الإدارة'
             };
             db.expenses.push(exp);
-            const ok = await saveDB();
+            const ok = saveDB();
             if (ok) {
                 document.getElementById('expenseForm').reset();
                 document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
@@ -1220,7 +1248,6 @@
                 tbody.innerHTML = `<tr class="empty-row"><td colspan="5">${dict[currentLang].noDataRow || 'لا توجد بيانات'}</td></tr>`;
                 return;
             }
-            // الأحدث أولاً لتسهيل المتابعة
             [...db.expenses].sort((a, b) => b.id - a.id).forEach(ex => {
                 tbody.innerHTML += `
                     <tr>
@@ -1234,11 +1261,11 @@
             });
         }
 
-        async function deleteExpense(id) {
+        function deleteExpense(id) {
             if (confirm(currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا المصروف؟' : 'Are you sure to delete this expense?')) {
                 const backup = db.expenses;
                 db.expenses = db.expenses.filter(x => x.id !== id);
-                const ok = await saveDB();
+                const ok = saveDB();
                 if (ok) {
                     loadExpensesTable();
                 } else {
@@ -1247,7 +1274,7 @@
             }
         }
 
-        // التقارير والشفتات (تصفية اختيارية حسب التاريخ - فارغ = كل التواريخ)
+        // التقارير: تصفية اختيارية حسب التاريخ (فارغ = كل التواريخ)
         function loadReports() {
             const filterDate = document.getElementById('filterDate').value;
             const filterStaff = document.getElementById('filterStaff').value;
@@ -1276,7 +1303,6 @@
             document.getElementById('netRevenueMetric').innerText = netRev.toFixed(2) + ' SAR';
             document.getElementById('totalCash').innerText = totalCash.toFixed(2) + ' SAR';
 
-            // أداء العمال
             let staffPerfBody = document.getElementById('staffPerformanceBody');
             staffPerfBody.innerHTML = '';
             let staffMap = {};
@@ -1303,7 +1329,6 @@
                 });
             }
 
-            // تفاصيل الفواتير (الأحدث أولاً)
             let reportsTableBody = document.getElementById('reportsTableBody');
             reportsTableBody.innerHTML = '';
             if (filteredInvoices.length === 0) {
@@ -1336,11 +1361,11 @@
             loadReports();
         }
 
-        async function deleteInvoice(id) {
+        function deleteInvoice(id) {
             if (confirm(currentLang === 'ar' ? 'هل تريد حذف هذه الفاتورة نهائياً؟' : 'Delete this invoice permanently?')) {
                 const backup = db.invoices;
                 db.invoices = db.invoices.filter(i => i.id !== id);
-                const ok = await saveDB();
+                const ok = saveDB();
                 if (ok) {
                     loadReports();
                 } else {
@@ -1367,7 +1392,7 @@
             }
         }
 
-        async function submitEditInvoice() {
+        function submitEditInvoice() {
             const id = parseInt(document.getElementById('editInvId').value);
             const newPrice = parseFloat(document.getElementById('editInvPrice').value);
             const newStaff = document.getElementById('editInvStaff').value;
@@ -1379,7 +1404,7 @@
                 inv.price = newPrice;
                 inv.staff = newStaff;
                 inv.location = newLoc;
-                const ok = await saveDB();
+                const ok = saveDB();
                 if (ok) {
                     closeModal('editInvoiceModal');
                     loadReports();
@@ -1390,7 +1415,7 @@
             }
         }
 
-        // الإدارة والمالك (مع إمكانية تعديل وتصحيح أسماء العمال)
+        // الإدارة والمالك
         function checkAdmin() {
             const pass = document.getElementById('adminPass').value;
             if (pass === db.adminPass) {
@@ -1411,12 +1436,12 @@
             }
         }
 
-        async function updateAdminPassword() {
+        function updateAdminPassword() {
             const newPass = document.getElementById('newAdminPasswordVal').value;
             if (newPass.trim()) {
                 const backup = db.adminPass;
                 db.adminPass = newPass;
-                const ok = await saveDB();
+                const ok = saveDB();
                 if (ok) {
                     alert(currentLang === 'ar' ? 'تم تحديث كلمة مرور المدير بنجاح.' : 'Manager password updated successfully.');
                     closeModal('devModal');
@@ -1447,11 +1472,11 @@
             });
         }
 
-        async function addStaff() {
+        function addStaff() {
             const name = document.getElementById('newStaffName').value.trim();
             if (name && !db.staff.includes(name)) {
                 db.staff.push(name);
-                const ok = await saveDB();
+                const ok = saveDB();
                 if (ok) {
                     document.getElementById('newStaffName').value = '';
                     renderAdminLists();
@@ -1462,14 +1487,13 @@
             }
         }
 
-        async function updateStaffName(idx) {
+        function updateStaffName(idx) {
             const inputField = document.getElementById(`staff_name_${idx}`);
             const newName = inputField.value.trim();
             if (newName) {
                 const oldName = db.staff[idx];
                 db.staff[idx] = newName;
 
-                // انعكاس تعديل الاسم على كافة الفواتير السابقة لضمان عدم ضياع أي بيانات
                 const touchedInvoices = [];
                 db.invoices.forEach(inv => {
                     if (inv.staff === oldName) {
@@ -1478,7 +1502,7 @@
                     }
                 });
 
-                const ok = await saveDB();
+                const ok = saveDB();
                 if (ok) {
                     renderAdminLists();
                     populateDropdowns();
@@ -1490,10 +1514,10 @@
             }
         }
 
-        async function removeStaff(idx) {
+        function removeStaff(idx) {
             const removed = db.staff[idx];
             db.staff.splice(idx, 1);
-            const ok = await saveDB();
+            const ok = saveDB();
             if (ok) {
                 renderAdminLists();
                 populateDropdowns();
@@ -1502,12 +1526,12 @@
             }
         }
 
-        async function addService() {
+        function addService() {
             const name = document.getElementById('newServiceName').value.trim();
             const price = parseFloat(document.getElementById('newServicePrice').value);
             if (name && !isNaN(price)) {
                 db.services.push({ name, price });
-                const ok = await saveDB();
+                const ok = saveDB();
                 if (ok) {
                     document.getElementById('newServiceName').value = '';
                     document.getElementById('newServicePrice').value = '';
@@ -1519,10 +1543,10 @@
             }
         }
 
-        async function removeService(idx) {
+        function removeService(idx) {
             const removed = db.services[idx];
             db.services.splice(idx, 1);
-            const ok = await saveDB();
+            const ok = saveDB();
             if (ok) {
                 renderAdminLists();
                 populateDropdowns();
@@ -1531,21 +1555,87 @@
             }
         }
 
+        // === الطباعة ===
+        // نوزّع حسب العنصر المطلوب طباعته: الفاتورة الحرارية تُطبع في نافذة مستقلة
+        // بحجم ورق 80مم (يطابق طابعتك الحرارية)، والتقرير يُطبع كصفحة عادية كاملة
+        // دون سحب باقي عناصر الواجهة (الأزرار والقوائم) معه.
         function printElement(elemId) {
+            if (elemId === 'thermal-receipt') {
+                printReceipt();
+            } else {
+                printReportArea(elemId);
+            }
+        }
+
+        function printReceipt() {
+            const el = document.getElementById('thermal-receipt');
+            const w = window.open('', '_blank', 'width=380,height=650');
+            if (!w) {
+                alert(currentLang === 'ar' ? 'يرجى السماح بالنوافذ المنبثقة لهذا الموقع لتتمكن من الطباعة.' : 'Please allow pop-ups for this site to print.');
+                return;
+            }
+            const html = `<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>فاتورة</title>
+<style>
+  @page { size: 80mm auto; margin: 3mm; }
+  * { box-sizing: border-box; font-family: 'Tajawal', 'Arial', 'Courier New', monospace; }
+  body { margin: 0; padding: 6px; color: #000; }
+  .thermal-header { text-align: center; border-bottom: 2px dashed #000; padding-bottom: 8px; margin-bottom: 8px; }
+  .thermal-header h3 { font-size: 19px; font-weight: 900; margin: 0 0 5px; }
+  .thermal-header p { font-size: 14px; font-weight: 700; margin: 3px 0; }
+  .thermal-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; margin: 6px 0; gap: 10px; }
+  .thermal-divider { border-top: 1px dashed #000; margin: 8px 0; }
+  .thermal-total { border-top: 3px solid #000; border-bottom: 3px solid #000; padding: 8px 0; font-weight: 900; font-size: 18px; margin-top: 6px; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>${el.innerHTML}</body>
+</html>`;
+            w.document.open();
+            w.document.write(html);
+            w.document.close();
+            w.onload = function () {
+                w.focus();
+                w.print();
+                setTimeout(function () { w.close(); }, 300);
+            };
+        }
+
+        function printReportArea(elemId) {
+            const source = document.getElementById(elemId);
+            const printArea = document.getElementById('printArea');
+            printArea.innerHTML = source.innerHTML;
+            document.body.classList.add('print-report-mode');
             window.print();
+            setTimeout(function () {
+                printArea.innerHTML = '';
+                document.body.classList.remove('print-report-mode');
+            }, 500);
         }
 
         function exportPDF(elemId, filename) {
             const element = document.getElementById(elemId);
-            html2pdf().from(element).save(filename + '.pdf');
+            const widthMM = 80;
+            const heightMM = Math.max(120, Math.round(element.scrollHeight * 0.28) + 20);
+            const opt = {
+                margin: 2,
+                filename: filename + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3, useCORS: true },
+                jsPDF: { unit: 'mm', format: [widthMM, heightMM], orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            initApp().catch(err => {
+            try {
+                initApp();
+            } catch (err) {
                 console.error('App init failed:', err);
-                document.getElementById('loadingText').innerText = 'حدث خطأ أثناء تحميل التطبيق';
-                document.getElementById('loadingSubtext').innerText = 'يرجى تحديث الصفحة والمحاولة مرة أخرى';
-            });
+                document.getElementById('loadingText').innerText = 'حدث خطأ أثناء تحميل التطبيق - يرجى تحديث الصفحة';
+            }
         });
     </script>
 </body>
