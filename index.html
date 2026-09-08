@@ -1294,7 +1294,7 @@
             let totalExp = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
             let totalCash = filteredInvoices.filter(i => i.pay === 'كاش' || i.pay === 'Cash').reduce((sum, i) => sum + i.price, 0);
 
-            let totalStaffComm = totalRev * 0.35;
+            let totalStaffComm = totalRev * 0.30;
             let netRev = totalRev - totalStaffComm - totalExp;
 
             document.getElementById('totalRevenue').innerText = totalRev.toFixed(2) + ' SAR';
