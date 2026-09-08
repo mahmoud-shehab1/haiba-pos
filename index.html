@@ -127,15 +127,15 @@
 
         .thermal-wrapper { display: flex; justify-content: center; width: 100%; }
         .thermal-box {
-            width: 72mm; padding: 10px; background: #FFF !important;
-            font-family: 'Tajawal', 'Courier New', monospace; font-size: 13px; font-weight: 700; line-height: 1.5; color: #000 !important; border: 1px dashed #CBD5E1;
-            border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 6px; text-align: inherit;
+            width: 58mm; padding: 8px; background: #FFF !important;
+            font-family: 'Tajawal', 'Courier New', monospace; font-size: 12px; font-weight: 700; line-height: 1.4; color: #000 !important; border: 1px dashed #CBD5E1;
+            border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 5px; text-align: inherit;
         }
-        .thermal-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 8px; margin-bottom: 3px; }
-        .thermal-header h3 { font-size: 15px; font-weight: 900; margin-bottom: 3px; }
-        .thermal-row { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 13px; font-weight: 700; }
+        .thermal-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 6px; margin-bottom: 3px; }
+        .thermal-header h3 { font-size: 13px; font-weight: 900; margin-bottom: 3px; }
+        .thermal-row { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 12px; font-weight: 700; }
         .thermal-divider { border-top: 1px dashed #000; margin: 4px 0; width: 100%; }
-        .thermal-total { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 6px 0; font-weight: 900; font-size: 15px; margin-top: 3px; }
+        .thermal-total { border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 5px 0; font-weight: 900; font-size: 13px; margin-top: 3px; }
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -156,31 +156,25 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         #loadingText { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
+        #loadingSubtext { font-weight: 500; color: var(--text-muted); font-size: 0.8rem; }
 
-        .storage-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
-
-        #printArea { display: none; }
+        .storage-note {
+            font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;
+        }
 
         @media print {
             .no-print { display: none !important; }
-            body.print-report-mode * { visibility: hidden; }
-            body.print-report-mode #printArea,
-            body.print-report-mode #printArea * { visibility: visible !important; }
-            body.print-report-mode #printArea {
-                display: block !important; position: absolute; top: 0; left: 0; width: 100%; padding: 12px;
-            }
-            body.print-report-mode #printArea .no-print { display: none !important; }
         }
     </style>
 </head>
 <body>
 
+    <!-- شاشة التحميل: تظهر أثناء تحميل البيانات المحفوظة، وتختفي بعد اكتمال التحميل -->
     <div id="loadingOverlay">
         <div class="spinner"></div>
         <p id="loadingText">جاري تحميل البيانات...</p>
+        <p id="loadingSubtext">Loading your saved data</p>
     </div>
-
-    <div id="printArea"></div>
 
     <header class="no-print">
         <div class="brand">
@@ -285,8 +279,8 @@
                         <div class="thermal-box" id="thermal-receipt">
                             <div class="thermal-header">
                                 <h3 data-i18n="centerTitle">مركز هيبة الاسترخاء</h3>
-                                <p style="font-size:12px;" data-i18n="centerSubShort">جدة - المساج والحمام المغربي</p>
-                                <p id="r-date" style="margin-top:3px; font-size:12px; font-weight:bold;"></p>
+                                <p style="font-size:11px;" data-i18n="centerSubShort">جدة - المساج والحمام المغربي</p>
+                                <p id="r-date" style="margin-top:3px; font-size:11px; font-weight:bold;"></p>
                             </div>
                             
                             <div class="thermal-row"><span data-i18n="rSerial">رقم الفاتورة:</span><strong id="r-serial">HS-000001</strong></div>
@@ -304,7 +298,7 @@
                                 <span id="r-price">0.00 ر.س</span>
                             </div>
                             
-                            <div style="text-align:center; margin-top:8px; font-size:12px; font-weight:700;">
+                            <div style="text-align:center; margin-top:8px; font-size:11px; font-weight:700;">
                                 <p data-i18n="rFooter1">أهلاً بكم - نتمنى لكم تجربة ممتعة</p>
                                 <p style="margin-top:2px;" data-i18n="rFooter2">يرجى الاحتفاظ بالفاتورة</p>
                             </div>
@@ -447,7 +441,7 @@
                                     <th data-i18n="thStaffName">اسم العامل / العاملة</th>
                                     <th data-i18n="thServiceCount">عدد الخدمات</th>
                                     <th data-i18n="thStaffSales">إجمالي مبيعات العامل</th>
-                                    <th data-i18n="thStaffDue">مستحق العامل (العمولة 30%)</th>
+                                    <th data-i18n="thStaffDue">مستحق العامل (العمولة)</th>
                                 </tr>
                             </thead>
                             <tbody id="staffPerformanceBody"></tbody>
@@ -456,22 +450,22 @@
                 </div>
 
                 <div style="margin-top: 1.5rem;">
-                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> <span data-i18n="invLogHeader">سجل الفواتير المصدرة:</span></h3>
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-list-check"></i> <span data-i18n="invoiceDetailsHeader">تفاصيل الفواتير المسجلة:</span></h3>
                     <div class="table-responsive">
                         <table>
                             <thead>
                                 <tr>
-                                    <th data-i18n="thSerial">رقم الفاتورة</th>
-                                    <th data-i18n="thDate">التاريخ</th>
-                                    <th data-i18n="thStaffName">الموظف/ة</th>
+                                    <th data-i18n="thInvNo">رقم الفاتورة</th>
+                                    <th data-i18n="thDateTime">التاريخ والوقت</th>
+                                    <th data-i18n="thStaff">العامل/ة</th>
                                     <th data-i18n="thService">الخدمة</th>
-                                    <th data-i18n="thAmount">السعر</th>
-                                    <th data-i18n="thPay">الدفع</th>
-                                    <th data-i18n="thLoc">الموقع</th>
-                                    <th class="no-print" data-i18n="thAction">إجراء</th>
+                                    <th data-i18n="thLocation">الموقع</th>
+                                    <th data-i18n="thPayMethod">الدفع</th>
+                                    <th data-i18n="thAmountVal">المبلغ</th>
+                                    <th class="no-print" data-i18n="thAction">إجراءات</th>
                                 </tr>
                             </thead>
-                            <tbody id="invoicesTableBody"></tbody>
+                            <tbody id="reportsTableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -479,64 +473,109 @@
         </div>
     </div>
 
-    <!-- Modals for Settings & Developer -->
+    <!-- MODAL: ADMIN PANEL -->
     <div id="adminModal" class="modal">
         <div class="modal-content">
             <div class="card-header">
-                <div class="card-title"><i class="fa-solid fa-gear"></i> <span data-i18n="settingsTitle">إعدادات النظام والعمال والخدمات</span></div>
-                <button class="btn btn-danger" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
+                <div class="card-title"><i class="fa-solid fa-user-gear"></i> <span data-i18n="adminPanelTitle">لوحة تحكم الإعدادات</span></div>
+                <button onclick="closeModal('adminModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div style="display:flex; flex-direction:column; gap:16px;">
-                <div>
-                    <h4 style="font-size:0.95rem; color:var(--primary); margin-bottom:8px;" data-i18n="manageStaffTitle">إدارة العمال والعاملات (النسبة ثابتة 30%)</h4>
-                    <div style="display:flex; gap:8px; margin-bottom:8px;">
-                        <input type="text" id="newStaffName" placeholder="اسم العامل الجديد" style="padding:8px; border:1px solid var(--border); border-radius:8px; flex:1;">
-                        <button class="btn btn-primary" onclick="addNewStaff()"><i class="fa-solid fa-plus"></i> <span data-i18n="addBtn">إضافة</span></button>
-                    </div>
-                    <div id="staffListConfig" style="display:flex; flex-direction:column; gap:6px; max-height:150px; overflow-y:auto;"></div>
+            
+            <div id="loginSec" class="form-group">
+                <label data-i18n="adminPassPrompt">أدخل رمز الدخول الخاص بالمدير</label>
+                <input type="password" id="adminPass" placeholder="رمز المدير (الافتراضي: 1234)">
+                <button class="btn btn-primary" style="margin-top:10px;" onclick="checkAdmin()" data-i18n="loginBtn">تسجيل الدخول</button>
+            </div>
+
+            <div id="adminControls" style="display:none;">
+                <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:8px; border-radius:8px; margin-bottom:12px; color:#166534; font-size:0.85rem;" data-i18n="adminLoggedMsg">
+                    تم تسجيل الدخول بنجاح. إدارة كادر العمل والخدمات:
                 </div>
-                <hr style="border:0; border-top:1px solid var(--border);">
-                <div>
-                    <h4 style="font-size:0.95rem; color:var(--primary); margin-bottom:8px;" data-i18n="manageServicesTitle">إدارة الخدمات والأسعار</h4>
-                    <div style="display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
-                        <input type="text" id="newServiceName" placeholder="اسم الخدمة" style="padding:8px; border:1px solid var(--border); border-radius:8px; flex:2; min-width:140px;">
-                        <input type="number" id="newServicePrice" placeholder="السعر" style="padding:8px; border:1px solid var(--border); border-radius:8px; flex:1; min-width:80px;">
-                        <button class="btn btn-primary" onclick="addNewService()"><i class="fa-solid fa-plus"></i> <span data-i18n="addBtn">إضافة</span></button>
-                    </div>
-                    <div id="servicesListConfig" style="display:flex; flex-direction:column; gap:6px; max-height:150px; overflow-y:auto;"></div>
+
+                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);" data-i18n="manageStaffHeader">إدارة كادر العمل (إضافة وتعديل الأَسماء):</h4>
+                <div class="form-group" style="gap:8px;">
+                    <input type="text" id="newStaffName" placeholder="اسم العامل / العاملة جديد">
+                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addStaff()" data-i18n="addStaffBtn">إضافة عامل جديد</button>
                 </div>
-                <hr style="border:0; border-top:1px solid var(--border);">
-                <div>
-                    <h4 style="font-size:0.95rem; color:var(--primary); margin-bottom:8px;" data-i18n="backupTitle">النسخ الاحتياطي واستعادة البيانات</h4>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <button class="btn btn-accent" onclick="exportDataJSON()"><i class="fa-solid fa-download"></i> <span data-i18n="exportDataBtn">تصدير النسخة</span></button>
-                        <label class="btn btn-print" style="cursor:pointer; margin:0;">
-                            <i class="fa-solid fa-upload"></i> <span data-i18n="importDataBtn">استعادة النسخة</span>
-                            <input type="file" id="importFile" accept=".json" onchange="importDataJSON(event)" style="display:none;">
-                        </label>
-                    </div>
+                <ul id="staffListUI" style="list-style:none; margin: 10px 0; max-height:160px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
+
+                <hr style="margin: 1.25rem 0; border:0; border-top:1px solid var(--border);">
+                
+                <h4 style="font-size:0.95rem; margin-bottom:8px; color:var(--primary);" data-i18n="manageServiceHeader">إضافة خدمات أو عروض جديدة:</h4>
+                <div class="form-group" style="gap:8px;">
+                    <input type="text" id="newServiceName" placeholder="اسم الخدمة أو العرض">
+                    <input type="number" id="newServicePrice" placeholder="السعر الافتراضي">
+                    <button class="btn btn-accent" style="margin-top:6px;" onclick="addService()" data-i18n="addServiceBtn">إضافة الخدمة</button>
                 </div>
+                <ul id="serviceListUI" style="list-style:none; margin-top:6px; max-height:120px; overflow-y:auto; border: 1px solid var(--border); padding: 8px; border-radius:6px;"></ul>
+
+                <button class="btn btn-primary" style="width:100%; margin-top:1rem;" onclick="closeModal('adminModal')" data-i18n="closePanelBtn">إغلاق اللوحة</button>
             </div>
         </div>
     </div>
 
-    <div id="developerModal" class="modal">
+    <!-- MODAL: DEVELOPER / OWNER PANEL -->
+    <div id="devModal" class="modal">
         <div class="modal-content">
             <div class="card-header">
-                <div class="card-title"><i class="fa-solid fa-code"></i> <span data-i18n="ownerTitle">لوحة المالك والمطور</span></div>
-                <button class="btn btn-danger" onclick="closeDeveloperModal()"><i class="fa-solid fa-xmark"></i></button>
+                <div class="card-title"><i class="fa-solid fa-code" style="color:#0F172A;"></i> <span data-i18n="ownerPanelTitle">لوحة المالك</span></div>
+                <button onclick="closeModal('devModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div style="display:flex; flex-direction:column; gap:12px; font-size:0.9rem; line-height:1.6;">
-                <p><strong>مركز هيبة الاسترخاء - جدة</strong></p>
-                <p data-i18n="devDesc">نظام متكامل لإدارة صالونات ومراكز المساج، إصدار الفواتير الحرارية، حساب إيرادات المركز ونسب العمال بدقة عالية (30%).</p>
-                <p><i class="fa-solid fa-shield-halved text-success"></i> <span data-i18n="devSec">جميع البيانات محمية ومخزنة محلياً في متصفحك (LocalStorage).</span></p>
+
+            <div id="devLoginSec" class="form-group">
+                <label data-i18n="devPassPrompt">أدخل رمز مرور المبرمج</label>
+                <input type="password" id="devPassInput" placeholder="أدخل رمز المبرمج (الافتراضي: 9999)">
+                <button class="btn" style="background:#0F172A; color:#FFF; margin-top:10px;" onclick="checkDeveloper()" data-i18n="devLoginBtn">دخول لوحة المالك</button>
             </div>
+
+            <div id="devControls" style="display:none;">
+                <div style="background:#EFF6FF; border:1px solid #BFDBFE; padding:10px; border-radius:8px; margin-bottom:12px; color:#1E40AF; font-size:0.85rem;" data-i18n="devLoggedMsg">
+                    أهلاً بك يا محمود. من هنا يمكنك تغيير كلمة مرور لوحة المدير.
+                </div>
+                <div class="form-group">
+                    <label data-i18n="newAdminPassLbl">كلمة المرور الجديدة للمدير</label>
+                    <input type="text" id="newAdminPasswordVal" placeholder="أدخل كلمة المرور الجديدة">
+                    <button class="btn btn-primary" style="margin-top:8px;" onclick="updateAdminPassword()" data-i18n="savePassBtn">حفظ وتحديث كلمة المرور</button>
+                </div>
+                <button class="btn" style="width:100%; margin-top:1rem; background:#CBD5E1; color:#0F172A;" onclick="closeModal('devModal')" data-i18n="closePanelBtn">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال تعديل الفاتورة (للمدير) -->
+    <div id="editInvoiceModal" class="modal">
+        <div class="modal-content">
+            <div class="card-header">
+                <div class="card-title" data-i18n="editInvTitle">تعديل بيانات الفاتورة (صلاحية المدير)</div>
+                <button onclick="closeModal('editInvoiceModal')" style="border:none; background:none; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="hidden" id="editInvId">
+            <div class="form-group" style="margin-bottom:10px;">
+                <label data-i18n="invSerialLbl">رقم الفاتورة</label>
+                <input type="text" id="editInvSerial" readonly style="background:#E2E8F0;">
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label data-i18n="invStaffLbl">اسم العامل / العاملة</label>
+                <select id="editInvStaff"></select>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label data-i18n="invPriceLbl">المبلغ (ر.س)</label>
+                <input type="number" id="editInvPrice" step="0.01">
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label data-i18n="invLocLbl">مكان تقديم الخدمة</label>
+                <select id="editInvLocation">
+                    <option value="حضور بالمركز" data-i18n="locCenter">حضور بالمركز</option>
+                    <option value="زيارة منزلية" data-i18n="locHome">زيارة منزلية</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" style="width:100%;" onclick="submitEditInvoice()" data-i18n="saveChangesBtn">حفظ التعديلات</button>
         </div>
     </div>
 
     <script>
-        // Translations Dictionary
-        const translations = {
+        // قواميس اللغات (العربية، الإنجليزية، الفلبينية، البنغالية)
+        const dict = {
             ar: {
                 centerTitle: "مركز هيبة الاسترخاء",
                 centerSub: "فرع جدة - المساج والحمام المغربي والبدي كير",
@@ -586,11 +625,11 @@
                 thAmount: "المبلغ",
                 thResponsible: "المسؤول",
                 thAction: "إجراء",
-                reportsHeader: "التقارير اليومية والشفت (الإيرادات، نسب العمال، والمصروفات)",
+                reportsHeader: "التقارير والشفتات واليومية (الإيرادات، نسب العمال، والمصروفات)",
                 printReportBtn: "طباعة التقرير",
                 filterDateLbl: "التاريخ",
-                clearDateFilter: "عرض كل الفواتير (كل التواريخ)",
                 filterDateHint: "اتركه فارغاً لعرض فواتير كل الأيام معاً",
+                clearDateFilter: "عرض كل الفواتير (كل التواريخ)",
                 filterStaffLbl: "تصفية حسب العامل/ة",
                 allStaff: "جميع العاملين",
                 filterLocLbl: "مكان الخدمة",
@@ -604,34 +643,47 @@
                 thStaffName: "اسم العامل / العاملة",
                 thServiceCount: "عدد الخدمات",
                 thStaffSales: "إجمالي مبيعات العامل",
-                thStaffDue: "مستحق العامل (العمولة 30%)",
-                invLogHeader: "سجل الفواتير المصدرة:",
-                thSerial: "رقم الفاتورة",
+                thStaffDue: "مستحق العامل (العمولة)",
+                invoiceDetailsHeader: "تفاصيل الفواتير المسجلة:",
+                thInvNo: "رقم الفاتورة",
+                thDateTime: "التاريخ والوقت",
+                thStaff: "العامل/ة",
                 thService: "الخدمة",
-                thPay: "الدفع",
-                thLoc: "الموقع",
-                settingsTitle: "إعدادات النظام والعمال والخدمات",
-                manageStaffTitle: "إدارة العمال والعاملات (النسبة ثابتة 30%)",
-                addBtn: "إضافة",
-                manageServicesTitle: "إدارة الخدمات والأسعار",
-                backupTitle: "النسخ الاحتياطي واستعادة البيانات",
-                exportDataBtn: "تصدير النسخة",
-                importDataBtn: "استعادة النسخة",
-                ownerTitle: "لوحة المالك والمطور",
-                devDesc: "نظام متكامل لإدارة صالونات ومراكز المساج، إصدار الفواتير الحرارية، حساب إيرادات المركز ونسب العمال بدقة عالية (30%).",
-                devSec: "جميع البيانات محمية ومخزنة محلياً في متصفحك (LocalStorage)."
+                thLocation: "الموقع",
+                thPayMethod: "الدفع",
+                thAmountVal: "المبلغ",
+                noDataRow: "لا توجد بيانات لعرضها",
+                adminPanelTitle: "لوحة تحكم الإعدادات",
+                adminPassPrompt: "أدخل رمز الدخول الخاص بالمدير",
+                loginBtn: "تسجيل الدخول",
+                adminLoggedMsg: "تم تسجيل الدخول بنجاح. إدارة كادر العمل والخدمات وتصحيح الأسماء:",
+                manageStaffHeader: "إدارة كادر العمل (إضافة وتعديل الأَسماء)",
+                addStaffBtn: "إضافة عامل جديد",
+                manageServiceHeader: "إضافة خدمات أو عروض جديدة:",
+                addServiceBtn: "إضافة الخدمة",
+                closePanelBtn: "إغلاق اللوحة",
+                ownerPanelTitle: "لوحة المالك",
+                devPassPrompt: "أدخل رمز مرور المبرمج",
+                devLoginBtn: "دخول لوحة المالك",
+                devLoggedMsg: "أهلاً بك يا محمود. من هنا يمكنك تغيير كلمة مرور لوحة المدير.",
+                newAdminPassLbl: "كلمة المرور الجديدة للمدير",
+                savePassBtn: "حفظ وتحديث كلمة المرور",
+                editInvTitle: "تعديل بيانات الفاتورة (صلاحية المدير)",
+                saveChangesBtn: "حفظ التعديلات",
+                editBtn: "تعديل",
+                deleteBtn: "حذف"
             },
             en: {
                 centerTitle: "Haiba Relaxation Center",
                 centerSub: "Jeddah Branch - Massage, Moroccan Bath & Pedicure",
-                centerSubShort: "Jeddah - Massage & Moroccan Bath",
+                centerSubShort: "Jeddah - Massage & Bath",
                 settingsBtn: "Settings",
                 ownerBtn: "Owner Panel",
                 tabPos: "Issue Invoice",
                 tabExpenses: "Expenses",
-                tabReports: "Reports & Shifts",
+                tabReports: "Reports & Daily Shift",
                 newInvoiceTitle: "Create New Invoice",
-                invSerialLbl: "Invoice No. (Serial)",
+                invSerialLbl: "Invoice No (Serial)",
                 invDateLbl: "Invoice Date",
                 invStaffLbl: "Staff Name",
                 invServiceLbl: "Service / Offer",
@@ -639,14 +691,14 @@
                 invPriceLbl: "Price (SAR)",
                 invPayLbl: "Payment Method",
                 payCash: "Cash",
-                payCard: "Card (POS)",
+                payCard: "Card (Network)",
                 payTransfer: "Bank Transfer",
                 invLocLbl: "Service Location",
                 locCenter: "At Center",
                 locHome: "Home Visit",
                 savePrintBtn: "Save & Print Instantly",
                 previewTitle: "Invoice Preview",
-                rSerial: "Invoice No.:",
+                rSerial: "Invoice No:",
                 rTime: "Date & Time:",
                 rStaff: "Staff:",
                 rService: "Service:",
@@ -654,13 +706,13 @@
                 rLoc: "Location:",
                 rPay: "Payment:",
                 rTotal: "Total Amount:",
-                rFooter1: "Welcome - Enjoy Your Experience",
-                rFooter2: "Please Keep Your Receipt",
+                rFooter1: "Welcome - Have a great experience",
+                rFooter2: "Please keep your receipt",
                 manualPrintBtn: "Manual Print",
                 downloadPdfBtn: "Download PDF",
-                expensesHeader: "Operational & Petty Expenses",
+                expensesHeader: "Record Petty & Operational Expenses",
                 expDateLbl: "Expense Date",
-                expTitleLbl: "Expense Item (e.g. Hospitality)",
+                expTitleLbl: "Expense Title (e.g., Hospitality, Supplies)",
                 expAmountLbl: "Amount (SAR)",
                 expUserLbl: "Responsible Person",
                 saveExpBtn: "Save Expense",
@@ -670,52 +722,65 @@
                 thAmount: "Amount",
                 thResponsible: "Responsible",
                 thAction: "Action",
-                reportsHeader: "Daily & Shift Reports",
+                reportsHeader: "Daily Reports & Shifts (Revenue, Staff Comm, Expenses)",
                 printReportBtn: "Print Report",
                 filterDateLbl: "Date",
-                clearDateFilter: "Show All Invoices",
-                filterDateHint: "Leave blank to show all days together",
+                filterDateHint: "Leave empty to show invoices from all days",
+                clearDateFilter: "Show all invoices (all dates)",
                 filterStaffLbl: "Filter by Staff",
                 allStaff: "All Staff",
                 filterLocLbl: "Location",
                 allLocations: "All Locations",
-                mTotalSales: "Total Sales (Revenue)",
-                mStaffComm: "Total Staff Dues (Commission)",
+                mTotalSales: "Total Sales (Center Revenue)",
+                mStaffComm: "Total Staff Commissions",
                 mExpenses: "Total Expenses",
                 mNetRev: "Net Center Revenue",
-                mCash: "Cash Collection (Net)",
+                mCash: "Net Cash Collected",
                 staffProdHeader: "Staff Productivity & Commissions Summary:",
                 thStaffName: "Staff Name",
                 thServiceCount: "Services Count",
-                thStaffSales: "Total Sales",
-                thStaffDue: "Staff Due (30% Commission)",
-                invLogHeader: "Issued Invoices Log:",
-                thSerial: "Invoice No.",
+                thStaffSales: "Total Staff Sales",
+                thStaffDue: "Staff Due (Commission)",
+                invoiceDetailsHeader: "Recorded Invoices Details:",
+                thInvNo: "Invoice No",
+                thDateTime: "Date & Time",
+                thStaff: "Staff",
                 thService: "Service",
-                thPay: "Payment",
-                thLoc: "Location",
-                settingsTitle: "System, Staff & Services Settings",
-                manageStaffTitle: "Manage Staff (Fixed 30% Commission)",
-                addBtn: "Add",
-                manageServicesTitle: "Manage Services & Prices",
-                backupTitle: "Backup & Restore Data",
-                exportDataBtn: "Export Backup",
-                importDataBtn: "Restore Backup",
-                ownerTitle: "Owner & Developer Panel",
-                devDesc: "Integrated system for massage centers management, thermal receipts, tracking revenue and staff commissions with high precision (30%).",
-                devSec: "All data is securely stored locally in your browser (LocalStorage)."
+                thLocation: "Location",
+                thPayMethod: "Payment",
+                thAmountVal: "Amount",
+                noDataRow: "No data to display",
+                adminPanelTitle: "Settings Control Panel",
+                adminPassPrompt: "Enter Manager Passcode",
+                loginBtn: "Login",
+                adminLoggedMsg: "Logged in successfully. Manage staff, services, and correct names:",
+                manageStaffHeader: "Staff Management (Add & Edit Names)",
+                addStaffBtn: "Add New Staff",
+                manageServiceHeader: "Add Services or Offers:",
+                addServiceBtn: "Add Service",
+                closePanelBtn: "Close Panel",
+                ownerPanelTitle: "Owner Panel",
+                devPassPrompt: "Enter Developer Passcode",
+                devLoginBtn: "Login Owner",
+                devLoggedMsg: "Welcome Mahmoud. You can update the manager passcode here.",
+                newAdminPassLbl: "New Manager Password",
+                savePassBtn: "Save & Update Password",
+                editInvTitle: "Edit Invoice Details (Manager)",
+                saveChangesBtn: "Save Changes",
+                editBtn: "Edit",
+                deleteBtn: "Delete"
             },
             fil: {
                 centerTitle: "Haiba Relaxation Center",
                 centerSub: "Jeddah Branch - Massage, Moroccan Bath & Pedicure",
-                centerSubShort: "Jeddah - Massage & Moroccan Bath",
+                centerSubShort: "Jeddah - Massage & Bath",
                 settingsBtn: "Mga Setting",
                 ownerBtn: "Panel ng May-ari",
-                tabPos: "Maglabas ng Invoice",
+                tabPos: "Gumawa ng Invoice",
                 tabExpenses: "Mga Gastusin",
-                tabReports: "Mga Ulat",
+                tabReports: "Mga Ulat at Shift",
                 newInvoiceTitle: "Gumawa ng Bagong Invoice",
-                invSerialLbl: "Invoice No. (Serial)",
+                invSerialLbl: "Invoice No (Serial)",
                 invDateLbl: "Petsa ng Invoice",
                 invStaffLbl: "Pangalan ng Staff",
                 invServiceLbl: "Serbisyo / Alok",
@@ -723,14 +788,14 @@
                 invPriceLbl: "Presyo (SAR)",
                 invPayLbl: "Paraan ng Pagbabayad",
                 payCash: "Cash",
-                payCard: "Card (POS)",
+                payCard: "Card (Network)",
                 payTransfer: "Bank Transfer",
                 invLocLbl: "Lokasyon ng Serbisyo",
                 locCenter: "Sa Center",
                 locHome: "Home Visit",
-                savePrintBtn: "I-save at I-print",
+                savePrintBtn: "I-save at I-print Agad",
                 previewTitle: "Preview ng Invoice",
-                rSerial: "Invoice No.:",
+                rSerial: "Invoice No:",
                 rTime: "Petsa at Oras:",
                 rStaff: "Staff:",
                 rService: "Serbisyo:",
@@ -738,81 +803,94 @@
                 rLoc: "Lokasyon:",
                 rPay: "Bayad:",
                 rTotal: "Kabuuang Halaga:",
-                rFooter1: "Maligayang pagdating - Enjoy!",
-                rFooter2: "Mangyaring itabi ang resibo",
-                manualPrintBtn: "Manual Print",
+                rFooter1: "Maligayang pagdating - Mag-enjoy",
+                rFooter2: "Mangyaring itago ang resibo",
+                manualPrintBtn: "Manwal na Pag-print",
                 downloadPdfBtn: "I-download ang PDF",
-                expensesHeader: "Mga Gastusin",
+                expensesHeader: "Itala ang mga Gastusin",
                 expDateLbl: "Petsa ng Gastusin",
-                expTitleLbl: "Uri ng Gastusin",
+                expTitleLbl: "Pangalan ng Gastusin",
                 expAmountLbl: "Halaga (SAR)",
-                expUserLbl: "Namahala",
+                expUserLbl: "Responsableng Tao",
                 saveExpBtn: "I-save ang Gastusin",
-                expTableTitle: "Naitalang Gastusin:",
+                expTableTitle: "Mga Naitalang Gastusin:",
                 thDate: "Petsa",
-                thItem: "Aytem",
+                thItem: "Item",
                 thAmount: "Halaga",
-                thResponsible: "Namahala",
+                thResponsible: "Responsable",
                 thAction: "Aksyon",
-                reportsHeader: "Mga Ulat sa Araw at Shift",
+                reportsHeader: "Araw-araw na Ulat at Shift",
                 printReportBtn: "I-print ang Ulat",
                 filterDateLbl: "Petsa",
-                clearDateFilter: "Ipakita Lahat ng Invoice",
-                filterDateHint: "Iwanang bakante para sa lahat ng araw",
+                filterDateHint: "Iwanang blangko para makita ang lahat ng araw",
+                clearDateFilter: "Ipakita lahat ng invoice",
                 filterStaffLbl: "Salain ayon sa Staff",
                 allStaff: "Lahat ng Staff",
                 filterLocLbl: "Lokasyon",
                 allLocations: "Lahat ng Lokasyon",
                 mTotalSales: "Kabuuang Benta",
-                mStaffComm: "Kabuuang Komisyon ng Staff",
+                mStaffComm: "Komisyon ng Staff",
                 mExpenses: "Kabuuang Gastusin",
-                mNetRev: "Netong Kita ng Center",
-                mCash: "Cash Collection",
-                staffProdHeader: "Buod ng Pagiging Produktibo at Komisyon:",
+                mNetRev: "Netong Kita",
+                mCash: "Net Cash",
+                staffProdHeader: "Buod ng Produktibidad ng Staff:",
                 thStaffName: "Pangalan ng Staff",
                 thServiceCount: "Bilang ng Serbisyo",
-                thStaffSales: "Kabuuang Benta",
-                thStaffDue: "Bahagi ng Staff (30% Komisyon)",
-                invLogHeader: "Talaan ng mga Invoice:",
-                thSerial: "Invoice No.",
+                thStaffSales: "Kabuuang Benta ng Staff",
+                thStaffDue: "Komisyon",
+                invoiceDetailsHeader: "Mga Detalye ng Invoice:",
+                thInvNo: "Invoice No",
+                thDateTime: "Petsa at Oras",
+                thStaff: "Staff",
                 thService: "Serbisyo",
-                thPay: "Bayad",
-                thLoc: "Lokasyon",
-                settingsTitle: "Mga Setting ng Sistema at Staff",
-                manageStaffTitle: "Pamahalaan ang Staff (Fixed 30% Commission)",
-                addBtn: "Idagdag",
-                manageServicesTitle: "Pamahalaan ang mga Serbisyo",
-                backupTitle: "Backup at Restore",
-                exportDataBtn: "I-export ang Backup",
-                importDataBtn: "I-restore ang Backup",
-                ownerTitle: "Panel ng May-ari",
-                devDesc: "Pinagsama-samang sistema para sa pamamahala ng massage center at mga resibo.",
-                devSec: "Ang lahat ng data ay ligtas na nakaimbak sa browser (LocalStorage)."
+                thLocation: "Lokasyon",
+                thPayMethod: "Bayad",
+                thAmountVal: "Halaga",
+                noDataRow: "Walang datos na ipapakita",
+                adminPanelTitle: "Panel ng Setting",
+                adminPassPrompt: "Ilagay ang Manager Passcode",
+                loginBtn: "Mag-login",
+                adminLoggedMsg: "Matagumpay na naka-login. Pamahalaan ang mga staff at itama ang mga pangalan:",
+                manageStaffHeader: "Pamamahala ng Staff (Magdagdag at Mag-edit)",
+                addStaffBtn: "Magdagdag ng Bagong Staff",
+                manageServiceHeader: "Magdagdag ng Serbisyo:",
+                addServiceBtn: "Magdagdag ng Serbisyo",
+                closePanelBtn: "Isara ang Panel",
+                ownerPanelTitle: "Panel ng May-ari",
+                devPassPrompt: "Ilagay ang Developer Passcode",
+                devLoginBtn: "Login Owner",
+                devLoggedMsg: "Maligayang pagdating Mahmoud.",
+                newAdminPassLbl: "Bagong Password ng Manager",
+                savePassBtn: "I-save at I-update",
+                editInvTitle: "I-edit ang Invoice (Manager)",
+                saveChangesBtn: "I-save ang mga Pagbabago",
+                editBtn: "I-edit",
+                deleteBtn: "Tanggalin"
             },
             bn: {
                 centerTitle: "হাইবা রিলাক্সেশন সেন্টার",
-                centerSub: "জেদ্দা শাখা - ম্যাসাজ, মরক্কান বাথ এবং পেডিকিউর",
-                centerSubShort: "জেদ্দা - ম্যাসাজ এবং মরক্কান বাথ",
+                centerSub: "জেদ্দা শাখা - ম্যাসাজ, মরোক্কান বাথ এবং পেডিকিউর",
+                centerSubShort: "জেদ্দা - ম্যাসাজ ও বাথ",
                 settingsBtn: "সেটিংস",
                 ownerBtn: "মালিক প্যানেল",
-                tabPos: "ইনভয়েস ইস্যু",
+                tabPos: "ইনভয়েস তৈরি",
                 tabExpenses: "খরচ ব্যবস্থাপনা",
-                tabReports: "প্রতিবেদন ও শিফট",
+                tabReports: "রিপোর্ট এবং শিফট",
                 newInvoiceTitle: "নতুন ইনভয়েস তৈরি করুন",
-                invSerialLbl: "ইনভয়েস নং (সিরিয়াল)",
+                invSerialLbl: "ইনভয়েস নং",
                 invDateLbl: "ইনভয়েসের তারিখ",
                 invStaffLbl: "কর্মচারীর নাম",
                 invServiceLbl: "সেবা / অফার",
                 invDurationLbl: "সময়কাল",
                 invPriceLbl: "মূল্য (SAR)",
                 invPayLbl: "পেমেন্ট পদ্ধতি",
-                payCash: "নগদ (Cash)",
-                payCard: "কার্ড (POS)",
+                payCash: "নগদ (ক্যাশ)",
+                payCard: "কার্ড (নেটওয়ার্ক)",
                 payTransfer: "ব্যাংক ট্রান্সফার",
                 invLocLbl: "সেবার স্থান",
-                locCenter: "কেন্দ্রে",
+                locCenter: "কেন্দ্রে উপস্থিত",
                 locHome: "হোম ভিজিট",
-                savePrintBtn: "সংরক্ষণ করুন এবং প্রিন্ট করুন",
+                savePrintBtn: "সংরক্ষণ এবং প্রিন্ট করুন",
                 previewTitle: "ইনভয়েস প্রিভিউ",
                 rSerial: "ইনভয়েস নং:",
                 rTime: "তারিখ ও সময়:",
@@ -823,181 +901,239 @@
                 rPay: "পেমেন্ট:",
                 rTotal: "মোট পরিমাণ:",
                 rFooter1: "স্বাগতম - আপনার অভিজ্ঞতা উপভোগ করুন",
-                rFooter2: "রসিদটি সংরক্ষণ করুন",
+                rFooter2: "দয়া করে রসিদটি সংরক্ষণ করুন",
                 manualPrintBtn: "ম্যানুয়াল প্রিন্ট",
                 downloadPdfBtn: "PDF ডাউনলোড করুন",
-                expensesHeader: "দাপ্তরিক ও আনুষঙ্গিক খরচ",
+                expensesHeader: "খুচরা এবং অপারেশনাল খরচ রেকর্ড করুন",
                 expDateLbl: "খরচের তারিখ",
-                expTitleLbl: "খরচের বিবরণ",
+                expTitleLbl: "খরচের বিবরণ (যেমন: আপ্যায়ন)",
                 expAmountLbl: "পরিমাণ (SAR)",
                 expUserLbl: "দায়িত্বপ্রাপ্ত ব্যক্তি",
                 saveExpBtn: "খরচ সংরক্ষণ করুন",
-                expTableTitle: "সংরক্ষিত খরচ:",
+                expTableTitle: "রেকর্ডকৃত খরচ:",
                 thDate: "তারিখ",
-                thItem: "বিবরণ",
+                thItem: "আইটেম",
                 thAmount: "পরিমাণ",
                 thResponsible: "দায়িত্বপ্রাপ্ত",
                 thAction: "পদক্ষেপ",
-                reportsHeader: "দৈনিক ও শিফট রিপোর্ট",
+                reportsHeader: "দৈনিক রিপোর্ট ও শিফট (আয়, কমিশন, খরচ)",
                 printReportBtn: "রিপোর্ট প্রিন্ট করুন",
                 filterDateLbl: "তারিখ",
-                clearDateFilter: "সকল ইনভয়েস দেখান",
-                filterDateHint: "সকল দিনের ইনভয়েস দেখতে খালি রাখুন",
-                filterStaffLbl: "কর্মী দ্বারা ফিল্টার",
+                filterDateHint: "সব দিনের ইনভয়েস দেখতে খালি রাখুন",
+                clearDateFilter: "সব ইনভয়েস দেখুন",
+                filterStaffLbl: "কর্মী অনুসারে ফিল্টার",
                 allStaff: "সকল কর্মী",
-                filterLocLbl: "অবস্থান",
-                allLocations: "সকল অবস্থান",
-                mTotalSales: "মোট বিক্রয় (রাজস্ব)",
-                mStaffComm: "কর্মীদের মোট কমিশন",
+                filterLocLbl: "অবস্থান ফিল্টার",
+                allLocations: "সকল স্থান",
+                mTotalSales: "মোট বিক্রয় (কেন্দ্রের আয়)",
+                mStaffComm: "মোট কর্মী কমিশন",
                 mExpenses: "মোট খরচ",
-                mNetRev: "কেন্দ্রের নিট রাজস্ব",
-                mCash: "নগদ সংগ্রহ (নিট)",
-                staffProdHeader: "কর্মী উৎপাদনশীলতা এবং কমিশনের সারাংশ:",
+                mNetRev: "নিট কেন্দ্র আয়",
+                mCash: "নিট নগদ সংগ্রহ",
+                staffProdHeader: "কর্মীর উৎপাদনশীলতা এবং কমিশন সারাংশ:",
                 thStaffName: "কর্মীর নাম",
                 thServiceCount: "সেবার সংখ্যা",
-                thStaffSales: "মোট বিক্রয়",
-                thStaffDue: "কর্মীর পাওনা (৩০% কমিশন)",
-                invLogHeader: "ইস্যুকৃত ইনভয়েসের তালিকা:",
-                thSerial: "ইনভয়েস নং",
+                thStaffSales: "কর্মীর মোট বিক্রয়",
+                thStaffDue: "কর্মীর পাওনা (কমিশন)",
+                invoiceDetailsHeader: "রেকর্ডকৃত ইনভয়েসের বিবরণ:",
+                thInvNo: "ইনভয়েস নং",
+                thDateTime: "তারিখ ও সময়",
+                thStaff: "কর্মী",
                 thService: "সেবা",
-                thPay: "পেমেন্ট",
-                thLoc: "অবস্থান",
-                settingsTitle: "সিস্টেম, কর্মী ও সেবা সেটিংস",
-                manageStaffTitle: "কর্মী পরিচালনা (নির্ধারিত ৩০% কমিশন)",
-                addBtn: "যোগ করুন",
-                manageServicesTitle: "সেবা এবং মূল্য পরিচালনা",
-                backupTitle: "ব্যাকআপ এবং ডেটা পুনরুদ্ধার",
-                exportDataBtn: "ব্যাকআপ রপ্তানি",
-                importDataBtn: "ব্যাকআপ আমদানি",
-                ownerTitle: "মালিক ও ডেভেলপার প্যানেল",
-                devDesc: "ম্যাসাজ সেন্টার পরিচালনার জন্য একটি সমন্বিত সিস্টেম, থার্মাল রসিদ এবং নির্ভুল হিসাব (৩০%)।",
-                devSec: "সমস্ত ডেটা আপনার ব্রাউজারে সুরক্ষিতভাবে সংরক্ষিত (LocalStorage)।"
+                thLocation: "অবস্থান",
+                thPayMethod: "পেমেন্ট",
+                thAmountVal: "পরিমাণ",
+                noDataRow: "দেখানোর জন্য কোন তথ্য নেই",
+                adminPanelTitle: "সেটিংস কন্ট্রোল প্যানেল",
+                adminPassPrompt: "ম্যানেজার পাসকোড লিখুন",
+                loginBtn: "লগইন",
+                adminLoggedMsg: "সফলভাবে লগইন হয়েছে। কর্মী পরিচালনা এবং নাম সংশোধন করুন:",
+                manageStaffHeader: "কর্মী ব্যবস্থাপনা (যোগ এবং সম্পাদনা)",
+                addStaffBtn: "নতুন কর্মী যোগ করুন",
+                manageServiceHeader: "সেবা বা অফার যোগ করুন:",
+                addServiceBtn: "সেবা যোগ করুন",
+                closePanelBtn: "প্যানেল বন্ধ করুন",
+                ownerPanelTitle: "মালিক প্যানেল",
+                devPassPrompt: "ডেভেলপার পাসকোড লিখুন",
+                devLoginBtn: "মালিক লগইন",
+                devLoggedMsg: "স্বাগতম মাহমুদ। আপনি এখানে ম্যানেজার পাসওয়ার্ড পরিবর্তন করতে পারেন।",
+                newAdminPassLbl: "নতুন ম্যানেজার পাসওয়ার্ড",
+                savePassBtn: "সংরক্ষণ এবং আপডেট করুন",
+                editInvTitle: "ইনভয়েস সম্পাদনা (ম্যানেজার)",
+                saveChangesBtn: "পরিবর্তন সংরক্ষণ করুন",
+                editBtn: "সম্পাদনা",
+                deleteBtn: "মুছে ফেলুন"
             }
         };
 
+        // اللغة الافتراضية للجلسة الحالية (لا يتم حفظها بين الجلسات لتفادي أي استخدام لتخزين المتصفح)
         let currentLang = 'ar';
 
         function changeLanguage(lang) {
             currentLang = lang;
-            document.getElementById('htmlRoot').setAttribute('lang', lang);
-            document.getElementById('htmlRoot').setAttribute('dir', (lang === 'ar' ? 'rtl' : 'ltr'));
-            localStorage.setItem('haiba_lang', lang);
-
-            const dict = translations[lang];
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (dict[key]) {
-                    el.textContent = dict[key];
-                }
-            });
-
-            // Update select options that use i18n
-            document.querySelectorAll('select option[data-i18n]').forEach(opt => {
-                const key = opt.getAttribute('data-i18n');
-                if (dict[key]) {
-                    opt.textContent = dict[key];
-                }
-            });
-
-            updateLivePreview();
-            loadReports();
-            renderAdminConfig();
+            const html = document.getElementById('htmlRoot');
+            html.setAttribute('lang', lang);
+            if (lang === 'ar' || lang === 'bn') {
+                html.setAttribute('dir', 'rtl');
+            } else {
+                html.setAttribute('dir', 'ltr');
+            }
+            document.getElementById('langSelect').value = lang;
+            applyTranslations();
         }
 
-        // Default Data State
-        let defaultStaff = ["أحمد", "محمد", "خالد", "سعيد", "عبدالله"];
-        let defaultServices = [
-            { name: "مساج استرخائي 60 دقيقة", price: 150 },
-            { name: "مساج مساج عيادي 60 دقيقة", price: 180 },
-            { name: "حمام مغربي ملكي", price: 200 },
-            { name: "بدي كير وماني كير", price: 100 },
-            { name: "باقة هيبة المتكاملة (مساج + مغربي)", price: 350 }
-        ];
+        function applyTranslations() {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[currentLang] && dict[currentLang][key]) {
+                    el.innerText = dict[currentLang][key];
+                }
+            });
+        }
 
-        let staffList = JSON.parse(localStorage.getItem('haiba_staff')) || defaultStaff;
-        let servicesList = JSON.parse(localStorage.getItem('haiba_services')) || defaultServices;
-        let invoices = JSON.parse(localStorage.getItem('haiba_invoices')) || [];
-        let expenses = JSON.parse(localStorage.getItem('haiba_expenses')) || [];
+        // === طبقة البيانات ===
+        // مهم جداً: هذا التطبيق لا يستخدم أي تخزين متصفح (localStorage) لأنه غير موثوق داخل بيئة المعاينة
+        // وقد يفقد بياناتك بين الجلسات. بدلاً من ذلك يتم استخدام تخزين دائم مرتبط بحسابك (window.storage)
+        // بحيث تبقى فواتيرك ومصروفاتك محفوظة مهما أعدت فتح الصفحة أو غيّرت الجهاز.
+        const STORAGE_KEY = 'haiba_pos_data';
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('haiba_lang') || 'ar';
-            document.getElementById('langSelect').value = savedLang;
-            changeLanguage(savedLang);
+        function getDefaultDB() {
+            return {
+                staff: ['أحمد', 'محمد', 'سارة', 'ريم'],
+                services: [
+                    { name: 'مساج استرخائي 60 دقيقة', price: 150 },
+                    { name: 'حمام مغربي ملكي', price: 200 },
+                    { name: 'بدي كير ومناكير', price: 90 },
+                    { name: 'باقة العناية الشاملة', price: 350 }
+                ],
+                invoices: [],
+                expenses: [],
+                adminPass: '1234',
+                nextSerial: 1
+            };
+        }
 
-            // Set default date to today
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('invDateInput').value = today;
-            document.getElementById('expDate').value = today;
+        let db = getDefaultDB();
 
-            initSerial();
-            populateDropdowns();
-            updateLivePreview();
-            loadReports();
-            renderExpensesTable();
+        async function loadDB() {
+            try {
+                const result = await window.storage.get(STORAGE_KEY, false);
+                if (result && result.value) {
+                    const parsed = JSON.parse(result.value);
+                    db = Object.assign(getDefaultDB(), parsed);
+                } else {
+                    db = getDefaultDB();
+                }
+            } catch (err) {
+                // لا توجد بيانات محفوظة بعد (أول استخدام) أو خطأ في القراءة -> نبدأ بقيم افتراضية وننشئ السجل
+                db = getDefaultDB();
+                try {
+                    await window.storage.set(STORAGE_KEY, JSON.stringify(db), false);
+                } catch (err2) {
+                    console.error('Initial save failed:', err2);
+                }
+            }
+        }
 
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').classList.add('hidden');
-            }, 300);
-        });
+        async function saveDB() {
+            try {
+                const result = await window.storage.set(STORAGE_KEY, JSON.stringify(db), false);
+                if (!result) {
+                    alert(currentLang === 'ar' ? 'تعذّر حفظ البيانات، يرجى المحاولة مرة أخرى.' : 'Failed to save data, please try again.');
+                    return false;
+                }
+                return true;
+            } catch (err) {
+                console.error('Save error:', err);
+                alert(currentLang === 'ar' ? 'حدث خطأ أثناء حفظ البيانات. تحقق من اتصالك وحاول مرة أخرى.' : 'An error occurred while saving data. Check your connection and try again.');
+                return false;
+            }
+        }
 
+        // التنقل بين التبويبات
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById('btn-tab-' + tabId).classList.add('active');
-            if(tabId === 'reports') {
-                loadReports();
-            }
+            if (tabId === 'reports') loadReports();
         }
 
-        function initSerial() {
-            const nextNum = invoices.length + 1;
-            const serialStr = 'HS-' + String(nextNum).padStart(6, '0');
-            document.getElementById('invSerial').value = serialStr;
-            document.getElementById('r-serial').textContent = serialStr;
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        function openAdminModal() {
+            document.getElementById('adminModal').classList.add('active');
+            renderAdminLists();
+        }
+        function openDeveloperModal() {
+            document.getElementById('devModal').classList.add('active');
+        }
+
+        // تهيئة الشاشة وتعبئة القوائم (تُستدعى مرة واحدة عند بدء التطبيق)
+        async function initApp() {
+            await loadDB();
+
+            document.getElementById('langSelect').value = currentLang;
+            changeLanguage(currentLang);
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invDateInput').value = today;
+            document.getElementById('expDate').value = today;
+            // نترك تصفية التاريخ في التقارير فارغة افتراضياً لعرض كل الفواتير من كل الأيام
+            document.getElementById('filterDate').value = '';
+
+            resetInvoiceFormState();
+            populateDropdowns();
+            updateLivePreview();
+
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        function resetInvoiceFormState() {
+            document.getElementById('invSerial').value = 'HS-' + String(db.nextSerial).padStart(6, '0');
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invDateInput').value = today;
         }
 
         function populateDropdowns() {
-            // Staff selects
             const staffSelect = document.getElementById('staffSelect');
-            staffSelect.innerHTML = '';
-            staffList.forEach(s => {
-                const opt = document.createElement('option');
-                opt.value = s;
-                opt.textContent = s;
-                staffSelect.appendChild(opt);
-            });
-
             const filterStaff = document.getElementById('filterStaff');
-            const currentFilterStaffVal = filterStaff.value;
-            filterStaff.innerHTML = `<option value="ALL" data-i18n="allStaff">${translations[currentLang].allStaff}</option>`;
-            staffList.forEach(s => {
-                const opt = document.createElement('option');
-                opt.value = s;
-                opt.textContent = s;
-                filterStaff.appendChild(opt);
-            });
-            filterStaff.value = currentFilterStaffVal;
+            const editInvStaff = document.getElementById('editInvStaff');
 
-            // Service select
+            const prevStaffFilter = filterStaff.value || 'ALL';
+
+            staffSelect.innerHTML = '';
+            filterStaff.innerHTML = `<option value="ALL">${dict[currentLang].allStaff || 'جميع العاملين'}</option>`;
+            editInvStaff.innerHTML = '';
+
+            db.staff.forEach(s => {
+                staffSelect.innerHTML += `<option value="${s}">${s}</option>`;
+                filterStaff.innerHTML += `<option value="${s}">${s}</option>`;
+                editInvStaff.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+
+            if (db.staff.includes(prevStaffFilter) || prevStaffFilter === 'ALL') {
+                filterStaff.value = prevStaffFilter;
+            }
+
             const serviceSelect = document.getElementById('serviceSelect');
             serviceSelect.innerHTML = '';
-            servicesList.forEach((srv, idx) => {
-                const opt = document.createElement('option');
-                opt.value = idx;
-                opt.textContent = `${srv.name} (${srv.price} ر.س)`;
-                serviceSelect.appendChild(opt);
+            db.services.forEach(srv => {
+                serviceSelect.innerHTML += `<option value="${srv.name}" data-price="${srv.price}">${srv.name} (${srv.price} ر.س)</option>`;
             });
 
-            if(servicesList.length > 0) {
-                document.getElementById('price').value = servicesList[0].price;
-            }
+            onServiceSelectChange();
         }
 
         function onServiceSelectChange() {
-            const idx = document.getElementById('serviceSelect').value;
-            if(servicesList[idx]) {
-                document.getElementById('price').value = servicesList[idx].price;
+            const select = document.getElementById('serviceSelect');
+            const selectedOpt = select.options[select.selectedIndex];
+            if (selectedOpt) {
+                const price = selectedOpt.getAttribute('data-price');
+                document.getElementById('price').value = price;
+                document.getElementById('duration').value = '60 دقيقة';
             }
             updateLivePreview();
         }
@@ -1008,237 +1144,191 @@
         }
 
         function updateLivePreview() {
-            const serial = document.getElementById('invSerial').value;
-            const dateVal = document.getElementById('invDateInput').value;
-            const staff = document.getElementById('staffSelect').value;
-            const srvIdx = document.getElementById('serviceSelect').value;
-            const srvName = servicesList[srvIdx] ? servicesList[srvIdx].name : '--';
-            const duration = document.getElementById('duration').value || '--';
-            const price = parseFloat(document.getElementById('price').value) || 0;
-            const payMethod = document.getElementById('paymentMethod').value;
-            const loc = document.getElementById('serviceLocation').value;
-
-            document.getElementById('r-serial').textContent = serial;
-            document.getElementById('r-date').textContent = dateVal;
-            document.getElementById('r-time').textContent = new Date().toLocaleTimeString('ar-SA', {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('r-staff').textContent = staff || '--';
-            document.getElementById('r-service').textContent = srvName;
-            document.getElementById('r-duration').textContent = duration;
-            document.getElementById('r-type').textContent = loc;
-            document.getElementById('r-pay').textContent = payMethod;
-            document.getElementById('r-price').textContent = price.toFixed(2) + ' ر.س';
+            document.getElementById('r-serial').innerText = document.getElementById('invSerial').value;
+            document.getElementById('r-staff').innerText = document.getElementById('staffSelect').value || '--';
+            document.getElementById('r-service').innerText = document.getElementById('serviceSelect').value || '--';
+            document.getElementById('r-duration').innerText = document.getElementById('duration').value || '--';
+            document.getElementById('r-price').innerText = (document.getElementById('price').value || '0.00') + ' ر.س';
+            document.getElementById('r-pay').innerText = document.getElementById('paymentMethod').value;
+            document.getElementById('r-type').innerText = document.getElementById('serviceLocation').value;
+            document.getElementById('r-date').innerText = document.getElementById('invDateInput').value;
+            document.getElementById('r-time').innerText = new Date().toLocaleTimeString('ar-SA');
         }
 
-        function saveInvoice(e) {
+        // حفظ الفاتورة (يُحفظ الآن في التخزين الدائم بدل localStorage)
+        async function saveInvoice(e) {
             e.preventDefault();
-            const serial = document.getElementById('invSerial').value;
-            const dateVal = document.getElementById('invDateInput').value;
-            const staff = document.getElementById('staffSelect').value;
-            const srvIdx = document.getElementById('serviceSelect').value;
-            const srvName = servicesList[srvIdx] ? servicesList[srvIdx].name : 'خدمة خاصة';
-            const duration = document.getElementById('duration').value;
-            const price = parseFloat(document.getElementById('price').value) || 0;
-            const payMethod = document.getElementById('paymentMethod').value;
-            const loc = document.getElementById('serviceLocation').value;
-
-            // نسبة العامل ثابتة 30% لجميع العمال داخل المركز
-            const commissionRate = 0.30; 
-            const commission = price * commissionRate;
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
 
             const newInv = {
                 id: Date.now(),
-                serial,
-                date: dateVal,
-                staff,
-                service: srvName,
-                duration,
-                price,
-                commission,
-                payMethod,
-                location: loc,
-                timestamp: new Date().toISOString()
+                serial: document.getElementById('invSerial').value,
+                date: document.getElementById('invDateInput').value,
+                time: new Date().toLocaleTimeString('ar-SA'),
+                staff: document.getElementById('staffSelect').value,
+                service: document.getElementById('serviceSelect').value,
+                duration: document.getElementById('duration').value,
+                price: parseFloat(document.getElementById('price').value),
+                pay: document.getElementById('paymentMethod').value,
+                location: document.getElementById('serviceLocation').value
             };
 
-            invoices.push(newInv);
-            localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
+            db.invoices.push(newInv);
+            db.nextSerial += 1;
 
-            // Instant print thermal receipt
-            printElement('thermal-receipt');
+            const ok = await saveDB();
+            saveBtn.disabled = false;
 
-            // Reset and re-init serial
-            initSerial();
-            document.getElementById('duration').value = '';
-            document.getElementById('price').value = servicesList[0] ? servicesList[0].price : 0;
-            updateLivePreview();
-            loadReports();
-        }
-
-        function deleteInvoice(id) {
-            if(confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) {
-                invoices = invoices.filter(inv => inv.id !== id);
-                localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
-                loadReports();
+            if (ok) {
+                alert(currentLang === 'ar' ? 'تم حفظ الفاتورة بنجاح!' : 'Invoice saved successfully!');
+                resetInvoiceFormState();
+                updateLivePreview();
+            } else {
+                // فشل الحفظ: نتراجع عن التغييرات المحلية حتى لا يختلف العدّاد عمّا هو محفوظ فعلياً
+                db.invoices.pop();
+                db.nextSerial -= 1;
             }
         }
 
-        // Expenses Management
-        function saveExpense(e) {
+        // حفظ المصروف
+        async function saveExpense(e) {
             e.preventDefault();
-            const date = document.getElementById('expDate').value;
-            const title = document.getElementById('expTitle').value;
-            const amount = parseFloat(document.getElementById('expAmount').value) || 0;
-            const user = document.getElementById('expUser').value || 'الإدارة';
-
-            const newExp = {
+            const exp = {
                 id: Date.now(),
-                date,
-                title,
-                amount,
-                user
+                date: document.getElementById('expDate').value,
+                title: document.getElementById('expTitle').value,
+                amount: parseFloat(document.getElementById('expAmount').value),
+                user: document.getElementById('expUser').value || 'الإدارة'
             };
-
-            expenses.push(newExp);
-            localStorage.setItem('haiba_expenses', JSON.stringify(expenses));
-
-            document.getElementById('expTitle').value = '';
-            document.getElementById('expAmount').value = '';
-            document.getElementById('expUser').value = '';
-            renderExpensesTable();
-            loadReports();
+            db.expenses.push(exp);
+            const ok = await saveDB();
+            if (ok) {
+                document.getElementById('expenseForm').reset();
+                document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
+                loadExpensesTable();
+                alert(currentLang === 'ar' ? 'تم تسجيل المصروف بنجاح.' : 'Expense recorded successfully.');
+            } else {
+                db.expenses.pop();
+            }
         }
 
-        function deleteExpense(id) {
-            expenses = expenses.filter(ex => ex.id !== id);
-            localStorage.setItem('haiba_expenses', JSON.stringify(expenses));
-            renderExpensesTable();
-            loadReports();
-        }
-
-        function renderExpensesTable() {
+        function loadExpensesTable() {
             const tbody = document.getElementById('expensesTableBody');
             tbody.innerHTML = '';
-            if(expenses.length === 0) {
-                tbody.innerHTML = `<tr class="empty-row"><td colspan="5">لا توجد مصروفات مسجلة حالياً</td></tr>`;
+            if (db.expenses.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="5">${dict[currentLang].noDataRow || 'لا توجد بيانات'}</td></tr>`;
                 return;
             }
-            expenses.slice().reverse().forEach(ex => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${ex.date}</td>
-                    <td><strong>${ex.title}</strong></td>
-                    <td style="color:#DC2626; font-weight:bold;">${ex.amount.toFixed(2)} ر.س</td>
-                    <td>${ex.user}</td>
-                    <td class="no-print"><button class="btn btn-danger" onclick="deleteExpense(${ex.id})"><i class="fa-solid fa-trash"></i></button></td>
+            // الأحدث أولاً لتسهيل المتابعة
+            [...db.expenses].sort((a, b) => b.id - a.id).forEach(ex => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${ex.date}</td>
+                        <td>${ex.title}</td>
+                        <td>${ex.amount.toFixed(2)} ر.س</td>
+                        <td>${ex.user}</td>
+                        <td class="no-print"><button class="btn btn-danger" onclick="deleteExpense(${ex.id})">${dict[currentLang].deleteBtn || 'حذف'}</button></td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
             });
         }
 
-        // Reports & Analytics
+        async function deleteExpense(id) {
+            if (confirm(currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا المصروف؟' : 'Are you sure to delete this expense?')) {
+                const backup = db.expenses;
+                db.expenses = db.expenses.filter(x => x.id !== id);
+                const ok = await saveDB();
+                if (ok) {
+                    loadExpensesTable();
+                } else {
+                    db.expenses = backup;
+                }
+            }
+        }
+
+        // التقارير والشفتات (تصفية اختيارية حسب التاريخ - فارغ = كل التواريخ)
         function loadReports() {
             const filterDate = document.getElementById('filterDate').value;
             const filterStaff = document.getElementById('filterStaff').value;
             const filterLocation = document.getElementById('filterLocation').value;
 
-            let filteredInvoices = invoices;
-            if(filterDate) {
-                filteredInvoices = filteredInvoices.filter(inv => inv.date === filterDate);
-            }
-            if(filterStaff !== 'ALL') {
+            let filteredInvoices = filterDate ? db.invoices.filter(inv => inv.date === filterDate) : [...db.invoices];
+            let filteredExpenses = filterDate ? db.expenses.filter(ex => ex.date === filterDate) : [...db.expenses];
+
+            if (filterStaff !== 'ALL') {
                 filteredInvoices = filteredInvoices.filter(inv => inv.staff === filterStaff);
             }
-            if(filterLocation !== 'ALL') {
+            if (filterLocation !== 'ALL') {
                 filteredInvoices = filteredInvoices.filter(inv => inv.location === filterLocation);
             }
 
-            // Calculate totals
-            let totalRev = 0;
-            let totalStaffComm = 0;
-            let totalCashVal = 0;
+            let totalRev = filteredInvoices.reduce((sum, i) => sum + i.price, 0);
+            let totalExp = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
+            let totalCash = filteredInvoices.filter(i => i.pay === 'كاش' || i.pay === 'Cash').reduce((sum, i) => sum + i.price, 0);
 
-            let staffStats = {};
-            staffList.forEach(s => {
-                staffStats[s] = { count: 0, sales: 0, commission: 0 };
+            let totalStaffComm = totalRev * 0.35;
+            let netRev = totalRev - totalStaffComm - totalExp;
+
+            document.getElementById('totalRevenue').innerText = totalRev.toFixed(2) + ' SAR';
+            document.getElementById('totalStaffCommission').innerText = totalStaffComm.toFixed(2) + ' SAR';
+            document.getElementById('totalExpensesMetric').innerText = totalExp.toFixed(2) + ' SAR';
+            document.getElementById('netRevenueMetric').innerText = netRev.toFixed(2) + ' SAR';
+            document.getElementById('totalCash').innerText = totalCash.toFixed(2) + ' SAR';
+
+            // أداء العمال
+            let staffPerfBody = document.getElementById('staffPerformanceBody');
+            staffPerfBody.innerHTML = '';
+            let staffMap = {};
+            filteredInvoices.forEach(i => {
+                if (!staffMap[i.staff]) staffMap[i.staff] = { count: 0, sales: 0 };
+                staffMap[i.staff].count += 1;
+                staffMap[i.staff].sales += i.price;
             });
 
-            filteredInvoices.forEach(inv => {
-                totalRev += inv.price;
-                totalStaffComm += inv.commission;
-                if(inv.payMethod === 'كاش') {
-                    totalCashVal += inv.price;
-                }
-
-                if(!staffStats[inv.staff]) {
-                    staffStats[inv.staff] = { count: 0, sales: 0, commission: 0 };
-                }
-                staffStats[inv.staff].count += 1;
-                staffStats[inv.staff].sales += inv.price;
-                staffStats[inv.staff].commission += inv.commission;
-            });
-
-            // Filter expenses by date if date filter is active
-            let filteredExpenses = expenses;
-            if(filterDate) {
-                filteredExpenses = filteredExpenses.filter(ex => ex.date === filterDate);
-            }
-            let totalExpVal = 0;
-            filteredExpenses.forEach(ex => {
-                totalExpVal += ex.amount;
-            });
-
-            let netRev = totalRev - totalStaffComm - totalExpVal;
-
-            document.getElementById('totalRevenue').textContent = totalRev.toFixed(2) + ' SAR';
-            document.getElementById('totalStaffCommission').textContent = totalStaffComm.toFixed(2) + ' SAR';
-            document.getElementById('totalExpensesMetric').textContent = totalExpVal.toFixed(2) + ' SAR';
-            document.getElementById('netRevenueMetric').textContent = netRev.toFixed(2) + ' SAR';
-            document.getElementById('totalCash').textContent = totalCashVal.toFixed(2) + ' SAR';
-
-            // Render Staff Performance Body
-            const staffBody = document.getElementById('staffPerformanceBody');
-            staffBody.innerHTML = '';
-            let hasStaffData = false;
-            for(let staffName in staffStats) {
-                const stat = staffStats[staffName];
-                if(stat.count > 0 || filterStaff === 'ALL') {
-                    hasStaffData = true;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><strong>${staffName}</strong></td>
-                        <td>${stat.count}</td>
-                        <td>${stat.sales.toFixed(2)} ر.س</td>
-                        <td style="color:var(--primary); font-weight:bold;">${stat.commission.toFixed(2)} ر.س</td>
+            const staffNames = Object.keys(staffMap);
+            if (staffNames.length === 0) {
+                staffPerfBody.innerHTML = `<tr class="empty-row"><td colspan="4">${dict[currentLang].noDataRow || 'لا توجد بيانات'}</td></tr>`;
+            } else {
+                staffNames.forEach(st => {
+                    let comm = staffMap[st].sales * 0.35;
+                    staffPerfBody.innerHTML += `
+                        <tr>
+                            <td>${st}</td>
+                            <td>${staffMap[st].count}</td>
+                            <td>${staffMap[st].sales.toFixed(2)} ر.س</td>
+                            <td>${comm.toFixed(2)} ر.س</td>
+                        </tr>
                     `;
-                    staffBody.appendChild(tr);
-                }
-            }
-            if(!hasStaffData) {
-                staffBody.innerHTML = `<tr class="empty-row"><td colspan="4">لا توجد بيانات إنتاجية للفترة المحددة</td></tr>`;
+                });
             }
 
-            // Render Invoices Table Body
-            const invBody = document.getElementById('invoicesTableBody');
-            invBody.innerHTML = '';
-            if(filteredInvoices.length === 0) {
-                invBody.innerHTML = `<tr class="empty-row"><td colspan="8">لا توجد فواتير مطابقة لخيارات البحث</td></tr>`;
-                return;
+            // تفاصيل الفواتير (الأحدث أولاً)
+            let reportsTableBody = document.getElementById('reportsTableBody');
+            reportsTableBody.innerHTML = '';
+            if (filteredInvoices.length === 0) {
+                reportsTableBody.innerHTML = `<tr class="empty-row"><td colspan="8">${dict[currentLang].noDataRow || 'لا توجد بيانات'}</td></tr>`;
+            } else {
+                [...filteredInvoices].sort((a, b) => b.id - a.id).forEach(inv => {
+                    reportsTableBody.innerHTML += `
+                        <tr>
+                            <td>${inv.serial}</td>
+                            <td>${inv.date} ${inv.time}</td>
+                            <td>${inv.staff}</td>
+                            <td>${inv.service}</td>
+                            <td>${inv.location}</td>
+                            <td>${inv.pay}</td>
+                            <td>${inv.price.toFixed(2)} ر.س</td>
+                            <td class="no-print">
+                                <button class="btn btn-warning btn-sm" onclick="openEditInvoice(${inv.id})">${dict[currentLang].editBtn || 'تعديل'}</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteInvoice(${inv.id})">${dict[currentLang].deleteBtn || 'حذف'}</button>
+                            </td>
+                        </tr>
+                    `;
+                });
             }
-            filteredInvoices.slice().reverse().forEach(inv => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${inv.serial}</strong></td>
-                    <td>${inv.date}</td>
-                    <td>${inv.staff}</td>
-                    <td>${inv.service} (${inv.duration})</td>
-                    <td style="font-weight:bold; color:var(--primary);">${inv.price.toFixed(2)} ر.س</td>
-                    <td>${inv.payMethod}</td>
-                    <td>${inv.location}</td>
-                    <td class="no-print">
-                        <button class="btn btn-danger" onclick="deleteInvoice(${inv.id})"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                invBody.appendChild(tr);
-            });
+
+            loadExpensesTable();
         }
 
         function clearDateFilter() {
@@ -1246,180 +1336,217 @@
             loadReports();
         }
 
-        // Admin & Settings Modal
-        function openAdminModal() {
-            renderAdminConfig();
-            document.getElementById('adminModal').classList.add('active');
-        }
-        function closeAdminModal() {
-            document.getElementById('adminModal').classList.remove('active');
-            populateDropdowns();
-            loadReports();
-        }
-
-        function openDeveloperModal() {
-            document.getElementById('developerModal').classList.add('active');
-        }
-        function closeDeveloperModal() {
-            document.getElementById('developerModal').classList.remove('active');
+        async function deleteInvoice(id) {
+            if (confirm(currentLang === 'ar' ? 'هل تريد حذف هذه الفاتورة نهائياً؟' : 'Delete this invoice permanently?')) {
+                const backup = db.invoices;
+                db.invoices = db.invoices.filter(i => i.id !== id);
+                const ok = await saveDB();
+                if (ok) {
+                    loadReports();
+                } else {
+                    db.invoices = backup;
+                }
+            }
         }
 
-        function renderAdminConfig() {
-            // Staff config list
-            const staffListDiv = document.getElementById('staffListConfig');
-            staffListDiv.innerHTML = '';
-            staffList.forEach((s, idx) => {
-                const div = document.createElement('div');
-                div.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#F8FAFC; padding:6px 10px; border-radius:6px; border:1px solid var(--border);";
-                div.innerHTML = `<span><strong>${s}</strong> (النسبة: 30%)</span> <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="removeStaff(${idx})"><i class="fa-solid fa-xmark"></i></button>`;
-                staffListDiv.appendChild(div);
+        function openEditInvoice(id) {
+            const inv = db.invoices.find(i => i.id === id);
+            if (inv) {
+                document.getElementById('editInvId').value = inv.id;
+                document.getElementById('editInvSerial').value = inv.serial;
+                document.getElementById('editInvPrice').value = inv.price;
+                document.getElementById('editInvLocation').value = inv.location || 'حضور بالمركز';
+
+                const editStaffSel = document.getElementById('editInvStaff');
+                editStaffSel.innerHTML = '';
+                db.staff.forEach(s => {
+                    editStaffSel.innerHTML += `<option value="${s}" ${s === inv.staff ? 'selected' : ''}>${s}</option>`;
+                });
+
+                document.getElementById('editInvoiceModal').classList.add('active');
+            }
+        }
+
+        async function submitEditInvoice() {
+            const id = parseInt(document.getElementById('editInvId').value);
+            const newPrice = parseFloat(document.getElementById('editInvPrice').value);
+            const newStaff = document.getElementById('editInvStaff').value;
+            const newLoc = document.getElementById('editInvLocation').value;
+
+            const inv = db.invoices.find(i => i.id === id);
+            if (inv) {
+                const backup = { price: inv.price, staff: inv.staff, location: inv.location };
+                inv.price = newPrice;
+                inv.staff = newStaff;
+                inv.location = newLoc;
+                const ok = await saveDB();
+                if (ok) {
+                    closeModal('editInvoiceModal');
+                    loadReports();
+                    alert(currentLang === 'ar' ? 'تم تعديل الفاتورة وتحديث العمليات بنجاح.' : 'Invoice updated successfully.');
+                } else {
+                    Object.assign(inv, backup);
+                }
+            }
+        }
+
+        // الإدارة والمالك (مع إمكانية تعديل وتصحيح أسماء العمال)
+        function checkAdmin() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === db.adminPass) {
+                document.getElementById('loginSec').style.display = 'none';
+                document.getElementById('adminControls').style.display = 'block';
+            } else {
+                alert(currentLang === 'ar' ? 'رمز الدخول غير صحيح!' : 'Incorrect passcode!');
+            }
+        }
+
+        function checkDeveloper() {
+            const pass = document.getElementById('devPassInput').value;
+            if (pass === '9999') {
+                document.getElementById('devLoginSec').style.display = 'none';
+                document.getElementById('devControls').style.display = 'block';
+            } else {
+                alert(currentLang === 'ar' ? 'رمز المبرمج غير صحيح!' : 'Incorrect developer passcode!');
+            }
+        }
+
+        async function updateAdminPassword() {
+            const newPass = document.getElementById('newAdminPasswordVal').value;
+            if (newPass.trim()) {
+                const backup = db.adminPass;
+                db.adminPass = newPass;
+                const ok = await saveDB();
+                if (ok) {
+                    alert(currentLang === 'ar' ? 'تم تحديث كلمة مرور المدير بنجاح.' : 'Manager password updated successfully.');
+                    closeModal('devModal');
+                } else {
+                    db.adminPass = backup;
+                }
+            } else {
+                alert(currentLang === 'ar' ? 'الرجاء إدخال كلمة مرور صحيحة.' : 'Please enter valid password.');
+            }
+        }
+
+        function renderAdminLists() {
+            const staffListUI = document.getElementById('staffListUI');
+            staffListUI.innerHTML = '';
+            db.staff.forEach((s, idx) => {
+                staffListUI.innerHTML += `
+                    <li style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #eee; gap:8px;">
+                        <input type="text" id="staff_name_${idx}" value="${s}" style="padding:4px 8px; border:1px solid #ccc; border-radius:4px; font-weight:bold; flex:1;">
+                        <button class="btn btn-accent btn-sm" onclick="updateStaffName(${idx})" style="padding:4px 8px; font-size:0.75rem;">تعديل الاسم</button>
+                        <button class="btn btn-danger btn-sm" onclick="removeStaff(${idx})" style="padding:4px 8px; font-size:0.75rem;">حذف</button>
+                    </li>`;
             });
 
-            // Services config list
-            const srvListDiv = document.getElementById('servicesListConfig');
-            srvListDiv.innerHTML = '';
-            servicesList.forEach((srv, idx) => {
-                const div = document.createElement('div');
-                div.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#F8FAFC; padding:6px 10px; border-radius:6px; border:1px solid var(--border);";
-                div.innerHTML = `<span><strong>${srv.name}</strong> - ${srv.price} ر.س</span> <button class="btn btn-danger" style="padding:2px 6px; font-size:0.75rem;" onclick="removeService(${idx})"><i class="fa-solid fa-xmark"></i></button>`;
-                srvListDiv.appendChild(div);
+            const serviceListUI = document.getElementById('serviceListUI');
+            serviceListUI.innerHTML = '';
+            db.services.forEach((srv, idx) => {
+                serviceListUI.innerHTML += `<li style="display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid #eee;"><span>${srv.name} (${srv.price} ر.س)</span> <button class="btn btn-danger btn-sm" onclick="removeService(${idx})">حذف</button></li>`;
             });
         }
 
-        function addNewStaff() {
+        async function addStaff() {
             const name = document.getElementById('newStaffName').value.trim();
-            if(name && !staffList.includes(name)) {
-                staffList.push(name);
-                localStorage.setItem('haiba_staff', JSON.stringify(staffList));
-                document.getElementById('newStaffName').value = '';
-                renderAdminConfig();
+            if (name && !db.staff.includes(name)) {
+                db.staff.push(name);
+                const ok = await saveDB();
+                if (ok) {
+                    document.getElementById('newStaffName').value = '';
+                    renderAdminLists();
+                    populateDropdowns();
+                } else {
+                    db.staff.pop();
+                }
             }
         }
 
-        function removeStaff(idx) {
-            if(staffList.length <= 1) {
-                alert('يجب أن يكون هناك عامل واحد على الأقل في النظام.');
-                return;
+        async function updateStaffName(idx) {
+            const inputField = document.getElementById(`staff_name_${idx}`);
+            const newName = inputField.value.trim();
+            if (newName) {
+                const oldName = db.staff[idx];
+                db.staff[idx] = newName;
+
+                // انعكاس تعديل الاسم على كافة الفواتير السابقة لضمان عدم ضياع أي بيانات
+                const touchedInvoices = [];
+                db.invoices.forEach(inv => {
+                    if (inv.staff === oldName) {
+                        touchedInvoices.push(inv);
+                        inv.staff = newName;
+                    }
+                });
+
+                const ok = await saveDB();
+                if (ok) {
+                    renderAdminLists();
+                    populateDropdowns();
+                    alert(currentLang === 'ar' ? 'تم تعديل اسم العامل وتحديثه في كافة الفواتير السابقة!' : 'Staff name updated across all invoices!');
+                } else {
+                    db.staff[idx] = oldName;
+                    touchedInvoices.forEach(inv => { inv.staff = oldName; });
+                }
             }
-            staffList.splice(idx, 1);
-            localStorage.setItem('haiba_staff', JSON.stringify(staffList));
-            renderAdminConfig();
         }
 
-        function addNewService() {
+        async function removeStaff(idx) {
+            const removed = db.staff[idx];
+            db.staff.splice(idx, 1);
+            const ok = await saveDB();
+            if (ok) {
+                renderAdminLists();
+                populateDropdowns();
+            } else {
+                db.staff.splice(idx, 0, removed);
+            }
+        }
+
+        async function addService() {
             const name = document.getElementById('newServiceName').value.trim();
             const price = parseFloat(document.getElementById('newServicePrice').value);
-            if(name && !isNaN(price)) {
-                servicesList.push({ name, price });
-                localStorage.setItem('haiba_services', JSON.stringify(servicesList));
-                document.getElementById('newServiceName').value = '';
-                document.getElementById('newServicePrice').value = '';
-                renderAdminConfig();
+            if (name && !isNaN(price)) {
+                db.services.push({ name, price });
+                const ok = await saveDB();
+                if (ok) {
+                    document.getElementById('newServiceName').value = '';
+                    document.getElementById('newServicePrice').value = '';
+                    renderAdminLists();
+                    populateDropdowns();
+                } else {
+                    db.services.pop();
+                }
             }
         }
 
-        function removeService(idx) {
-            if(servicesList.length <= 1) {
-                alert('يجب أن تكون هناك خدمة واحدة على الأقل في النظام.');
-                return;
-            }
-            servicesList.splice(idx, 1);
-            localStorage.setItem('haiba_services', JSON.stringify(servicesList));
-            renderAdminConfig();
-        }
-
-        // Backup & Restore
-        function exportDataJSON() {
-            const backupObj = {
-                staff: staffList,
-                services: servicesList,
-                invoices: invoices,
-                expenses: expenses,
-                exportDate: new Date().toISOString()
-            };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `Haiba_Center_Backup_${new Date().toISOString().split('T')[0]}.json`);
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-        }
-
-        function importDataJSON(e) {
-            const fileReader = new FileReader();
-            if(e.target.files[0]) {
-                fileReader.readAsText(e.target.files[0], "UTF-8");
-                fileReader.onload = function(event) {
-                    try {
-                        const parsed = JSON.parse(event.target.result);
-                        if(parsed.invoices && parsed.staff) {
-                            staffList = parsed.staff;
-                            servicesList = parsed.services || defaultServices;
-                            invoices = parsed.invoices;
-                            expenses = parsed.expenses || [];
-
-                            localStorage.setItem('haiba_staff', JSON.stringify(staffList));
-                            localStorage.setItem('haiba_services', JSON.stringify(servicesList));
-                            localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
-                            localStorage.setItem('haiba_expenses', JSON.stringify(expenses));
-
-                            alert('تم استعادة البيانات بنجاح!');
-                            closeAdminModal();
-                            populateDropdowns();
-                            updateLivePreview();
-                            loadReports();
-                            renderExpensesTable();
-                        } else {
-                            alert('ملف النسخ الاحتياطي غير صالح.');
-                        }
-                    } catch(err) {
-                        alert('حدث خطأ أثناء قراءة ملف النسخ الاحتياطي.');
-                    }
-                };
-            }
-        }
-
-        // Print & PDF Functions
-        function printElement(elementId) {
-            if(elementId === 'reports') {
-                document.body.classList.add('print-report-mode');
-                const printArea = document.getElementById('printArea');
-                const reportsContent = document.querySelector('#reports .card').cloneNode(true);
-                printArea.innerHTML = '';
-                printArea.appendChild(reportsContent);
-
-                window.print();
-                document.body.classList.remove('print-report-mode');
-                printArea.innerHTML = '';
+        async function removeService(idx) {
+            const removed = db.services[idx];
+            db.services.splice(idx, 1);
+            const ok = await saveDB();
+            if (ok) {
+                renderAdminLists();
+                populateDropdowns();
             } else {
-                const el = document.getElementById(elementId);
-                const win = window.open('', '', 'height=700,width=450');
-                win.document.write('<html><head><title>طباعة الفاتورة - مركز هيبة الاسترخاء</title>');
-                win.document.write('<style>body { font-family: Tajawal, sans-serif; direction: rtl; text-align: right; padding: 10px; }</style>');
-                win.document.write('</head><body>');
-                win.document.write(el.innerHTML);
-                win.document.write('</body></html>');
-                win.document.close();
-                win.focus();
-                setTimeout(() => {
-                    win.print();
-                    win.close();
-                }, 300);
+                db.services.splice(idx, 0, removed);
             }
         }
 
-        function exportPDF(elementId, filenamePrefix) {
-            const element = document.getElementById(elementId);
-            const opt = {
-                margin:       5,
-                filename:     `${filenamePrefix}_${Date.now()}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'mm', format: [80, 150], orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(opt).save();
+        function printElement(elemId) {
+            window.print();
         }
+
+        function exportPDF(elemId, filename) {
+            const element = document.getElementById(elemId);
+            html2pdf().from(element).save(filename + '.pdf');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initApp().catch(err => {
+                console.error('App init failed:', err);
+                document.getElementById('loadingText').innerText = 'حدث خطأ أثناء تحميل التطبيق';
+                document.getElementById('loadingSubtext').innerText = 'يرجى تحديث الصفحة والمحاولة مرة أخرى';
+            });
+        });
     </script>
 </body>
 </html>
