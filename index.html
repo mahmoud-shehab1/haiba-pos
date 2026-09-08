@@ -1317,7 +1317,7 @@
                 staffPerfBody.innerHTML = `<tr class="empty-row"><td colspan="4">${dict[currentLang].noDataRow || 'لا توجد بيانات'}</td></tr>`;
             } else {
                 staffNames.forEach(st => {
-                    let comm = staffMap[st].sales * 0.35;
+                    let comm = staffMap[st].sales * 0.3;
                     staffPerfBody.innerHTML += `
                         <tr>
                             <td>${st}</td>
