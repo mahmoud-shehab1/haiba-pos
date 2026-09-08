@@ -96,6 +96,7 @@
             font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
             gap: 8px; transition: all 0.2s; font-size: 0.9rem;
         }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-hover); }
         .btn-accent { background: var(--accent); color: #1A2E05; }
@@ -122,6 +123,8 @@
         th { background: #F8FAFC; color: #475569; font-weight: 700; }
         tr:hover { background: #F8FAFC; }
 
+        .empty-row td { text-align: center; color: var(--text-muted); padding: 18px 12px; font-weight: 600; }
+
         .thermal-wrapper { display: flex; justify-content: center; width: 100%; }
         .thermal-box {
             width: 58mm; padding: 8px; background: #FFF !important;
@@ -142,12 +145,36 @@
         .modal.active { display: flex !important; }
         .modal-content { background: white; width: 100%; max-width: 500px; padding: 1.5rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; text-align: inherit; }
 
+        #loadingOverlay {
+            position: fixed; inset: 0; background: var(--bg); z-index: 3000;
+            display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+        }
+        #loadingOverlay.hidden { display: none; }
+        .spinner {
+            width: 42px; height: 42px; border: 4px solid #DDD6FE; border-top-color: var(--primary);
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #loadingText { font-weight: 700; color: var(--primary); font-size: 0.95rem; }
+        #loadingSubtext { font-weight: 500; color: var(--text-muted); font-size: 0.8rem; }
+
+        .storage-note {
+            font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;
+        }
+
         @media print {
             .no-print { display: none !important; }
         }
     </style>
 </head>
 <body>
+
+    <!-- شاشة التحميل: تظهر أثناء تحميل البيانات المحفوظة، وتختفي بعد اكتمال التحميل -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p id="loadingText">جاري تحميل البيانات...</p>
+        <p id="loadingSubtext">Loading your saved data</p>
+    </div>
 
     <header class="no-print">
         <div class="brand">
@@ -348,6 +375,8 @@
                     <div class="form-group">
                         <label data-i18n="filterDateLbl">التاريخ</label>
                         <input type="date" id="filterDate" onchange="loadReports()">
+                        <span class="chip" onclick="clearDateFilter()"><span data-i18n="clearDateFilter">عرض كل الفواتير (كل التواريخ)</span></span>
+                        <span class="storage-note" data-i18n="filterDateHint">اتركه فارغاً لعرض فواتير كل الأيام معاً</span>
                     </div>
                     <div class="form-group">
                         <label data-i18n="filterStaffLbl">تصفية حسب العامل/ة</label>
@@ -599,6 +628,8 @@
                 reportsHeader: "التقارير والشفتات واليومية (الإيرادات، نسب العمال، والمصروفات)",
                 printReportBtn: "طباعة التقرير",
                 filterDateLbl: "التاريخ",
+                filterDateHint: "اتركه فارغاً لعرض فواتير كل الأيام معاً",
+                clearDateFilter: "عرض كل الفواتير (كل التواريخ)",
                 filterStaffLbl: "تصفية حسب العامل/ة",
                 allStaff: "جميع العاملين",
                 filterLocLbl: "مكان الخدمة",
@@ -621,6 +652,7 @@
                 thLocation: "الموقع",
                 thPayMethod: "الدفع",
                 thAmountVal: "المبلغ",
+                noDataRow: "لا توجد بيانات لعرضها",
                 adminPanelTitle: "لوحة تحكم الإعدادات",
                 adminPassPrompt: "أدخل رمز الدخول الخاص بالمدير",
                 loginBtn: "تسجيل الدخول",
@@ -693,6 +725,8 @@
                 reportsHeader: "Daily Reports & Shifts (Revenue, Staff Comm, Expenses)",
                 printReportBtn: "Print Report",
                 filterDateLbl: "Date",
+                filterDateHint: "Leave empty to show invoices from all days",
+                clearDateFilter: "Show all invoices (all dates)",
                 filterStaffLbl: "Filter by Staff",
                 allStaff: "All Staff",
                 filterLocLbl: "Location",
@@ -715,6 +749,7 @@
                 thLocation: "Location",
                 thPayMethod: "Payment",
                 thAmountVal: "Amount",
+                noDataRow: "No data to display",
                 adminPanelTitle: "Settings Control Panel",
                 adminPassPrompt: "Enter Manager Passcode",
                 loginBtn: "Login",
@@ -787,6 +822,8 @@
                 reportsHeader: "Araw-araw na Ulat at Shift",
                 printReportBtn: "I-print ang Ulat",
                 filterDateLbl: "Petsa",
+                filterDateHint: "Iwanang blangko para makita ang lahat ng araw",
+                clearDateFilter: "Ipakita lahat ng invoice",
                 filterStaffLbl: "Salain ayon sa Staff",
                 allStaff: "Lahat ng Staff",
                 filterLocLbl: "Lokasyon",
@@ -809,6 +846,7 @@
                 thLocation: "Lokasyon",
                 thPayMethod: "Bayad",
                 thAmountVal: "Halaga",
+                noDataRow: "Walang datos na ipapakita",
                 adminPanelTitle: "Panel ng Setting",
                 adminPassPrompt: "Ilagay ang Manager Passcode",
                 loginBtn: "Mag-login",
@@ -863,7 +901,7 @@
                 rPay: "পেমেন্ট:",
                 rTotal: "মোট পরিমাণ:",
                 rFooter1: "স্বাগতম - আপনার অভিজ্ঞতা উপভোগ করুন",
-                rFooter2: "দয়া করে রসিদটি সংরক্ষণ করুন",
+                rFooter2: "দয়া করে রসিদটি সংরক্ষণ করুন",
                 manualPrintBtn: "ম্যানুয়াল প্রিন্ট",
                 downloadPdfBtn: "PDF ডাউনলোড করুন",
                 expensesHeader: "খুচরা এবং অপারেশনাল খরচ রেকর্ড করুন",
@@ -881,6 +919,8 @@
                 reportsHeader: "দৈনিক রিপোর্ট ও শিফট (আয়, কমিশন, খরচ)",
                 printReportBtn: "রিপোর্ট প্রিন্ট করুন",
                 filterDateLbl: "তারিখ",
+                filterDateHint: "সব দিনের ইনভয়েস দেখতে খালি রাখুন",
+                clearDateFilter: "সব ইনভয়েস দেখুন",
                 filterStaffLbl: "কর্মী অনুসারে ফিল্টার",
                 allStaff: "সকল কর্মী",
                 filterLocLbl: "অবস্থান ফিল্টার",
@@ -903,6 +943,7 @@
                 thLocation: "অবস্থান",
                 thPayMethod: "পেমেন্ট",
                 thAmountVal: "পরিমাণ",
+                noDataRow: "দেখানোর জন্য কোন তথ্য নেই",
                 adminPanelTitle: "সেটিংস কন্ট্রোল প্যানেল",
                 adminPassPrompt: "ম্যানেজার পাসকোড লিখুন",
                 loginBtn: "লগইন",
@@ -925,11 +966,11 @@
             }
         };
 
-        let currentLang = localStorage.getItem('haiba_lang') || 'ar';
+        // اللغة الافتراضية للجلسة الحالية (لا يتم حفظها بين الجلسات لتفادي أي استخدام لتخزين المتصفح)
+        let currentLang = 'ar';
 
         function changeLanguage(lang) {
             currentLang = lang;
-            localStorage.setItem('haiba_lang', lang);
             const html = document.getElementById('htmlRoot');
             html.setAttribute('lang', lang);
             if (lang === 'ar' || lang === 'bn') {
@@ -951,26 +992,63 @@
             });
         }
 
-        // التخزين المحلي والبيانات الأساسية (مع دعم الحفاظ على كل المدخلات السابقة وتاريخ 6 و 7 سبتمبر)
-        let db = {
-            staff: JSON.parse(localStorage.getItem('haiba_staff')) || ['أحمد', 'محمد', 'سارة', 'ريم'],
-            services: JSON.parse(localStorage.getItem('haiba_services')) || [
-                {name: 'مساج استرخائي 60 دقيقة', price: 150},
-                {name: 'حمام مغربي ملكي', price: 200},
-                {name: 'بدي كير ومناكير', price: 90},
-                {name: 'باقة العناية الشاملة', price: 350}
-            ],
-            invoices: JSON.parse(localStorage.getItem('haiba_invoices')) || [],
-            expenses: JSON.parse(localStorage.getItem('haiba_expenses')) || [],
-            adminPass: localStorage.getItem('haiba_admin_pass') || '1234'
-        };
+        // === طبقة البيانات ===
+        // مهم جداً: هذا التطبيق لا يستخدم أي تخزين متصفح (localStorage) لأنه غير موثوق داخل بيئة المعاينة
+        // وقد يفقد بياناتك بين الجلسات. بدلاً من ذلك يتم استخدام تخزين دائم مرتبط بحسابك (window.storage)
+        // بحيث تبقى فواتيرك ومصروفاتك محفوظة مهما أعدت فتح الصفحة أو غيّرت الجهاز.
+        const STORAGE_KEY = 'haiba_pos_data';
 
-        function saveData() {
-            localStorage.setItem('haiba_staff', JSON.stringify(db.staff));
-            localStorage.setItem('haiba_services', JSON.stringify(db.services));
-            localStorage.setItem('haiba_invoices', JSON.stringify(db.invoices));
-            localStorage.setItem('haiba_expenses', JSON.stringify(db.expenses));
-            localStorage.setItem('haiba_admin_pass', db.adminPass);
+        function getDefaultDB() {
+            return {
+                staff: ['أحمد', 'محمد', 'سارة', 'ريم'],
+                services: [
+                    { name: 'مساج استرخائي 60 دقيقة', price: 150 },
+                    { name: 'حمام مغربي ملكي', price: 200 },
+                    { name: 'بدي كير ومناكير', price: 90 },
+                    { name: 'باقة العناية الشاملة', price: 350 }
+                ],
+                invoices: [],
+                expenses: [],
+                adminPass: '1234',
+                nextSerial: 1
+            };
+        }
+
+        let db = getDefaultDB();
+
+        async function loadDB() {
+            try {
+                const result = await window.storage.get(STORAGE_KEY, false);
+                if (result && result.value) {
+                    const parsed = JSON.parse(result.value);
+                    db = Object.assign(getDefaultDB(), parsed);
+                } else {
+                    db = getDefaultDB();
+                }
+            } catch (err) {
+                // لا توجد بيانات محفوظة بعد (أول استخدام) أو خطأ في القراءة -> نبدأ بقيم افتراضية وننشئ السجل
+                db = getDefaultDB();
+                try {
+                    await window.storage.set(STORAGE_KEY, JSON.stringify(db), false);
+                } catch (err2) {
+                    console.error('Initial save failed:', err2);
+                }
+            }
+        }
+
+        async function saveDB() {
+            try {
+                const result = await window.storage.set(STORAGE_KEY, JSON.stringify(db), false);
+                if (!result) {
+                    alert(currentLang === 'ar' ? 'تعذّر حفظ البيانات، يرجى المحاولة مرة أخرى.' : 'Failed to save data, please try again.');
+                    return false;
+                }
+                return true;
+            } catch (err) {
+                console.error('Save error:', err);
+                alert(currentLang === 'ar' ? 'حدث خطأ أثناء حفظ البيانات. تحقق من اتصالك وحاول مرة أخرى.' : 'An error occurred while saving data. Check your connection and try again.');
+                return false;
+            }
         }
 
         // التنقل بين التبويبات
@@ -979,7 +1057,7 @@
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             document.getElementById('btn-tab-' + tabId).classList.add('active');
-            if(tabId === 'reports') loadReports();
+            if (tabId === 'reports') loadReports();
         }
 
         function closeModal(modalId) {
@@ -993,38 +1071,52 @@
             document.getElementById('devModal').classList.add('active');
         }
 
-        // تهيئة الشاشة وتعبئة القوائم
-        function initApp() {
+        // تهيئة الشاشة وتعبئة القوائم (تُستدعى مرة واحدة عند بدء التطبيق)
+        async function initApp() {
+            await loadDB();
+
             document.getElementById('langSelect').value = currentLang;
             changeLanguage(currentLang);
 
             const today = new Date().toISOString().split('T')[0];
-            if(document.getElementById('invDateInput')) document.getElementById('invDateInput').value = today;
-            if(document.getElementById('expDate')) document.getElementById('expDate').value = today;
-            if(document.getElementById('filterDate')) document.getElementById('filterDate').value = today;
-            
-            // رقم الفاتورة التسلسلي
-            const nextSerial = 'HS-' + String(db.invoices.length + 1).padStart(6, '0');
-            document.getElementById('invSerial').value = nextSerial;
+            document.getElementById('invDateInput').value = today;
+            document.getElementById('expDate').value = today;
+            // نترك تصفية التاريخ في التقارير فارغة افتراضياً لعرض كل الفواتير من كل الأيام
+            document.getElementById('filterDate').value = '';
 
+            resetInvoiceFormState();
             populateDropdowns();
             updateLivePreview();
+
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        function resetInvoiceFormState() {
+            document.getElementById('invSerial').value = 'HS-' + String(db.nextSerial).padStart(6, '0');
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invDateInput').value = today;
         }
 
         function populateDropdowns() {
             const staffSelect = document.getElementById('staffSelect');
             const filterStaff = document.getElementById('filterStaff');
             const editInvStaff = document.getElementById('editInvStaff');
-            
+
+            const prevStaffFilter = filterStaff.value || 'ALL';
+
             staffSelect.innerHTML = '';
             filterStaff.innerHTML = `<option value="ALL">${dict[currentLang].allStaff || 'جميع العاملين'}</option>`;
             editInvStaff.innerHTML = '';
-            
+
             db.staff.forEach(s => {
                 staffSelect.innerHTML += `<option value="${s}">${s}</option>`;
                 filterStaff.innerHTML += `<option value="${s}">${s}</option>`;
                 editInvStaff.innerHTML += `<option value="${s}">${s}</option>`;
             });
+
+            if (db.staff.includes(prevStaffFilter) || prevStaffFilter === 'ALL') {
+                filterStaff.value = prevStaffFilter;
+            }
 
             const serviceSelect = document.getElementById('serviceSelect');
             serviceSelect.innerHTML = '';
@@ -1038,7 +1130,7 @@
         function onServiceSelectChange() {
             const select = document.getElementById('serviceSelect');
             const selectedOpt = select.options[select.selectedIndex];
-            if(selectedOpt) {
+            if (selectedOpt) {
                 const price = selectedOpt.getAttribute('data-price');
                 document.getElementById('price').value = price;
                 document.getElementById('duration').value = '60 دقيقة';
@@ -1063,9 +1155,12 @@
             document.getElementById('r-time').innerText = new Date().toLocaleTimeString('ar-SA');
         }
 
-        // حفظ الفاتورة (مع الحفاظ الكامل على كافة العمليات والبيانات)
-        function saveInvoice(e) {
+        // حفظ الفاتورة (يُحفظ الآن في التخزين الدائم بدل localStorage)
+        async function saveInvoice(e) {
             e.preventDefault();
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+
             const newInv = {
                 id: Date.now(),
                 serial: document.getElementById('invSerial').value,
@@ -1080,13 +1175,24 @@
             };
 
             db.invoices.push(newInv);
-            saveData();
-            alert(currentLang === 'ar' ? 'تم حفظ الفاتورة بنجاح!' : 'Invoice saved successfully!');
-            initApp();
+            db.nextSerial += 1;
+
+            const ok = await saveDB();
+            saveBtn.disabled = false;
+
+            if (ok) {
+                alert(currentLang === 'ar' ? 'تم حفظ الفاتورة بنجاح!' : 'Invoice saved successfully!');
+                resetInvoiceFormState();
+                updateLivePreview();
+            } else {
+                // فشل الحفظ: نتراجع عن التغييرات المحلية حتى لا يختلف العدّاد عمّا هو محفوظ فعلياً
+                db.invoices.pop();
+                db.nextSerial -= 1;
+            }
         }
 
         // حفظ المصروف
-        function saveExpense(e) {
+        async function saveExpense(e) {
             e.preventDefault();
             const exp = {
                 id: Date.now(),
@@ -1096,17 +1202,26 @@
                 user: document.getElementById('expUser').value || 'الإدارة'
             };
             db.expenses.push(exp);
-            saveData();
-            document.getElementById('expenseForm').reset();
-            document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
-            loadExpensesTable();
-            alert(currentLang === 'ar' ? 'تم تسجيل المصروف بنجاح.' : 'Expense recorded successfully.');
+            const ok = await saveDB();
+            if (ok) {
+                document.getElementById('expenseForm').reset();
+                document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
+                loadExpensesTable();
+                alert(currentLang === 'ar' ? 'تم تسجيل المصروف بنجاح.' : 'Expense recorded successfully.');
+            } else {
+                db.expenses.pop();
+            }
         }
 
         function loadExpensesTable() {
             const tbody = document.getElementById('expensesTableBody');
             tbody.innerHTML = '';
-            db.expenses.forEach(ex => {
+            if (db.expenses.length === 0) {
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="5">${dict[currentLang].noDataRow || 'لا توجد بيانات'}</td></tr>`;
+                return;
+            }
+            // الأحدث أولاً لتسهيل المتابعة
+            [...db.expenses].sort((a, b) => b.id - a.id).forEach(ex => {
                 tbody.innerHTML += `
                     <tr>
                         <td>${ex.date}</td>
@@ -1119,27 +1234,32 @@
             });
         }
 
-        function deleteExpense(id) {
-            if(confirm(currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا المصروف؟' : 'Are you sure to delete this expense?')) {
+        async function deleteExpense(id) {
+            if (confirm(currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا المصروف؟' : 'Are you sure to delete this expense?')) {
+                const backup = db.expenses;
                 db.expenses = db.expenses.filter(x => x.id !== id);
-                saveData();
-                loadExpensesTable();
+                const ok = await saveDB();
+                if (ok) {
+                    loadExpensesTable();
+                } else {
+                    db.expenses = backup;
+                }
             }
         }
 
-        // التقارير والشفتات (مع دعم الفلترة بالحضوري والمنزلي وتاريخ 6 و 7)
+        // التقارير والشفتات (تصفية اختيارية حسب التاريخ - فارغ = كل التواريخ)
         function loadReports() {
             const filterDate = document.getElementById('filterDate').value;
             const filterStaff = document.getElementById('filterStaff').value;
             const filterLocation = document.getElementById('filterLocation').value;
 
-            let filteredInvoices = db.invoices.filter(inv => inv.date === filterDate);
-            let filteredExpenses = db.expenses.filter(ex => ex.date === filterDate);
+            let filteredInvoices = filterDate ? db.invoices.filter(inv => inv.date === filterDate) : [...db.invoices];
+            let filteredExpenses = filterDate ? db.expenses.filter(ex => ex.date === filterDate) : [...db.expenses];
 
-            if(filterStaff !== 'ALL') {
+            if (filterStaff !== 'ALL') {
                 filteredInvoices = filteredInvoices.filter(inv => inv.staff === filterStaff);
             }
-            if(filterLocation !== 'ALL') {
+            if (filterLocation !== 'ALL') {
                 filteredInvoices = filteredInvoices.filter(inv => inv.location === filterLocation);
             }
 
@@ -1147,7 +1267,7 @@
             let totalExp = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
             let totalCash = filteredInvoices.filter(i => i.pay === 'كاش' || i.pay === 'Cash').reduce((sum, i) => sum + i.price, 0);
 
-            let totalStaffComm = totalRev * 0.35; 
+            let totalStaffComm = totalRev * 0.35;
             let netRev = totalRev - totalStaffComm - totalExp;
 
             document.getElementById('totalRevenue').innerText = totalRev.toFixed(2) + ' SAR';
@@ -1161,64 +1281,82 @@
             staffPerfBody.innerHTML = '';
             let staffMap = {};
             filteredInvoices.forEach(i => {
-                if(!staffMap[i.staff]) staffMap[i.staff] = { count: 0, sales: 0 };
+                if (!staffMap[i.staff]) staffMap[i.staff] = { count: 0, sales: 0 };
                 staffMap[i.staff].count += 1;
                 staffMap[i.staff].sales += i.price;
             });
 
-            for(let st in staffMap) {
-                let comm = staffMap[st].sales * 0.35;
-                staffPerfBody.innerHTML += `
-                    <tr>
-                        <td>${st}</td>
-                        <td>${staffMap[st].count}</td>
-                        <td>${staffMap[st].sales.toFixed(2)} ر.س</td>
-                        <td>${comm.toFixed(2)} ر.س</td>
-                    </tr>
-                `;
+            const staffNames = Object.keys(staffMap);
+            if (staffNames.length === 0) {
+                staffPerfBody.innerHTML = `<tr class="empty-row"><td colspan="4">${dict[currentLang].noDataRow || 'لا توجد بيانات'}</td></tr>`;
+            } else {
+                staffNames.forEach(st => {
+                    let comm = staffMap[st].sales * 0.35;
+                    staffPerfBody.innerHTML += `
+                        <tr>
+                            <td>${st}</td>
+                            <td>${staffMap[st].count}</td>
+                            <td>${staffMap[st].sales.toFixed(2)} ر.س</td>
+                            <td>${comm.toFixed(2)} ر.س</td>
+                        </tr>
+                    `;
+                });
             }
 
-            // تفاصيل الفواتير
+            // تفاصيل الفواتير (الأحدث أولاً)
             let reportsTableBody = document.getElementById('reportsTableBody');
             reportsTableBody.innerHTML = '';
-            filteredInvoices.forEach(inv => {
-                reportsTableBody.innerHTML += `
-                    <tr>
-                        <td>${inv.serial}</td>
-                        <td>${inv.date} ${inv.time}</td>
-                        <td>${inv.staff}</td>
-                        <td>${inv.service}</td>
-                        <td>${inv.location}</td>
-                        <td>${inv.pay}</td>
-                        <td>${inv.price.toFixed(2)} ر.س</td>
-                        <td class="no-print">
-                            <button class="btn btn-warning btn-sm" onclick="openEditInvoice(${inv.id})">${dict[currentLang].editBtn || 'تعديل'}</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteInvoice(${inv.id})">${dict[currentLang].deleteBtn || 'حذف'}</button>
-                        </td>
-                    </tr>
-                `;
-            });
+            if (filteredInvoices.length === 0) {
+                reportsTableBody.innerHTML = `<tr class="empty-row"><td colspan="8">${dict[currentLang].noDataRow || 'لا توجد بيانات'}</td></tr>`;
+            } else {
+                [...filteredInvoices].sort((a, b) => b.id - a.id).forEach(inv => {
+                    reportsTableBody.innerHTML += `
+                        <tr>
+                            <td>${inv.serial}</td>
+                            <td>${inv.date} ${inv.time}</td>
+                            <td>${inv.staff}</td>
+                            <td>${inv.service}</td>
+                            <td>${inv.location}</td>
+                            <td>${inv.pay}</td>
+                            <td>${inv.price.toFixed(2)} ر.س</td>
+                            <td class="no-print">
+                                <button class="btn btn-warning btn-sm" onclick="openEditInvoice(${inv.id})">${dict[currentLang].editBtn || 'تعديل'}</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteInvoice(${inv.id})">${dict[currentLang].deleteBtn || 'حذف'}</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
 
             loadExpensesTable();
         }
 
-        function deleteInvoice(id) {
-            if(confirm(currentLang === 'ar' ? 'هل تريد حذف هذه الفاتورة نهائياً؟' : 'Delete this invoice permanently?')) {
+        function clearDateFilter() {
+            document.getElementById('filterDate').value = '';
+            loadReports();
+        }
+
+        async function deleteInvoice(id) {
+            if (confirm(currentLang === 'ar' ? 'هل تريد حذف هذه الفاتورة نهائياً؟' : 'Delete this invoice permanently?')) {
+                const backup = db.invoices;
                 db.invoices = db.invoices.filter(i => i.id !== id);
-                saveData();
-                loadReports();
+                const ok = await saveDB();
+                if (ok) {
+                    loadReports();
+                } else {
+                    db.invoices = backup;
+                }
             }
         }
 
         function openEditInvoice(id) {
             const inv = db.invoices.find(i => i.id === id);
-            if(inv) {
+            if (inv) {
                 document.getElementById('editInvId').value = inv.id;
                 document.getElementById('editInvSerial').value = inv.serial;
                 document.getElementById('editInvPrice').value = inv.price;
                 document.getElementById('editInvLocation').value = inv.location || 'حضور بالمركز';
-                
-                // تحديث قائمة العمال في مودال التعديل
+
                 const editStaffSel = document.getElementById('editInvStaff');
                 editStaffSel.innerHTML = '';
                 db.staff.forEach(s => {
@@ -1229,28 +1367,33 @@
             }
         }
 
-        function submitEditInvoice() {
+        async function submitEditInvoice() {
             const id = parseInt(document.getElementById('editInvId').value);
             const newPrice = parseFloat(document.getElementById('editInvPrice').value);
             const newStaff = document.getElementById('editInvStaff').value;
             const newLoc = document.getElementById('editInvLocation').value;
-            
+
             const inv = db.invoices.find(i => i.id === id);
-            if(inv) {
+            if (inv) {
+                const backup = { price: inv.price, staff: inv.staff, location: inv.location };
                 inv.price = newPrice;
                 inv.staff = newStaff;
                 inv.location = newLoc;
-                saveData();
-                closeModal('editInvoiceModal');
-                loadReports();
-                alert(currentLang === 'ar' ? 'تم تعديل الفاتورة وتحديث العمليات بنجاح.' : 'Invoice updated successfully.');
+                const ok = await saveDB();
+                if (ok) {
+                    closeModal('editInvoiceModal');
+                    loadReports();
+                    alert(currentLang === 'ar' ? 'تم تعديل الفاتورة وتحديث العمليات بنجاح.' : 'Invoice updated successfully.');
+                } else {
+                    Object.assign(inv, backup);
+                }
             }
         }
 
         // الإدارة والمالك (مع إمكانية تعديل وتصحيح أسماء العمال)
         function checkAdmin() {
             const pass = document.getElementById('adminPass').value;
-            if(pass === db.adminPass) {
+            if (pass === db.adminPass) {
                 document.getElementById('loginSec').style.display = 'none';
                 document.getElementById('adminControls').style.display = 'block';
             } else {
@@ -1260,7 +1403,7 @@
 
         function checkDeveloper() {
             const pass = document.getElementById('devPassInput').value;
-            if(pass === '9999') {
+            if (pass === '9999') {
                 document.getElementById('devLoginSec').style.display = 'none';
                 document.getElementById('devControls').style.display = 'block';
             } else {
@@ -1268,13 +1411,18 @@
             }
         }
 
-        function updateAdminPassword() {
+        async function updateAdminPassword() {
             const newPass = document.getElementById('newAdminPasswordVal').value;
-            if(newPass.trim()) {
+            if (newPass.trim()) {
+                const backup = db.adminPass;
                 db.adminPass = newPass;
-                saveData();
-                alert(currentLang === 'ar' ? 'تم تحديث كلمة مرور المدير بنجاح.' : 'Manager password updated successfully.');
-                closeModal('devModal');
+                const ok = await saveDB();
+                if (ok) {
+                    alert(currentLang === 'ar' ? 'تم تحديث كلمة مرور المدير بنجاح.' : 'Manager password updated successfully.');
+                    closeModal('devModal');
+                } else {
+                    db.adminPass = backup;
+                }
             } else {
                 alert(currentLang === 'ar' ? 'الرجاء إدخال كلمة مرور صحيحة.' : 'Please enter valid password.');
             }
@@ -1299,63 +1447,88 @@
             });
         }
 
-        function addStaff() {
+        async function addStaff() {
             const name = document.getElementById('newStaffName').value.trim();
-            if(name && !db.staff.includes(name)) {
+            if (name && !db.staff.includes(name)) {
                 db.staff.push(name);
-                saveData();
-                document.getElementById('newStaffName').value = '';
-                renderAdminLists();
-                populateDropdowns();
+                const ok = await saveDB();
+                if (ok) {
+                    document.getElementById('newStaffName').value = '';
+                    renderAdminLists();
+                    populateDropdowns();
+                } else {
+                    db.staff.pop();
+                }
             }
         }
 
-        function updateStaffName(idx) {
+        async function updateStaffName(idx) {
             const inputField = document.getElementById(`staff_name_${idx}`);
             const newName = inputField.value.trim();
-            if(newName) {
+            if (newName) {
                 const oldName = db.staff[idx];
                 db.staff[idx] = newName;
-                
+
                 // انعكاس تعديل الاسم على كافة الفواتير السابقة لضمان عدم ضياع أي بيانات
+                const touchedInvoices = [];
                 db.invoices.forEach(inv => {
-                    if(inv.staff === oldName) {
+                    if (inv.staff === oldName) {
+                        touchedInvoices.push(inv);
                         inv.staff = newName;
                     }
                 });
 
-                saveData();
-                renderAdminLists();
-                populateDropdowns();
-                alert(currentLang === 'ar' ? 'تم تعديل اسم العامل وتحديثه في كافة الفواتير السابقة!' : 'Staff name updated across all invoices!');
+                const ok = await saveDB();
+                if (ok) {
+                    renderAdminLists();
+                    populateDropdowns();
+                    alert(currentLang === 'ar' ? 'تم تعديل اسم العامل وتحديثه في كافة الفواتير السابقة!' : 'Staff name updated across all invoices!');
+                } else {
+                    db.staff[idx] = oldName;
+                    touchedInvoices.forEach(inv => { inv.staff = oldName; });
+                }
             }
         }
 
-        function removeStaff(idx) {
+        async function removeStaff(idx) {
+            const removed = db.staff[idx];
             db.staff.splice(idx, 1);
-            saveData();
-            renderAdminLists();
-            populateDropdowns();
+            const ok = await saveDB();
+            if (ok) {
+                renderAdminLists();
+                populateDropdowns();
+            } else {
+                db.staff.splice(idx, 0, removed);
+            }
         }
 
-        function addService() {
+        async function addService() {
             const name = document.getElementById('newServiceName').value.trim();
             const price = parseFloat(document.getElementById('newServicePrice').value);
-            if(name && !isNaN(price)) {
-                db.services.push({name, price});
-                saveData();
-                document.getElementById('newServiceName').value = '';
-                document.getElementById('newServicePrice').value = '';
-                renderAdminLists();
-                populateDropdowns();
+            if (name && !isNaN(price)) {
+                db.services.push({ name, price });
+                const ok = await saveDB();
+                if (ok) {
+                    document.getElementById('newServiceName').value = '';
+                    document.getElementById('newServicePrice').value = '';
+                    renderAdminLists();
+                    populateDropdowns();
+                } else {
+                    db.services.pop();
+                }
             }
         }
 
-        function removeService(idx) {
+        async function removeService(idx) {
+            const removed = db.services[idx];
             db.services.splice(idx, 1);
-            saveData();
-            renderAdminLists();
-            populateDropdowns();
+            const ok = await saveDB();
+            if (ok) {
+                renderAdminLists();
+                populateDropdowns();
+            } else {
+                db.services.splice(idx, 0, removed);
+            }
         }
 
         function printElement(elemId) {
@@ -1368,7 +1541,11 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            initApp();
+            initApp().catch(err => {
+                console.error('App init failed:', err);
+                document.getElementById('loadingText').innerText = 'حدث خطأ أثناء تحميل التطبيق';
+                document.getElementById('loadingSubtext').innerText = 'يرجى تحديث الصفحة والمحاولة مرة أخرى';
+            });
         });
     </script>
 </body>
