@@ -160,8 +160,9 @@
         #loadingOverlay {
             position: fixed; inset: 0; background: var(--bg); z-index: 3000;
             display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+            transition: opacity 0.3s ease;
         }
-        #loadingOverlay.hidden { display: none; }
+        #loadingOverlay.hidden { opacity: 0; pointer-events: none; display: none; }
         .spinner {
             width: 42px; height: 42px; border: 4px solid #DDD6FE; border-top-color: var(--primary);
             border-radius: 50%; animation: spin 0.8s linear infinite;
@@ -184,12 +185,12 @@
 
     <div id="loadingOverlay">
         <div class="spinner"></div>
-        <p id="loadingText">جاري تحميل النظام...</p>
+        <p id="loadingText">جاري تحميل نظام مركز هيبة الاسترخاء...</p>
     </div>
 
     <div id="printArea"></div>
 
-    <div id="cloudErrorBanner" class="no-print" style="display:none; background:#FEF2F2; color:#991B1B; border-bottom:2px solid #FCA5A5; padding:10px 16px; font-weight:700; font-size:0.85rem; white-space:pre-wrap;"></div>
+    <div id="cloudErrorBanner" class="no-print" style="display:none; background:#FEF2F2; color:#991B1B; border-bottom:2px solid #FCA5A5; padding:10px 16px; font-weight:700; font-size:0.85rem;"></div>
 
     <header class="no-print">
         <div class="brand">
@@ -200,7 +201,7 @@
             </div>
         </div>
         <div style="display:flex; align-items:center; gap:12px; flex-wrap: wrap;">
-            <span class="sync-badge"><span class="sync-dot"></span> <span data-i18n="liveSync">متصل بالسحابة</span></span>
+            <span class="sync-badge"><span class="sync-dot"></span> <span data-i18n="liveSync">جاهز وسريع</span></span>
             <button class="lang-toggle" onclick="toggleLanguage()"><i class="fa-solid fa-language"></i> <span id="langToggleLabel">EN</span></button>
             <button class="btn btn-accent" onclick="openAdminModal()"><i class="fa-solid fa-user-shield"></i> <span data-i18n="settingsStaff">الإعدادات والعمال</span></button>
         </div>
@@ -225,7 +226,7 @@
                     <form id="invoiceForm" onsubmit="saveInvoice(event)">
                         <div class="grid-form">
                             <div class="form-group">
-                                <label data-i18n="invSerial">رقم الفاتورة (تسلسلي)</label>
+                                <label data-i18n="invSerial">رقم الفاتورة (فريد وعشوائي)</label>
                                 <input type="text" id="invSerial" readonly style="background: #E2E8F0; font-weight:700;">
                             </div>
                             <div class="form-group">
@@ -304,7 +305,7 @@
                         </div>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px; margin-top: 1rem;" class="no-print">
-                        <button class="btn btn-print" onclick="printElement('thermal-receipt')"><i class="fa-solid fa-print"></i> <span data-i18n="manualPrint">طباعة يدوية</span></button>
+                        <button class="btn btn-print" onclick="printElement('thermal-receipt')"><i class="fa-solid fa-print"></i> <span data-i18n="manualPrint">طباعة المعاينة</span></button>
                     </div>
                 </div>
             </div>
@@ -364,7 +365,7 @@
                     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                         <input type="date" id="reportDateFilter" onchange="renderReports()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border);">
                         <button class="btn btn-secondary" onclick="clearReportFilter()"><i class="fa-solid fa-rotate-right"></i> <span data-i18n="allDates">كل التواريخ</span></button>
-                        <button class="btn btn-accent" onclick="fetchAllInvoicesNow()"><i class="fa-solid fa-cloud-arrow-down"></i> <span data-i18n="refreshCloud">تحديث الآن</span></button>
+                        <button class="btn btn-accent" onclick="fetchAllInvoicesNow()"><i class="fa-solid fa-rotate"></i> <span data-i18n="refreshCloud">تحديث البيانات</span></button>
                     </div>
                 </div>
                 <div id="invoiceCountBadge" style="margin: 6px 0 0; font-size:0.85rem; font-weight:700; color:var(--primary);"></div>
@@ -424,7 +425,7 @@
                 </div>
 
                 <div style="margin-top: 2rem;">
-                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-file-lines"></i> <span data-i18n="invoiceLogTitle">سجل الفواتير المسجلة:</span></h3>
+                    <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-file-lines"></i> <span data-i18n="invoiceLogTitle">سجل الفواتير المسجلة (مع زر طباعة فورية لأي فاتورة):</span></h3>
                     <div class="table-responsive">
                         <table>
                             <thead>
@@ -437,7 +438,7 @@
                                     <th data-i18n="paymentMethod">الدفع</th>
                                     <th data-i18n="priceLabel">السعر</th>
                                     <th data-i18n="colCommission">العمولة</th>
-                                    <th data-i18n="colActions">الإجراءات</th>
+                                    <th data-i18n="colActions">الإجراءات والطباعة</th>
                                 </tr>
                             </thead>
                             <tbody id="invoicesTableBody"></tbody>
@@ -596,19 +597,22 @@
             </div>
             <div style="display:flex; gap:10px; width:100%;">
                 <button class="btn btn-secondary" style="flex:1;" onclick="closePrintPreviewModal()" data-i18n="cancelBtn">إلغاء</button>
-                <button class="btn btn-print" style="flex:1;" onclick="printElement('modal-thermal-receipt')"><i class="fa-solid fa-print"></i> <span data-i18n="manualPrint">طباعة</span></button>
+                <button class="btn btn-print" style="flex:1;" onclick="printElement('modal-thermal-receipt')"><i class="fa-solid fa-print"></i> <span data-i18n="manualPrint">طباعة الآن</span></button>
             </div>
         </div>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://ovbptgghkqovrxgxnywy.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6IkFub24iLCJpYXQiOjE3NDEyMTk5NjgsImV4cCI6MjA1Njc5NTk2OH0.QQ__vcfkW_H5YQ5N1k8tZ8qJz3x2v_w4z5q_5z6x7_8';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6ImFub24iLCJzdXBhYmFzZSIsInJlZiI6Im92YnB0Z2doa3FvdnJ4Z3hueXd5Iiwicm9sZSI6ImFub24iLCJpYXJ0aCI6IkFub24iLCJpYXQiOjE3NDEyMTk5NjgsImV4cCI6MjA1Njc5NTk2OH0.QQ__vcfkW_H5YQ5N1k8tZ8qJz3x2v_w4z5q_5z6x7_8';
         
         let supabaseClient = null;
         try {
             if (window.supabase && typeof window.supabase.createClient === 'function') {
-                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+                    auth: { persistSession: false },
+                    db: { schema: 'public' }
+                });
             }
         } catch (e) {
             console.error("Supabase initialization error:", e);
@@ -620,13 +624,13 @@
                 brandTitle: "مركز هيبة الاسترخاء",
                 brandSubtitle: "فرع جدة - المساج والحمام المغربي والبدي كير",
                 brandSubtitleShort: "جدة - المساج والحمام المغربي",
-                liveSync: "متصل بالسحابة",
+                liveSync: "جاهز وسريع",
                 settingsStaff: "الإعدادات والعمال",
                 tabPos: "إصدار فاتورة",
                 tabExpenses: "إدارة المصروفات",
                 tabReports: "التقارير والشفتات واليومية",
                 newInvoice: "إنشاء فاتورة جديدة",
-                invSerial: "رقم الفاتورة (تسلسلي)",
+                invSerial: "رقم الفاتورة (فريد وعشوائي)",
                 invDate: "تاريخ الفاتورة",
                 staffName: "اسم العامل / العاملة",
                 serviceLabel: "الخدمة / العرض المقدم",
@@ -649,7 +653,7 @@
                 rLocation: "الموقع:",
                 rPay: "طريقة الدفع:",
                 rTotal: "المبلغ الإجمالي:",
-                manualPrint: "طباعة يدوية",
+                manualPrint: "طباعة المعاينة",
                 newExpense: "تسجيل مصروف جديد",
                 expTitleLabel: "بند المصروف",
                 expAmountLabel: "المبلغ (ر.س)",
@@ -659,10 +663,10 @@
                 colDate: "التاريخ",
                 colItem: "البند",
                 colAmount: "المبلغ",
-                colActions: "الإجراءات",
+                colActions: "الإجراءات والطباعة",
                 reportsTitle: "التقارير اليومية والشفت (الإيرادات، نسب العمال، والمصروفات)",
                 allDates: "كل التواريخ",
-                refreshCloud: "تحديث الآن",
+                refreshCloud: "تحديث البيانات",
                 totalRevenueLabel: "إجمالي المبيعات (إيرادات المركز)",
                 totalCommissionLabel: "إجمالي مستحقات العمال (النسب)",
                 totalExpensesLabel: "إجمالي المصروفات",
@@ -672,7 +676,7 @@
                 colServiceCount: "عدد الخدمات",
                 colStaffSales: "إجمالي مبيعات العامل",
                 colStaffCommission: "مستحق العامل (العمولة)",
-                invoiceLogTitle: "سجل الفواتير المسجلة:",
+                invoiceLogTitle: "سجل الفواتير المسجلة (مع زر طباعة فورية لأي فاتورة):",
                 colSerial: "رقم الفاتورة",
                 colDateTime: "التاريخ والوقت",
                 colCommission: "العمولة",
@@ -694,21 +698,18 @@
                 cancelBtn: "إلغاء",
                 saveChangesBtn: "حفظ التعديلات",
                 printModalTitle: "طباعة الفاتورة المسجلة",
-                actionPrint: "طباعة",
-                actionEdit: "تعديل",
-                actionDelete: "حذف"
             },
             en: {
                 brandTitle: "Haiba Relaxation Center",
                 brandSubtitle: "Jeddah Branch - Massage, Moroccan Bath & Pedicure",
                 brandSubtitleShort: "Jeddah - Massage & Moroccan Bath",
-                liveSync: "Cloud Connected",
+                liveSync: "Ready & Fast",
                 settingsStaff: "Settings & Staff",
                 tabPos: "Issue Invoice",
                 tabExpenses: "Expense Management",
                 tabReports: "Reports, Shifts & Daily",
                 newInvoice: "Create New Invoice",
-                invSerial: "Invoice Serial",
+                invSerial: "Invoice Serial (Unique)",
                 invDate: "Invoice Date",
                 staffName: "Staff Name",
                 serviceLabel: "Service / Offer",
@@ -731,7 +732,7 @@
                 rLocation: "Location:",
                 rPay: "Payment:",
                 rTotal: "Total Amount:",
-                manualPrint: "Manual Print",
+                manualPrint: "Print Preview",
                 newExpense: "Record New Expense",
                 expTitleLabel: "Expense Item",
                 expAmountLabel: "Amount (SAR)",
@@ -741,10 +742,10 @@
                 colDate: "Date",
                 colItem: "Item",
                 colAmount: "Amount",
-                colActions: "Actions",
+                colActions: "Actions & Print",
                 reportsTitle: "Daily & Shift Reports (Revenue, Commissions & Expenses)",
                 allDates: "All Dates",
-                refreshCloud: "Refresh Now",
+                refreshCloud: "Refresh Data",
                 totalRevenueLabel: "Total Sales (Center Revenue)",
                 totalCommissionLabel: "Total Staff Commissions",
                 totalExpensesLabel: "Total Expenses",
@@ -754,7 +755,7 @@
                 colServiceCount: "Services Count",
                 colStaffSales: "Total Staff Sales",
                 colStaffCommission: "Staff Commission Due",
-                invoiceLogTitle: "Registered Invoices Log:",
+                invoiceLogTitle: "Registered Invoices Log (with instant print for any invoice):",
                 colSerial: "Invoice #",
                 colDateTime: "Date & Time",
                 colCommission: "Commission",
@@ -776,9 +777,6 @@
                 cancelBtn: "Cancel",
                 saveChangesBtn: "Save Changes",
                 printModalTitle: "Print Registered Invoice",
-                actionPrint: "Print",
-                actionEdit: "Edit",
-                actionDelete: "Delete"
             }
         };
 
@@ -849,117 +847,113 @@
             return `${year}-${month}-${day}`;
         }
 
+        // توليد رقم فاتورة عشوائي فريد لا يتكرر أبداً
+        function generateUniqueInvoiceNumber() {
+            const randomPart = Math.floor(1000 + Math.random() * 9000);
+            const timePart = Date.now().toString().slice(-5);
+            return `HBA-${timePart}-${randomPart}`;
+        }
+
         window.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('invDateInput').value = getTodayDateString();
             document.getElementById('expDateInput').value = getTodayDateString();
             document.getElementById('reportDateFilter').value = getTodayDateString();
 
-            // Safety timeout to ensure loading overlay never hangs indefinitely
-            const loadingTimer = setTimeout(() => {
-                document.getElementById('loadingOverlay').classList.add('hidden');
-            }, 2000);
-
-            await loadDataFromCloudOrLocal();
-
-            clearTimeout(loadingTimer);
+            // تحميل سريع مع حماية ضد التوقف التام
+            await loadDataWithTimeout();
+            
             document.getElementById('loadingOverlay').classList.add('hidden');
         });
 
-        function showCloudError(msg) {
-            const banner = document.getElementById('cloudErrorBanner');
-            if (banner) {
-                banner.style.display = 'block';
-                banner.innerText = "تنبيه: " + msg;
-            }
-        }
+        async function loadDataWithTimeout() {
+            // تحميل محلي فوري أولاً لضمان عدم توقف الواجهة
+            loadFromLocalStorage();
+            initAppUI();
 
-        async function loadDataFromCloudOrLocal() {
-            try {
-                // Load local first for instant UI response
-                const localInv = localStorage.getItem('haiba_invoices');
-                if (localInv) invoices = JSON.parse(localInv);
+            // محاولة جلب البيانات من السحابة في الخلفية بمهلة أقصاها 3 ثوانٍ
+            if (supabaseClient) {
+                try {
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3000));
+                    
+                    const fetchPromise = (async () => {
+                        const { data: invData } = await supabaseClient.from('invoices').select('*').order('created_at', { ascending: false });
+                        if (invData && invData.length > 0) {
+                            invoices = invData.map(i => ({
+                                id: i.id,
+                                serial: i.serial,
+                                date: i.date,
+                                time: i.time || '',
+                                staff: i.staff,
+                                service: i.service,
+                                duration: i.duration,
+                                price: Number(i.price),
+                                paymentMethod: i.payment_method || 'cash',
+                                serviceLocation: i.service_location || 'in_center',
+                                commission: Number(i.commission || 0)
+                            }));
+                        }
 
-                const localExp = localStorage.getItem('haiba_expenses');
-                if (localExp) expenses = JSON.parse(localExp);
+                        const { data: expData } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false });
+                        if (expData && expData.length > 0) {
+                            expenses = expData.map(e => ({
+                                id: e.id,
+                                title: e.title,
+                                amount: Number(e.amount),
+                                date: e.date
+                            }));
+                        }
 
-                const localSettings = localStorage.getItem('haiba_settings');
-                if (localSettings) {
-                    const parsed = JSON.parse(localSettings);
-                    if (parsed.staffList) staffList = parsed.staffList;
-                    if (parsed.servicesList) servicesList = parsed.servicesList;
-                    if (parsed.settings) settings = parsed.settings;
-                }
+                        const { data: stData } = await supabaseClient.from('settings').select('*').limit(1);
+                        if (stData && stData.length > 0) {
+                            const s = stData[0];
+                            if (s.staff_json) staffList = JSON.parse(s.staff_json);
+                            if (s.services_json) servicesList = JSON.parse(s.services_json);
+                            if (s.center_commission !== undefined) settings.centerCommissionPercent = Number(s.center_commission);
+                            if (s.home_commission !== undefined) settings.homeVisitCommissionDefault = Number(s.home_commission);
+                        }
+                    }();
 
-                initAppUI();
-
-                // Then try sync with Supabase in background
-                if (supabaseClient) {
-                    const { data: invData, error: invErr } = await supabaseClient.from('invoices').select('*').order('created_at', { ascending: false });
-                    if (!invErr && invData && invData.length > 0) {
-                        invoices = invData.map(i => ({
-                            id: i.id,
-                            serial: i.serial,
-                            date: i.date,
-                            time: i.time || '',
-                            staff: i.staff,
-                            service: i.service,
-                            duration: i.duration,
-                            price: Number(i.price),
-                            paymentMethod: i.payment_method || 'cash',
-                            serviceLocation: i.service_location || 'in_center',
-                            commission: Number(i.commission || 0)
-                        }));
-                        localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
-                    }
-
-                    const { data: expData, error: expErr } = await supabaseClient.from('expenses').select('*').order('created_at', { ascending: false });
-                    if (!expErr && expData && expData.length > 0) {
-                        expenses = expData.map(e => ({
-                            id: e.id,
-                            title: e.title,
-                            amount: Number(e.amount),
-                            date: e.date
-                        }));
-                        localStorage.setItem('haiba_expenses', JSON.stringify(expenses));
-                    }
-
-                    const { data: stData, error: stErr } = await supabaseClient.from('settings').select('*').limit(1);
-                    if (!stErr && stData && stData.length > 0) {
-                        const s = stData[0];
-                        if (s.staff_json) staffList = JSON.parse(s.staff_json);
-                        if (s.services_json) servicesList = JSON.parse(s.services_json);
-                        if (s.center_commission !== undefined) settings.centerCommissionPercent = Number(s.center_commission);
-                        if (s.home_commission !== undefined) settings.homeVisitCommissionDefault = Number(s.home_commission);
-                    }
+                    await Promise.race([fetchPromise, timeoutPromise]);
                     initAppUI();
+                } catch (e) {
+                    console.log("Using offline / local mode due to network speed.");
                 }
-            } catch (err) {
-                console.error("Load exception:", err);
             }
         }
 
-        async function syncSettingsToCloud() {
-            try {
-                localStorage.setItem('haiba_settings', JSON.stringify({ staffList, servicesList, settings }));
-                if (supabaseClient) {
-                    const payload = {
-                        id: 1,
-                        staff_json: JSON.stringify(staffList),
-                        services_json: JSON.stringify(servicesList),
-                        center_commission: settings.centerCommissionPercent,
-                        home_commission: settings.homeVisitCommissionDefault
-                    };
-                    await supabaseClient.from('settings').upsert(payload);
-                }
-            } catch (e) {
-                console.error("Sync settings error:", e);
+        function loadFromLocalStorage() {
+            const localInv = localStorage.getItem('haiba_invoices');
+            if (localInv) invoices = JSON.parse(localInv);
+
+            const localExp = localStorage.getItem('haiba_expenses');
+            if (localExp) expenses = JSON.parse(localExp);
+
+            const localSettings = localStorage.getItem('haiba_settings');
+            if (localSettings) {
+                const parsed = JSON.parse(localSettings);
+                if (parsed.staffList) staffList = parsed.staffList;
+                if (parsed.servicesList) servicesList = parsed.servicesList;
+                if (parsed.settings) settings = parsed.settings;
+            }
+        }
+
+        function syncSettingsToCloud() {
+            localStorage.setItem('haiba_settings', JSON.stringify({ staffList, servicesList, settings }));
+            if (supabaseClient) {
+                supabaseClient.from('settings').upsert({
+                    id: 1,
+                    staff_json: JSON.stringify(staffList),
+                    services_json: JSON.stringify(servicesList),
+                    center_commission: settings.centerCommissionPercent,
+                    home_commission: settings.homeVisitCommissionDefault
+                }).then().catch(err => console.log(err));
             }
         }
 
         function initAppUI() {
             renderStaffSelects();
             renderServiceSelect();
-            updateNextSerial();
+            setNewSerial();
             renderInvoicesTable();
             renderExpensesTable();
             renderReports();
@@ -1021,13 +1015,8 @@
             updateLivePreview();
         }
 
-        function updateNextSerial() {
-            let maxSerial = 0;
-            invoices.forEach(inv => {
-                const num = parseInt(inv.serial, 10);
-                if (!isNaN(num) && num > maxSerial) maxSerial = num;
-            });
-            document.getElementById('invSerial').value = maxSerial + 1;
+        function setNewSerial() {
+            document.getElementById('invSerial').value = generateUniqueInvoiceNumber();
         }
 
         function calculateCommission(price, location) {
@@ -1095,7 +1084,7 @@
             const commission = calculateCommission(price, serviceLocation);
 
             const newInv = {
-                id: 'inv_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7)),
+                id: 'inv_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
                 serial,
                 date,
                 time,
@@ -1111,29 +1100,27 @@
             invoices.unshift(newInv);
             localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
 
-            try {
-                if (supabaseClient) {
-                    await supabaseClient.from('invoices').insert([{
-                        id: newInv.id,
-                        serial: newInv.serial,
-                        date: newInv.date,
-                        time: newInv.time,
-                        staff: newInv.staff,
-                        service: newInv.service,
-                        duration: newInv.duration,
-                        price: newInv.price,
-                        payment_method: newInv.paymentMethod,
-                        service_location: newInv.serviceLocation,
-                        commission: newInv.commission
-                    }]);
-                }
-            } catch (err) {
-                console.error("Save invoice cloud error:", err);
+            if (supabaseClient) {
+                supabaseClient.from('invoices').insert([{
+                    id: newInv.id,
+                    serial: newInv.serial,
+                    date: newInv.date,
+                    time: newInv.time,
+                    staff: newInv.staff,
+                    service: newInv.service,
+                    duration: newInv.duration,
+                    price: newInv.price,
+                    payment_method: newInv.paymentMethod,
+                    service_location: newInv.serviceLocation,
+                    commission: newInv.commission
+                }]).then().catch(err => console.log(err));
             }
 
+            // طباعة الإيصال فوراً
             printElement('thermal-receipt');
 
-            updateNextSerial();
+            // إعداد فاتورة جديدة برقم فريد جديد
+            setNewSerial();
             document.getElementById('price').value = '';
             document.getElementById('duration').value = '60';
             renderInvoicesTable();
@@ -1146,7 +1133,7 @@
             tbody.innerHTML = '';
 
             if (invoices.length === 0) {
-                tbody.innerHTML = `<tr class="empty-row"><td colspan="9" data-i18n="noInvoices">لا توجد فواتير مسجلة حتى الآن</td></tr>`;
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="9">لا توجد فواتير مسجلة حتى الآن</td></tr>`;
                 return;
             }
 
@@ -1162,7 +1149,7 @@
                     <td><strong>${Number(inv.price).toFixed(2)} SAR</strong></td>
                     <td style="color:var(--primary); font-weight:700;">${Number(inv.commission).toFixed(2)} SAR</td>
                     <td class="action-cell">
-                        <button class="btn btn-print" style="padding:4px 8px; font-size:0.8rem;" onclick="openPrintPreview('${inv.id}')" title="${currentLang==='ar'?'طباعة الفاتورة':'Print Invoice'}"><i class="fa-solid fa-print"></i></button>
+                        <button class="btn btn-print" style="padding:4px 8px; font-size:0.8rem;" onclick="openPrintPreview('${inv.id}')" title="طباعة الفاتورة"><i class="fa-solid fa-print"></i> طباعة</button>
                         <button class="btn btn-edit" onclick="openEditModal('${inv.id}')"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn btn-danger" onclick="deleteInvoice('${inv.id}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
@@ -1171,6 +1158,7 @@
             });
         }
 
+        // فتح نافذة معاينة وطباعة الفاتورة المسجلة في أي وقت
         function openPrintPreview(id) {
             const inv = invoices.find(i => i.id === id);
             if (!inv) return;
@@ -1197,12 +1185,8 @@
             invoices = invoices.filter(i => i.id !== id);
             localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
 
-            try {
-                if (supabaseClient) {
-                    await supabaseClient.from('invoices').delete().eq('id', id);
-                }
-            } catch (err) {
-                console.error("Delete invoice error:", err);
+            if (supabaseClient) {
+                supabaseClient.from('invoices').delete().eq('id', id).then().catch(err => console.log(err));
             }
 
             initAppUI();
@@ -1253,21 +1237,17 @@
             inv.commission = calculateCommission(inv.price, inv.serviceLocation);
 
             localStorage.setItem('haiba_invoices', JSON.stringify(invoices));
-            try {
-                if (supabaseClient) {
-                    await supabaseClient.from('invoices').update({
-                        date: inv.date,
-                        staff: inv.staff,
-                        service: inv.service,
-                        duration: inv.duration,
-                        price: inv.price,
-                        payment_method: inv.paymentMethod,
-                        service_location: inv.serviceLocation,
-                        commission: inv.commission
-                    }).eq('id', id);
-                }
-            } catch (err) {
-                console.error("Update error:", err);
+            if (supabaseClient) {
+                supabaseClient.from('invoices').update({
+                    date: inv.date,
+                    staff: inv.staff,
+                    service: inv.service,
+                    duration: inv.duration,
+                    price: inv.price,
+                    payment_method: inv.paymentMethod,
+                    service_location: inv.serviceLocation,
+                    commission: inv.commission
+                }).eq('id', id).then().catch(err => console.log(err));
             }
 
             closeEditModal();
@@ -1290,17 +1270,13 @@
             expenses.unshift(newExp);
             localStorage.setItem('haiba_expenses', JSON.stringify(expenses));
 
-            try {
-                if (supabaseClient) {
-                    await supabaseClient.from('expenses').insert([{
-                        id: newExp.id,
-                        title: newExp.title,
-                        amount: newExp.amount,
-                        date: newExp.date
-                    }]);
-                }
-            } catch (err) {
-                console.error("Save expense error:", err);
+            if (supabaseClient) {
+                supabaseClient.from('expenses').insert([{
+                    id: newExp.id,
+                    title: newExp.title,
+                    amount: newExp.amount,
+                    date: newExp.date
+                }]).then().catch(err => console.log(err));
             }
 
             document.getElementById('expTitle').value = '';
@@ -1315,7 +1291,7 @@
             tbody.innerHTML = '';
 
             if (expenses.length === 0) {
-                tbody.innerHTML = `<tr class="empty-row"><td colspan="4" data-i18n="noExpenses">لا توجد مصروفات مسجلة</td></tr>`;
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="4">لا توجد مصروفات مسجلة</td></tr>`;
                 return;
             }
 
@@ -1334,16 +1310,12 @@
         }
 
         async function deleteExpense(id) {
-            if (!confirm(currentLang === 'ar' ? 'هل أنت متأكد من حذف هذا المصروف؟' : 'Delete this expense?')) return;
+            if (!confirm('هل أنت متأكد من حذف هذا المصروف؟')) return;
             expenses = expenses.filter(e => e.id !== id);
             localStorage.setItem('haiba_expenses', JSON.stringify(expenses));
 
-            try {
-                if (supabaseClient) {
-                    await supabaseClient.from('expenses').delete().eq('id', id);
-                }
-            } catch (err) {
-                console.error("Delete expense error:", err);
+            if (supabaseClient) {
+                supabaseClient.from('expenses').delete().eq('id', id).then().catch(err => console.log(err));
             }
 
             renderExpensesTable();
@@ -1357,9 +1329,9 @@
 
         async function fetchAllInvoicesNow() {
             document.getElementById('loadingOverlay').classList.remove('hidden');
-            await loadDataFromCloudOrLocal();
+            await loadDataWithTimeout();
             document.getElementById('loadingOverlay').classList.add('hidden');
-            alert(currentLang === 'ar' ? 'تم تحديث البيانات بنجاح!' : 'Data updated successfully!');
+            alert('تم تحديث البيانات بنجاح!');
         }
 
         function renderReports() {
@@ -1431,7 +1403,7 @@
                     }
                 }
                 if (!hasStaffData) {
-                    staffBody.innerHTML = `<tr class="empty-row"><td colspan="4" data-i18n="noStaffActivity">لا توجد خدمات مسجلة للعمال في هذا التقرير</td></tr>`;
+                    staffBody.innerHTML = `<tr class="empty-row"><td colspan="4">لا توجد خدمات مسجلة للعمال في هذا التقرير</td></tr>`;
                 }
             }
 
@@ -1492,7 +1464,7 @@
             const nameAr = document.getElementById('newStaffNameAr').value.trim();
             const nameEn = document.getElementById('newStaffNameEn').value.trim();
             if (!nameAr) {
-                alert(currentLang === 'ar' ? 'الرجاء إدخال اسم العامل' : 'Please enter staff name');
+                alert('الرجاء إدخال اسم العامل');
                 return;
             }
             const newSt = { id: Date.now(), nameAr, nameEn };
@@ -1531,7 +1503,7 @@
             const nameEn = document.getElementById('newServiceNameEn').value.trim();
             const price = parseFloat(document.getElementById('newServicePrice').value) || 0;
             if (!nameAr) {
-                alert(currentLang === 'ar' ? 'الرجاء إدخال اسم الخدمة' : 'Please enter service name');
+                alert('الرجاء إدخال اسم الخدمة');
                 return;
             }
             const newSrv = { id: Date.now(), nameAr, nameEn, price };
@@ -1560,7 +1532,7 @@
             settings.centerCommissionPercent = parseFloat(document.getElementById('centerCommissionPercent').value) || 0;
             settings.homeVisitCommissionDefault = parseFloat(document.getElementById('homeVisitCommissionDefault').value) || 0;
             syncSettingsToCloud();
-            alert(currentLang === 'ar' ? 'تم حفظ الإعدادات بنجاح!' : 'Settings saved successfully!');
+            alert('تم حفظ الإعدادات بنجاح!');
             closeAdminModal();
         }
     </script>
