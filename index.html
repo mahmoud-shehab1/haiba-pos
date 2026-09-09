@@ -352,11 +352,13 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title"><i class="fa-solid fa-chart-line"></i> التقارير اليومية والشفت (الإيرادات، نسب العمال، والمصروفات)</div>
-                    <div style="display:flex; gap:8px; align-items:center;">
+                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                         <input type="date" id="reportDateFilter" onchange="renderReports()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border);">
                         <button class="btn" style="background:#64748B; color:white;" onclick="clearReportFilter()"><i class="fa-solid fa-rotate-right"></i> كل التواريخ</button>
+                        <button class="btn btn-accent" onclick="fetchAllInvoicesNow()"><i class="fa-solid fa-cloud-arrow-down"></i> تحديث الآن من السحابة</button>
                     </div>
                 </div>
+                <div id="invoiceCountBadge" style="margin: 6px 0 0; font-size:0.85rem; font-weight:700; color:var(--primary);"></div>
                 <div class="metrics-grid">
                     <div class="metric-card green">
                         <div>
