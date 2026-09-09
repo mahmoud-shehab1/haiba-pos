@@ -8,6 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
 
     <style>
         :root {
@@ -301,6 +302,9 @@
                             <div class="thermal-row thermal-total">
                                 <span data-i18n="rTotal">المبلغ الإجمالي:</span>
                                 <span id="r-price">0.00</span>
+                            </div>
+                            <div style="display:flex; justify-content:center; margin-top:4px;">
+                                <svg id="barcodeSvg"></svg>
                             </div>
                         </div>
                     </div>
@@ -912,6 +916,16 @@
             updateLivePreview();
         }
 
+        function renderBarcode(elementId, value) {
+            try {
+                if (!value) value = '0';
+                JsBarcode('#' + elementId, String(value), {
+                    format: 'CODE128', displayValue: true, fontSize: 12,
+                    height: 38, width: 1.4, margin: 2, background: '#ffffff', lineColor: '#000000'
+                });
+            } catch (e) { console.error('Barcode render error:', e); }
+        }
+
         function updateLivePreview() {
             const now = new Date();
             document.getElementById('r-date').innerText = formatDate(document.getElementById('invDateInput').value);
@@ -931,6 +945,8 @@
 
             const price = document.getElementById('price').value || 0;
             document.getElementById('r-price').innerText = Number(price).toFixed(2) + (currentLang === 'ar' ? ' ر.س' : ' SAR');
+
+            renderBarcode('barcodeSvg', document.getElementById('invSerial').value);
         }
 
         async function saveInvoice(e) {
@@ -974,6 +990,7 @@
 
             document.getElementById('r-serial').innerText = saved.serial || ('INV-' + String(saved.id).padStart(5, '0'));
             document.getElementById('invSerial').value = saved.serial || ('INV-' + String(saved.id).padStart(5, '0'));
+            renderBarcode('barcodeSvg', document.getElementById('invSerial').value);
             printElement('thermal-receipt');
 
             document.getElementById('invoiceForm').reset();
@@ -1414,6 +1431,7 @@
 <head>
 <meta charset="UTF-8">
 <title>${tr('rSerial')}</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
 <style>
   @page { size: 80mm auto; margin: 4mm; }
   * { box-sizing: border-box; font-family: 'Tajawal', 'Arial', 'Courier New', monospace; }
@@ -1424,6 +1442,7 @@
   .thermal-row { display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; margin: 6px 0; gap: 10px; }
   .thermal-divider { border-top: 1px dashed #000; margin: 8px 0; }
   .thermal-total { border-top: 3px solid #000; border-bottom: 3px solid #000; padding: 8px 0; font-weight: 900; font-size: 18px; margin-top: 6px; display: flex; justify-content: space-between; }
+  .barcode-wrap { display: flex; justify-content: center; margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -1441,6 +1460,14 @@
   <div class="thermal-row"><span>${tr('rLocation')}</span><span>${locationLabel(inv.serviceLocation)}</span></div>
   <div class="thermal-row"><span>${tr('rPay')}</span><span>${payLabel(inv.pay)}</span></div>
   <div class="thermal-row thermal-total"><span>${tr('rTotal')}</span><span>${priceText}</span></div>
+  <div class="barcode-wrap"><svg id="barcodeSvg"></svg></div>
+  <script>
+    try {
+      JsBarcode('#barcodeSvg', ${JSON.stringify(String(inv.serial))}, {
+        format: 'CODE128', displayValue: true, fontSize: 12, height: 38, width: 1.4, margin: 2
+      });
+    } catch (e) {}
+  </script>
 </body>
 </html>`;
             w.document.open(); w.document.write(html); w.document.close();
