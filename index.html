@@ -571,7 +571,7 @@
                 cashCollectedLabel: 'تحصيل الكاش (الصافي)', staffPerfTitle: 'ملخص إنتاجية وعمولات العمال:',
                 colServiceCount: 'عدد الخدمات', colStaffSales: 'إجمالي مبيعات العامل', colStaffCommission: 'مستحق العامل (العمولة)',
                 invoiceLogTitle: 'سجل الفواتير المسجلة:', colSerial: 'رقم الفاتورة', colDateTime: 'التاريخ والوقت',
-                colCommission: 'العمولة', adminTitle: 'إدارة العمال والخدمات والعمولات', addStaffLabel: 'إضافة عامل جديد:',
+                colCommission: 'العمولة', adminTitle: 'إدارة العمال الخدمات والعمولات', addStaffLabel: 'إضافة عامل جديد:',
                 staffNameArPh: 'الاسم بالعربية', staffNameEnPh: 'الاسم بالإنجليزية (اختياري)', addBtn: 'إضافة',
                 addServiceLabel: 'إضافة خدمة / عرض جديد:', serviceNameArPh: 'اسم الخدمة (عربي)',
                 serviceNameEnPh: 'اسم الخدمة (إنجليزي، اختياري)', addServiceBtn: 'إضافة خدمة',
@@ -638,14 +638,14 @@
         let currentLang = localStorage.getItem('haiba_lang') || 'ar';
 
         // =====================================================================
-        // STATE (mirrors Supabase; kept fresh via Realtime subscriptions)
+        // STATE
         // =====================================================================
-        let staffList = [];       // { id, name_ar, name_en, active }
-        let servicesList = [];    // { id, name_ar, name_en, price, active }
-        let commissionSettings = { centerPercent: 30, homeDefaultRate: 50, homeOverrides: {} }; // homeOverrides keyed by staff_id (string)
+        let staffList = [];
+        let servicesList = [];
+        let commissionSettings = { centerPercent: 30, homeDefaultRate: 50, homeOverrides: {} };
         let invoices = [];
         let expenses = [];
-        let editContext = null; // { type, id }
+        let editContext = null;
 
         // =====================================================================
         // HELPERS
@@ -683,8 +683,6 @@
             } catch (e) { return dateStr; }
         }
 
-        // Commission calc: percent-based for in-center, fixed rate for home visits
-        // (with an optional per-staff override, keyed by staff_id).
         function calculateWorkerCommission(serviceLocation, servicePrice, staffId) {
             const loc = normalizeLocation(serviceLocation);
             if (loc === 'in_center') {
@@ -707,7 +705,7 @@
                 staffId: row.staff_id ?? null, staffName: row.staff || '',
                 serviceId: row.service_id ?? null, serviceName: row.service || '',
                 duration: row.duration, price: Number(row.price),
-                pay: normalizePay(row.pay), serviceLocation: normalizeLocation(row.service_location),
+                pay: normalizePay(row.pay || row.payment_method), serviceLocation: normalizeLocation(row.service_location),
                 commission: row.commission != null ? Number(row.commission) : null
             };
         }
@@ -854,7 +852,6 @@
             document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = tr(el.getAttribute('data-i18n')); });
             document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.setAttribute('placeholder', tr(el.getAttribute('data-i18n-ph'))); });
 
-            // static select option labels
             document.querySelectorAll('#paymentMethod option, #serviceLocation option').forEach(opt => {
                 const key = opt.getAttribute('data-i18n');
                 if (key) opt.textContent = tr(key);
@@ -944,20 +941,21 @@
             const staff = findStaffById(staffId);
             const service = findServiceById(serviceId);
             const price = Number(document.getElementById('price').value);
-            const serviceLocation = document.getElementById('serviceLocation').value; // code
+            const serviceLocation = document.getElementById('serviceLocation').value;
             const commission = calculateWorkerCommission(serviceLocation, price, staffId);
+            const paymentMethodVal = document.getElementById('paymentMethod').value;
 
             const newInv = {
                 date: document.getElementById('invDateInput').value,
                 time: now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                 staff_id: staffId || null,
-                staff: staff ? staff.name_ar : '', // snapshot, always stored in Arabic as the canonical record name
+                staff: staff ? staff.name_ar : '',
                 service_id: serviceId || null,
                 service: service ? service.name_ar : '',
                 duration: document.getElementById('duration').value,
                 price: price,
                 commission: commission,
-                pay: document.getElementById('paymentMethod').value,
+                pay: paymentMethodVal,
                 service_location: serviceLocation
             };
 
@@ -1049,10 +1047,6 @@
         function clearReportFilter() { document.getElementById('reportDateFilter').value = ''; renderReports(); }
 
         function invoiceCommission(inv) {
-            // Always calculate live from the current commission settings. Relying on the
-            // stored "commission" column caused SAR 0.00 everywhere, because that column
-            // defaults to 0 (not null) — so every legacy row, and any row saved before the
-            // commission settings finished loading, silently read back as a "valid" zero.
             return calculateWorkerCommission(inv.serviceLocation, inv.price, inv.staffId);
         }
 
@@ -1085,7 +1079,7 @@
             });
 
             const netRev = totalRev - totalStaffComm - totalExp;
-            const cur = currentLang === 'ar' ? 'SAR' : 'SAR';
+            const cur = 'SAR';
             document.getElementById('totalRevenue').innerText = totalRev.toFixed(2) + ' ' + cur;
             document.getElementById('totalStaffCommission').innerText = totalStaffComm.toFixed(2) + ' ' + cur;
             document.getElementById('totalExpensesMetric').innerText = totalExp.toFixed(2) + ' ' + cur;
@@ -1136,7 +1130,7 @@
         }
 
         // =====================================================================
-        // ADMIN MODAL: STAFF / SERVICES / COMMISSION SETTINGS
+        // ADMIN MODAL
         // =====================================================================
         function openAdminModal() { document.getElementById('adminModal').classList.add('active'); renderAdminLists(); }
         function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
