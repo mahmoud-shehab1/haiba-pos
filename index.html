@@ -215,6 +215,30 @@
         <button onclick="document.getElementById('cloudErrorBanner').style.display='none'" style="position:absolute; top:6px; inset-inline-end:10px; background:transparent; border:none; color:#991B1B; font-size:1rem; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
+    <!-- FAILSAFE: runs immediately and independently of the main app script below.
+         Guarantees the loading spinner can never hang forever, whether the cause is
+         a slow/blocked network request or an unexpected script error further down. -->
+    <script>
+        (function () {
+            function reveal(msg) {
+                var ov = document.getElementById('loadingOverlay');
+                if (ov) ov.classList.add('hidden');
+                var banner = document.getElementById('cloudErrorBanner');
+                var text = document.getElementById('cloudErrorText');
+                if (banner && text && msg) { text.innerText = msg; banner.style.display = 'block'; }
+            }
+            window.addEventListener('error', function (e) {
+                reveal('حدث خطأ برمجي أوقف تحميل الصفحة: ' + (e && e.message ? e.message : e));
+            });
+            setTimeout(function () {
+                var ov = document.getElementById('loadingOverlay');
+                if (ov && !ov.classList.contains('hidden')) {
+                    reveal('انتهت مهلة الاتصال بقاعدة البيانات (Supabase). تحقق من اتصال الإنترنت، ثم اضغط "تحديث الآن من السحابة" في تبويب التقارير.');
+                }
+            }, 12000);
+        })();
+    </script>
+
     <header class="no-print">
         <div class="brand">
             <div class="brand-icon"><i class="fa-solid fa-spa"></i></div>
