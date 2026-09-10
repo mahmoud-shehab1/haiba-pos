@@ -28,6 +28,23 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', 'Poppins', sans-serif; }
         body { background-color: var(--bg); color: var(--text-main); padding-bottom: 50px; }
+        body.dark-mode {
+            --bg: #0F172A;
+            --surface: #172033;
+            --text-main: #F8FAFC;
+            --text-muted: #CBD5E1;
+            --border: #334155;
+        }
+        body.dark-mode .form-group input,
+        body.dark-mode .form-group select,
+        body.dark-mode .search-box input,
+        body.dark-mode .nav-btn { background: #1E293B; color: var(--text-main); }
+        body.dark-mode .nav-btn.active,
+        body.dark-mode .nav-btn:hover { background: #3B216D; color: #E9D5FF; }
+        body.dark-mode .chip { background: #334155; color: #F8FAFC; }
+        body.dark-mode .modal-content { background: var(--surface); }
+        body.dark-mode table th { background: #1E293B; }
+        body.dark-mode .empty-row td { color: var(--text-muted); }
         html[dir="ltr"] body { direction: ltr; text-align: left; }
 
         header {
@@ -49,6 +66,8 @@
             background: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 20px; color: #D9F99D;
         }
         .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #84CC16; animation: pulse 1.6s infinite; }
+        .sync-badge.offline { color: #FECACA; }
+        .sync-badge.offline .sync-dot { background: #EF4444; animation: none; }
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         .lang-toggle {
@@ -186,6 +205,29 @@
         .search-box input:focus { border-color: var(--primary); background: #FFF; outline: none; }
         .search-box i { position: absolute; top: 50%; transform: translateY(-50%); inset-inline-start: 12px; color: var(--text-muted); }
 
+        .quick-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .filter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; width: 100%; margin-top: 8px; }
+        .filter-grid input, .filter-grid select {
+            padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px;
+            background: var(--surface); color: var(--text-main); min-width: 0;
+        }
+        .draft-notice {
+            display: none; align-items: center; justify-content: space-between; gap: 8px;
+            background: #FFFBEB; border: 1px solid #FCD34D; color: #92400E;
+            padding: 8px 10px; border-radius: 8px; margin-top: 10px; font-size: .82rem; font-weight: 700;
+        }
+        .draft-notice.active { display: flex; }
+        body.dark-mode .draft-notice { background: #422006; border-color: #B45309; color: #FEF3C7; }
+        .status-pill { display: inline-flex; padding: 3px 8px; border-radius: 999px; font-size: .72rem; font-weight: 800; }
+        .status-pill.active { background: #DCFCE7; color: #166534; }
+        .status-pill.inactive { background: #FEE2E2; color: #991B1B; }
+        body.dark-mode .status-pill.active { background: #14532D; color: #BBF7D0; }
+        body.dark-mode .status-pill.inactive { background: #7F1D1D; color: #FECACA; }
+        .chart-row { display: grid; grid-template-columns: minmax(100px, 180px) 1fr auto; gap: 10px; align-items: center; margin: 8px 0; font-size: .82rem; }
+        .chart-track { height: 10px; background: var(--border); border-radius: 999px; overflow: hidden; }
+        .chart-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #A78BFA); border-radius: inherit; min-width: 3px; }
+        .shortcuts-hint { color: var(--text-muted); font-size: .75rem; margin-inline-start: auto; }
+
         .btn-icon-only { width: 34px; padding: 6px; }
         @media print {
             .no-print { display: none !important; }
@@ -250,6 +292,7 @@
         <div style="display:flex; align-items:center; gap:12px; flex-wrap: wrap;">
             <span class="sync-badge"><span class="sync-dot"></span> <span data-i18n="liveSync">مزامنة سحابية حيّة</span></span>
             <button class="lang-toggle" onclick="toggleLanguage()"><i class="fa-solid fa-language"></i> <span id="langToggleLabel">EN</span></button>
+            <button class="lang-toggle" onclick="toggleTheme()" title="تبديل المظهر"><i id="themeIcon" class="fa-solid fa-moon"></i> <span id="themeLabel" data-i18n="darkMode">داكن</span></button>
             <button class="btn btn-accent" onclick="openAdminModal()"><i class="fa-solid fa-user-shield"></i> <span data-i18n="settingsStaff">الإعدادات والعمال</span></button>
         </div>
     </header>
@@ -317,6 +360,10 @@
                                     <option value="home_visit" data-i18n="locHomeVisit">زيارة منزلية</option>
                                 </select>
                             </div>
+                        </div>
+                        <div id="draftNotice" class="draft-notice">
+                            <span><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="draftFound">تم العثور على مسودة محفوظة لهذه الفاتورة.</span></span>
+                            <button type="button" class="btn btn-secondary" style="padding:5px 9px;" onclick="clearInvoiceDraft()" data-i18n="discardDraft">تجاهل المسودة</button>
                         </div>
                         <div style="margin-top: 1.25rem;">
                             <button type="submit" id="saveBtn" class="btn btn-primary" style="width:100%; font-size:1rem;">
@@ -416,13 +463,31 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title"><i class="fa-solid fa-chart-line"></i> <span data-i18n="reportsTitle">التقارير اليومية والشفت (الإيرادات، نسب العمال، والمصروفات)</span></div>
-                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                        <input type="date" id="reportDateFilter" onchange="renderReports()" style="padding:6px 10px; border-radius:6px; border:1px solid var(--border);">
+                    <div class="quick-actions">
+                        <button class="btn btn-secondary" onclick="setReportPeriod('today')" data-i18n="today">اليوم</button>
+                        <button class="btn btn-secondary" onclick="setReportPeriod('week')" data-i18n="thisWeek">هذا الأسبوع</button>
+                        <button class="btn btn-secondary" onclick="setReportPeriod('month')" data-i18n="thisMonth">هذا الشهر</button>
                         <button class="btn btn-secondary" onclick="clearReportFilter()"><i class="fa-solid fa-rotate-right"></i> <span data-i18n="allDates">كل التواريخ</span></button>
                         <button class="btn btn-accent" onclick="fetchAllInvoicesNow()"><i class="fa-solid fa-cloud-arrow-down"></i> <span data-i18n="refreshCloud">تحديث الآن من السحابة</span></button>
                         <button class="btn btn-secondary" onclick="exportInvoicesCsv()"><i class="fa-solid fa-file-csv"></i> <span data-i18n="exportInvoicesCsv">تصدير الفواتير CSV</span></button>
                         <button class="btn btn-secondary" onclick="exportExpensesCsv()"><i class="fa-solid fa-file-csv"></i> <span data-i18n="exportExpensesCsv">تصدير المصروفات CSV</span></button>
                         <button class="btn btn-print" onclick="printReportSummary()"><i class="fa-solid fa-print"></i> <span data-i18n="printReport">طباعة التقرير</span></button>
+                    </div>
+                    <div class="filter-grid no-print">
+                        <input type="date" id="reportDateFilter" onchange="renderReports()">
+                        <input type="date" id="reportDateTo" onchange="renderReports()">
+                        <select id="reportStaffFilter" onchange="renderReports()"><option value="" data-i18n="allStaff">كل العمال</option></select>
+                        <select id="reportPayFilter" onchange="renderReports()">
+                            <option value="" data-i18n="allPayments">كل طرق الدفع</option>
+                            <option value="cash" data-i18n="payCash">كاش</option>
+                            <option value="card" data-i18n="payCard">صرافة (شبكة)</option>
+                            <option value="transfer" data-i18n="payTransfer">تحويل بنكي</option>
+                        </select>
+                        <select id="reportLocationFilter" onchange="renderReports()">
+                            <option value="" data-i18n="allLocations">كل المواقع</option>
+                            <option value="in_center" data-i18n="locInCenter">حضور بالمركز</option>
+                            <option value="home_visit" data-i18n="locHomeVisit">زيارة منزلية</option>
+                        </select>
                     </div>
                 </div>
                 <div id="invoiceCountBadge" style="margin: 6px 0 0; font-size:0.85rem; font-weight:700; color:var(--primary);"></div>
@@ -467,6 +532,7 @@
 
                 <div style="margin-top: 1.5rem;">
                     <h3 style="font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem;"><i class="fa-solid fa-users-gear"></i> <span data-i18n="staffPerfTitle">ملخص إنتاجية وعمولات العمال:</span></h3>
+                    <div id="staffChart" style="margin-bottom:1rem;"></div>
                     <div class="table-responsive">
                         <table>
                             <thead>
@@ -530,7 +596,7 @@
             </div>
             <div class="table-responsive" style="max-height: 170px;">
                 <table>
-                    <thead><tr><th data-i18n="staffName">اسم العامل</th><th data-i18n="colActions">إجراء</th></tr></thead>
+                    <thead><tr><th data-i18n="staffName">اسم العامل</th><th data-i18n="status">الحالة</th><th data-i18n="colActions">إجراء</th></tr></thead>
                     <tbody id="adminStaffList"></tbody>
                 </table>
             </div>
@@ -547,7 +613,7 @@
             </div>
             <div class="table-responsive" style="max-height: 170px;">
                 <table>
-                    <thead><tr><th data-i18n="serviceLabel">اسم الخدمة</th><th data-i18n="colDefaultPrice">السعر الافتراضي</th><th data-i18n="colActions">إجراء</th></tr></thead>
+                    <thead><tr><th data-i18n="serviceLabel">اسم الخدمة</th><th data-i18n="colDefaultPrice">السعر الافتراضي</th><th data-i18n="status">الحالة</th><th data-i18n="colActions">إجراء</th></tr></thead>
                     <tbody id="adminServiceList"></tbody>
                 </table>
             </div>
@@ -655,7 +721,13 @@
                 searchExpensesPh: 'ابحث عن بند مصروف...', searchInvoicesPh: 'ابحث برقم الفاتورة، اسم العامل، أو الخدمة...',
                 exportInvoicesCsv: 'تصدير الفواتير CSV', exportExpensesCsv: 'تصدير المصروفات CSV', printReport: 'طباعة التقرير',
                 duplicateStaff: 'هذا الاسم موجود مسبقاً في قائمة العمال.', duplicateService: 'هذه الخدمة موجودة مسبقاً في القائمة.',
-                invalidAmount: 'الرجاء إدخال مبلغ صحيح أكبر من صفر.'
+                invalidAmount: 'الرجاء إدخال مبلغ صحيح أكبر من صفر.',
+                darkMode: 'داكن', draftFound: 'تم العثور على مسودة محفوظة لهذه الفاتورة.',
+                discardDraft: 'تجاهل المسودة', today: 'اليوم', thisWeek: 'هذا الأسبوع',
+                thisMonth: 'هذا الشهر', allStaff: 'كل العمال', allPayments: 'كل طرق الدفع',
+                allLocations: 'كل المواقع', status: 'الحالة', active: 'نشط', inactive: 'موقوف',
+                activate: 'تفعيل', deactivate: 'إيقاف', chartSales: 'المبيعات حسب العامل',
+                lastSync: 'آخر مزامنة: ', offline: 'غير متصل'
             },
             en: {
                 brandTitle: 'Haiba Relaxation Center', brandSubtitle: 'Jeddah Branch - Massage, Moroccan Bath & Body Care',
@@ -700,7 +772,13 @@
                 searchExpensesPh: 'Search expense items...', searchInvoicesPh: 'Search by invoice no., staff, or service...',
                 exportInvoicesCsv: 'Export Invoices CSV', exportExpensesCsv: 'Export Expenses CSV', printReport: 'Print Report',
                 duplicateStaff: 'This name already exists in the staff list.', duplicateService: 'This service already exists in the list.',
-                invalidAmount: 'Please enter a valid amount greater than zero.'
+                invalidAmount: 'Please enter a valid amount greater than zero.',
+                darkMode: 'Dark', draftFound: 'A saved invoice draft was found.',
+                discardDraft: 'Discard draft', today: 'Today', thisWeek: 'This week',
+                thisMonth: 'This month', allStaff: 'All staff', allPayments: 'All payment methods',
+                allLocations: 'All locations', status: 'Status', active: 'Active', inactive: 'Inactive',
+                activate: 'Activate', deactivate: 'Deactivate', chartSales: 'Sales by staff',
+                lastSync: 'Last sync: ', offline: 'Offline'
             }
         };
         const LOC_LABEL = { in_center: { ar: 'حضور بالمركز', en: 'In-Center Visit' }, home_visit: { ar: 'زيارة منزلية', en: 'Home Visit' } };
@@ -717,6 +795,10 @@
         let invoices = [];
         let expenses = [];
         let editContext = null; // { type, id }
+        let realtimeChannel = null;
+        let realtimeStarted = false;
+        let draftTimer = null;
+        const DRAFT_KEY = 'haiba_invoice_draft_v2';
 
         // =====================================================================
         // HELPERS
@@ -732,6 +814,35 @@
             el.querySelector('span').innerText = message;
             container.appendChild(el);
             setTimeout(() => el.remove(), 3600);
+        }
+
+        function toggleTheme() {
+            const dark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('haiba_theme', dark ? 'dark' : 'light');
+            const icon = document.getElementById('themeIcon');
+            const label = document.getElementById('themeLabel');
+            if (icon) icon.className = dark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            if (label) label.textContent = tr('darkMode');
+        }
+
+        function setConnectionState(online) {
+            const badge = document.querySelector('.sync-badge');
+            if (!badge) return;
+            badge.classList.toggle('offline', !online);
+            const label = badge.querySelector('[data-i18n="liveSync"]');
+            if (label) label.textContent = online ? tr('liveSync') : tr('offline');
+        }
+
+        function getLocalDate(offsetDays = 0) {
+            const d = new Date();
+            d.setDate(d.getDate() + offsetDays);
+            const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+            return local.toISOString().slice(0, 10);
+        }
+
+        function dateToInputValue(date) {
+            const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+            return local.toISOString().slice(0, 10);
         }
 
         function normalizeLocation(val) {
@@ -858,6 +969,9 @@
         // REALTIME
         // =====================================================================
         function subscribeRealtime() {
+            if (realtimeStarted) return;
+            realtimeStarted = true;
+            setConnectionState(true);
             _supabase.channel('invoices-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'invoices' }, p => {
                 if (p.eventType === 'INSERT') { if (!invoices.find(i => i.id === p.new.id)) invoices.push(mapInvoiceRow(p.new)); }
                 else if (p.eventType === 'UPDATE') { const i = invoices.findIndex(x => x.id === p.new.id); if (i > -1) invoices[i] = mapInvoiceRow(p.new); }
@@ -884,7 +998,7 @@
                 if (p.eventType === 'INSERT') { if (!staffList.find(s => s.id === p.new.id)) staffList.push(mapStaffRow(p.new)); }
                 else if (p.eventType === 'UPDATE') { const i = staffList.findIndex(x => x.id === p.new.id); if (i > -1) staffList[i] = mapStaffRow(p.new); }
                 else if (p.eventType === 'DELETE') { staffList = staffList.filter(x => x.id !== p.old.id); }
-                populateStaffSelect(); renderAdminLists(); renderReports();
+                populateStaffSelect(); populateReportStaffFilter(); renderAdminLists(); renderReports();
             }).subscribe();
 
             _supabase.channel('services-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'services' }, p => {
@@ -895,23 +1009,36 @@
             }).subscribe();
         }
 
-        window.addEventListener('DOMContentLoaded', () => { applyLanguage(currentLang, true); loadDataFromCloud(); });
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('haiba_theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                const icon = document.getElementById('themeIcon');
+                if (icon) icon.className = 'fa-solid fa-sun';
+            }
+            applyLanguage(currentLang, true);
+            loadDataFromCloud();
+            window.addEventListener('online', () => setConnectionState(true));
+            window.addEventListener('offline', () => setConnectionState(false));
+        });
 
         // =====================================================================
         // INIT / TABS
         // =====================================================================
         function initApp() {
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalDate();
             document.getElementById('invDateInput').value = todayStr;
             document.getElementById('expDateInput').value = todayStr;
             document.getElementById('invSerial').value = '—';
 
             populateStaffSelect();
             populateServiceSelect();
+            populateReportStaffFilter();
             updateLivePreview();
             renderReports();
             renderExpenses();
             renderAdminLists();
+            restoreInvoiceDraft();
+            attachDraftAutosave();
         }
 
         function switchTab(tabId) {
@@ -932,13 +1059,15 @@
             html.setAttribute('lang', lang);
             html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
             document.getElementById('langToggleLabel').innerText = lang === 'ar' ? 'EN' : 'ع';
+            const themeLabel = document.getElementById('themeLabel');
+            if (themeLabel) themeLabel.textContent = tr('darkMode');
             document.title = lang === 'ar' ? 'مركز هيبة الاسترخاء - جدة | Haiba Relaxation Center' : 'Haiba Relaxation Center - Jeddah';
 
             document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = tr(el.getAttribute('data-i18n')); });
             document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.setAttribute('placeholder', tr(el.getAttribute('data-i18n-ph'))); });
 
             // static select option labels
-            document.querySelectorAll('#paymentMethod option, #serviceLocation option').forEach(opt => {
+            document.querySelectorAll('#paymentMethod option, #serviceLocation option, #reportPayFilter option, #reportLocationFilter option').forEach(opt => {
                 const key = opt.getAttribute('data-i18n');
                 if (key) opt.textContent = tr(key);
             });
@@ -946,6 +1075,7 @@
             if (!silent) {
                 populateStaffSelect();
                 populateServiceSelect();
+                populateReportStaffFilter();
                 updateLivePreview();
                 renderReports();
                 renderExpenses();
@@ -957,6 +1087,63 @@
         // =====================================================================
         // POS FORM
         // =====================================================================
+        function invoiceFormSnapshot() {
+            return {
+                date: document.getElementById('invDateInput')?.value || '',
+                staff: document.getElementById('staffSelect')?.value || '',
+                service: document.getElementById('serviceSelect')?.value || '',
+                duration: document.getElementById('duration')?.value || '',
+                price: document.getElementById('price')?.value || '',
+                pay: document.getElementById('paymentMethod')?.value || 'cash',
+                location: document.getElementById('serviceLocation')?.value || 'in_center',
+                savedAt: new Date().toISOString()
+            };
+        }
+
+        function saveInvoiceDraft() {
+            const snapshot = invoiceFormSnapshot();
+            const meaningful = snapshot.staff || snapshot.service || snapshot.duration || snapshot.price;
+            if (!meaningful) return;
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(snapshot));
+        }
+
+        function restoreInvoiceDraft() {
+            try {
+                const raw = localStorage.getItem(DRAFT_KEY);
+                if (!raw) return;
+                const draft = JSON.parse(raw);
+                const set = (id, value) => { const el = document.getElementById(id); if (el && value !== undefined) el.value = value; };
+                set('invDateInput', draft.date || getLocalDate());
+                set('staffSelect', draft.staff);
+                set('serviceSelect', draft.service);
+                set('duration', draft.duration);
+                set('price', draft.price);
+                set('paymentMethod', draft.pay);
+                set('serviceLocation', draft.location);
+                document.getElementById('draftNotice')?.classList.add('active');
+                updateLivePreview();
+            } catch (e) {
+                localStorage.removeItem(DRAFT_KEY);
+            }
+        }
+
+        function clearInvoiceDraft(showMessage = true) {
+            localStorage.removeItem(DRAFT_KEY);
+            document.getElementById('draftNotice')?.classList.remove('active');
+            if (showMessage) showToast(tr('discardDraft'), 'info');
+        }
+
+        function attachDraftAutosave() {
+            const form = document.getElementById('invoiceForm');
+            if (!form || form.dataset.draftBound) return;
+            form.dataset.draftBound = '1';
+            form.addEventListener('input', () => {
+                clearTimeout(draftTimer);
+                draftTimer = setTimeout(saveInvoiceDraft, 250);
+            });
+            form.addEventListener('change', saveInvoiceDraft);
+        }
+
         function populateStaffSelect() {
             const select = document.getElementById('staffSelect');
             const prev = select.value;
@@ -1068,6 +1255,7 @@
 
             const saved = data[0];
             if (!invoices.find(i => i.id === saved.id)) invoices.push(mapInvoiceRow(saved));
+            clearInvoiceDraft(false);
 
             document.getElementById('r-serial').innerText = saved.serial || ('INV-' + String(saved.id).padStart(5, '0'));
             document.getElementById('invSerial').value = saved.serial || ('INV-' + String(saved.id).padStart(5, '0'));
@@ -1075,7 +1263,7 @@
             printElement('thermal-receipt');
 
             document.getElementById('invoiceForm').reset();
-            document.getElementById('invDateInput').value = new Date().toISOString().split('T')[0];
+            document.getElementById('invDateInput').value = getLocalDate();
             document.getElementById('invSerial').value = '—';
             populateStaffSelect();
             populateServiceSelect();
@@ -1112,7 +1300,7 @@
             if (data && data[0] && !expenses.find(e2 => e2.id === data[0].id)) expenses.push(mapExpenseRow(data[0]));
 
             document.getElementById('expenseForm').reset();
-            document.getElementById('expDateInput').value = new Date().toISOString().split('T')[0];
+            document.getElementById('expDateInput').value = getLocalDate();
             renderExpenses();
             renderReports();
             showToast(tr('savedOk'), 'success');
@@ -1154,7 +1342,66 @@
         // =====================================================================
         // REPORTS
         // =====================================================================
-        function clearReportFilter() { document.getElementById('reportDateFilter').value = ''; renderReports(); }
+        function populateReportStaffFilter() {
+            const select = document.getElementById('reportStaffFilter');
+            if (!select) return;
+            const previous = select.value;
+            select.innerHTML = `<option value="">${tr('allStaff')}</option>`;
+            staffList.forEach(s => {
+                const option = document.createElement('option');
+                option.value = s.id;
+                option.textContent = staffDisplayName(s);
+                select.appendChild(option);
+            });
+            if ([...select.options].some(option => option.value === previous)) select.value = previous;
+        }
+
+        function clearReportFilter() {
+            ['reportDateFilter', 'reportDateTo', 'reportStaffFilter', 'reportPayFilter', 'reportLocationFilter'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            renderReports();
+        }
+
+        function setReportPeriod(period) {
+            const from = document.getElementById('reportDateFilter');
+            const to = document.getElementById('reportDateTo');
+            if (!from || !to) return;
+            const today = new Date();
+            let start = new Date(today);
+            if (period === 'week') {
+                start.setDate(today.getDate() - today.getDay());
+            } else if (period === 'month') {
+                start = new Date(today.getFullYear(), today.getMonth(), 1);
+            }
+            from.value = dateToInputValue(start);
+            to.value = period === 'today' ? from.value : getLocalDate();
+            renderReports();
+        }
+
+        function getReportFilteredData() {
+            const filterDate = document.getElementById('reportDateFilter')?.value || '';
+            const filterTo = document.getElementById('reportDateTo')?.value || '';
+            const filterStaff = document.getElementById('reportStaffFilter')?.value || '';
+            const filterPay = document.getElementById('reportPayFilter')?.value || '';
+            const filterLocation = document.getElementById('reportLocationFilter')?.value || '';
+            const inDateRange = date => {
+                if (filterDate && !filterTo) return date === filterDate;
+                if (filterDate && date < filterDate) return false;
+                if (filterTo && date > filterTo) return false;
+                return true;
+            };
+            return {
+                invoices: invoices.filter(i =>
+                    inDateRange(i.date) &&
+                    (!filterStaff || String(i.staffId) === String(filterStaff)) &&
+                    (!filterPay || i.pay === filterPay) &&
+                    (!filterLocation || i.serviceLocation === filterLocation)
+                ),
+                expenses: expenses.filter(e => inDateRange(e.date))
+            };
+        }
 
         function invoiceCommission(inv) {
             // Always calculate live from the current commission settings. Relying on the
@@ -1165,13 +1412,9 @@
         }
 
         function renderReports() {
-            const filterDate = document.getElementById('reportDateFilter').value;
-            let filteredInvoices = invoices;
-            let filteredExpenses = expenses;
-            if (filterDate) {
-                filteredInvoices = invoices.filter(i => i.date === filterDate);
-                filteredExpenses = expenses.filter(e => e.date === filterDate);
-            }
+            const reportData = getReportFilteredData();
+            const filteredInvoices = reportData.invoices;
+            const filteredExpenses = reportData.expenses;
 
             const totalRev = filteredInvoices.reduce((sum, i) => sum + i.price, 0);
             const totalExp = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
@@ -1203,6 +1446,17 @@
 
             const staffPerfBody = document.getElementById('staffPerformanceBody');
             const staffEntries = Object.values(staffMap);
+            const chart = document.getElementById('staffChart');
+            if (chart) {
+                const maxSales = Math.max(1, ...staffEntries.map(d => d.sales));
+                chart.innerHTML = staffEntries.length ? `<div style="font-weight:800;color:var(--primary);margin-bottom:8px;">${tr('chartSales')}</div>` +
+                    [...staffEntries].sort((a, b) => b.sales - a.sales).map(d => `
+                        <div class="chart-row">
+                            <span>${escapeHtml(d.label)}</span>
+                            <div class="chart-track"><div class="chart-fill" style="width:${Math.max(3, d.sales / maxSales * 100)}%"></div></div>
+                            <strong>${d.sales.toFixed(2)} SAR</strong>
+                        </div>`).join('') : '';
+            }
             if (staffEntries.length === 0) {
                 staffPerfBody.innerHTML = `<tr class="empty-row"><td colspan="4">${tr('noData')}</td></tr>`;
             } else {
@@ -1273,6 +1527,7 @@
             document.getElementById('newStaffNameAr').value = '';
             document.getElementById('newStaffNameEn').value = '';
             populateStaffSelect();
+            populateReportStaffFilter();
             renderAdminLists();
             showToast(tr('savedOk'), 'success');
         }
@@ -1310,6 +1565,33 @@
             const { error } = await _supabase.from('services').delete().eq('id', id);
             if (error) { showToast(tr('cloudSaveError') + error.message, 'error'); return; }
             servicesList = servicesList.filter(s => s.id !== id);
+            populateServiceSelect();
+            renderAdminLists();
+        }
+
+        async function toggleStaffActive(id) {
+            const staff = findStaffById(id);
+            if (!staff) return;
+            const { data, error } = await _supabase.from('staff').update({ active: !staff.active }).eq('id', id).select();
+            if (error) { showToast(tr('cloudSaveError') + error.message, 'error'); return; }
+            if (data && data[0]) {
+                const index = staffList.findIndex(s => s.id === id);
+                if (index > -1) staffList[index] = mapStaffRow(data[0]);
+            }
+            populateStaffSelect();
+            renderAdminLists();
+            populateReportStaffFilter();
+        }
+
+        async function toggleServiceActive(id) {
+            const service = findServiceById(id);
+            if (!service) return;
+            const { data, error } = await _supabase.from('services').update({ active: !service.active }).eq('id', id).select();
+            if (error) { showToast(tr('cloudSaveError') + error.message, 'error'); return; }
+            if (data && data[0]) {
+                const index = servicesList.findIndex(s => s.id === id);
+                if (index > -1) servicesList[index] = mapServiceRow(data[0]);
+            }
             populateServiceSelect();
             renderAdminLists();
         }
@@ -1356,8 +1638,10 @@
             staffTable.innerHTML = staffList.map(s => `
                 <tr>
                     <td>${escapeHtml(staffDisplayName(s))}</td>
+                    <td><span class="status-pill ${s.active ? 'active' : 'inactive'}">${tr(s.active ? 'active' : 'inactive')}</span></td>
                     <td class="action-cell">
                         <button class="btn btn-edit" title="${tr('editBtn')}" onclick="openEditModal('staff', ${s.id})"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-secondary" onclick="toggleStaffActive(${s.id})">${tr(s.active ? 'deactivate' : 'activate')}</button>
                         <button class="btn btn-danger" onclick="removeStaff(${s.id})">${tr('deleteBtn')}</button>
                     </td>
                 </tr>`).join('');
@@ -1367,8 +1651,10 @@
                 <tr>
                     <td>${escapeHtml(serviceDisplayName(sv))}</td>
                     <td>${sv.price} SAR</td>
+                    <td><span class="status-pill ${sv.active ? 'active' : 'inactive'}">${tr(sv.active ? 'active' : 'inactive')}</span></td>
                     <td class="action-cell">
                         <button class="btn btn-edit" title="${tr('editBtn')}" onclick="openEditModal('service', ${sv.id})"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-secondary" onclick="toggleServiceActive(${sv.id})">${tr(sv.active ? 'deactivate' : 'activate')}</button>
                         <button class="btn btn-danger" onclick="removeService(${sv.id})">${tr('deleteBtn')}</button>
                     </td>
                 </tr>`).join('');
@@ -1602,7 +1888,8 @@
 
         function exportInvoicesCsv() {
             const filterDate = document.getElementById('reportDateFilter').value;
-            const list = filterDate ? invoices.filter(i => i.date === filterDate) : invoices;
+            const filterTo = document.getElementById('reportDateTo')?.value || '';
+            const list = getReportFilteredData().invoices;
             if (!list.length) { showToast(tr('noInvoices'), 'info'); return; }
             const header = [tr('colSerial'), tr('colDateTime'), tr('staffName'), tr('serviceLabel'), tr('serviceLocation'), tr('paymentMethod'), tr('priceLabel'), tr('colCommission')];
             const rows = [header];
@@ -1614,17 +1901,18 @@
                     payLabel(inv.pay), inv.price.toFixed(2), invoiceCommission(inv).toFixed(2)
                 ]);
             });
-            downloadCsv(`invoices_${filterDate || 'all'}.csv`, rows);
+            downloadCsv(`invoices_${filterDate || 'all'}${filterTo ? '_' + filterTo : ''}.csv`, rows);
         }
 
         function exportExpensesCsv() {
             const filterDate = document.getElementById('reportDateFilter').value;
-            const list = filterDate ? expenses.filter(e => e.date === filterDate) : expenses;
+            const filterTo = document.getElementById('reportDateTo')?.value || '';
+            const list = getReportFilteredData().expenses;
             if (!list.length) { showToast(tr('noExpenses'), 'info'); return; }
             const header = [tr('colDate'), tr('colItem'), tr('colAmount')];
             const rows = [header];
             [...list].sort((a, b) => a.id - b.id).forEach(ex => rows.push([ex.date, ex.title, ex.amount.toFixed(2)]));
-            downloadCsv(`expenses_${filterDate || 'all'}.csv`, rows);
+            downloadCsv(`expenses_${filterDate || 'all'}${filterTo ? '_' + filterTo : ''}.csv`, rows);
         }
 
         function printReportSummary() { printGenericArea('reportsPrintArea'); }
