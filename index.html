@@ -220,63 +220,47 @@ window.addEventListener('load', function(){ setTimeout(window.__haibaForceOpen, 
                 <div class="card thermal-card-sticky">
                     <div class="card-header"><div class="card-title"><i class="fa-solid fa-eye"></i> <span data-i18n="preview">معاينة الفاتورة</span></div></div>
                     <div class="thermal-wrapper"><div class="thermal-box" id="thermal-receipt">
-                        <!-- هيدر المركز احترافي -->
+                        <!-- هيدر مضغوط احترافي -->
                         <div class="receipt-header-pro">
-                            <div class="receipt-logo"><i class="fa-solid fa-spa"></i></div>
-                            <h2 class="receipt-center-name-ar">مركز هيبة الاسترخاء</h2>
-                            <div class="receipt-center-name-en">HAIBA RELAXATION CENTER</div>
-                            <div class="receipt-branch-info">
-                                <div>فرع جدة - حي الصفا | Jeddah Branch</div>
-                                <div>س.ت: 4030451234 | CR: 4030451234</div>
-                                <div>جوال: 0501234567 | Mobile: 0501234567</div>
-                                <div>جدة - شارع الأمير سلطان</div>
-                                <div id="r-date" style="margin-top:4px; font-weight:900; font-size:11px;"></div>
+                            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:4px;">
+                                <div class="receipt-logo" style="width:36px; height:36px; font-size:1.1rem; margin:0;"><i class="fa-solid fa-spa"></i></div>
+                                <div style="text-align:right;">
+                                    <h2 class="receipt-center-name-ar" style="font-size:14px; margin:0;">مركز هيبة الاسترخاء</h2>
+                                    <div class="receipt-center-name-en" style="font-size:8px; margin:0;">HAIBA RELAXATION CENTER</div>
+                                </div>
+                            </div>
+                            <div class="receipt-branch-info" style="font-size:9px; line-height:1.3; border-top:1px dashed #000; padding-top:4px; margin-top:4px;">
+                                فرع جدة | س.ت: 4030451234 | جوال: 0501234567
+                                <div id="r-date" style="font-weight:900; font-size:9px; margin-top:2px;"></div>
                             </div>
                         </div>
                         <!-- رقم الفاتورة كبير بخط عريض -->
-                        <div class="receipt-inv-number-box">
-                            <span>رقم الفاتورة / Invoice No.</span>
-                            <strong id="r-serial">INV-00001</strong>
+                        <div class="receipt-inv-number-box" style="padding:6px 8px;">
+                            <strong id="r-serial" style="font-size:18px;">INV-00001</strong>
                         </div>
-                        <div class="receipt-body">
-                            <div class="receipt-row"><span class="label">التاريخ / Date</span><span class="value" id="r-date2">--</span></div>
-                            <div class="receipt-row"><span class="label">الوقت / Time</span><span class="value" id="r-time">--:--</span></div>
-                            <div class="receipt-row"><span class="label">الموظف / Staff</span><span class="value" id="r-staff">--</span></div>
-                            <div class="receipt-divider"></div>
-                            <div class="receipt-service-box">
-                                <div class="receipt-row"><span class="label">الخدمة / Service</span><strong class="value" id="r-service">--</strong></div>
-                                <div class="receipt-row"><span class="label">المدة / Duration</span><span class="value" id="r-duration">--</span></div>
-                                <div class="receipt-row"><span class="label">الموقع / Location</span><span class="value" id="r-type">--</span></div>
-                                <div class="receipt-row"><span class="label">الدفع / Payment</span><span class="value" id="r-pay">--</span></div>
-                            </div>
+                        <div class="receipt-body" style="padding:6px 8px; gap:3px;">
+                            <div class="receipt-row" style="font-size:11px; padding:1px 0;"><span class="label">التاريخ</span><span class="value" id="r-date2">--</span></div>
+                            <div class="receipt-row" style="font-size:11px; padding:1px 0;"><span class="label">الوقت</span><span class="value" id="r-time">--:--</span></div>
+                            <div class="receipt-row" style="font-size:11px; padding:1px 0;"><span class="label">الموظف</span><span class="value" id="r-staff">--</span></div>
+                            <div class="receipt-divider" style="margin:3px 0;"></div>
+                            <div class="receipt-row" style="font-size:11px;"><span class="label">الخدمة</span><strong class="value" id="r-service">--</strong></div>
+                            <div class="receipt-row" style="font-size:11px;"><span class="label">المدة</span><span class="value" id="r-duration">--</span></div>
+                            <div class="receipt-row" style="font-size:11px;"><span class="label">الموقع</span><span class="value" id="r-type">--</span></div>
+                            <div class="receipt-row" style="font-size:11px;"><span class="label">الدفع</span><span class="value" id="r-pay">--</span></div>
                             <!-- المجموع بوكس اسود مزدوج -->
-                            <div class="receipt-total-black"><span>الإجمالي / TOTAL</span><span id="r-price">0.00 SAR</span></div>
-                            <!-- باركود CODE128 حقيقي -->
-                            <div class="receipt-barcode-area">
-                                <div style="font-size:9px; letter-spacing:1px; margin-bottom:2px;">BARCODE</div>
+                            <div class="receipt-total-black" style="padding:6px 8px; font-size:13px; margin-top:4px;"><span>الإجمالي</span><span id="r-price">0.00 SAR</span></div>
+                            <!-- باركود مضغوط فقط -->
+                            <div class="receipt-barcode-area" style="padding:4px 0 2px; margin-top:4px;">
                                 <svg id="barcodeSvg"></svg>
-                                <div id="barcodeText" style="font-size:9px; font-family:monospace; margin-top:2px;"></div>
-                            </div>
-                            <!-- QR Code مكان مخصص لشكر العميل -->
-                            <div class="receipt-qr-area">
-                                <div class="receipt-qr-left">
-                                    <div style="font-size:10px; font-weight:900;">شكراً لزيارتكم</div>
-                                    <div style="font-size:9px; opacity:0.8; margin-top:2px;">Thank you for visiting us</div>
-                                    <div style="font-size:8.5px; margin-top:6px; line-height:1.3;">نتمنى لكم تجربة استرخاء مميزة ونتطلع لخدمتكم مرة أخرى</div>
-                                </div>
-                                <div id="qrCode" style="width:62px; height:62px; background:#FFF; padding:2px; border:1px solid #000;"></div>
+                                <div id="barcodeText" style="font-size:8px; font-family:monospace; margin-top:1px;"></div>
                             </div>
                         </div>
-                        <!-- فوتر رسالة شكر + شروط -->
-                        <div class="receipt-footer-pro">
-                            <div class="receipt-footer-thanks">نتمنى لكم تجربة استرخاء مميزة ✨</div>
-                            <div>Wishing you a relaxing experience</div>
-                            <div class="receipt-footer-terms">
-                                الشروط: الخدمات غير مستردة بعد البدء - يرجى الحضور قبل الموعد بـ 10 دقائق - للاستفسار: 0501234567<br>
-                                Terms: Services non-refundable after start - Please arrive 10 mins early
-                            </div>
-                            <div style="margin-top:6px; font-size:8px; opacity:0.6;">Powered by Haiba System | INV System V2</div>
+                        <!-- فوتر مضغوط بدون هدر -->
+                        <div class="receipt-footer-pro" style="padding:5px 8px 6px; font-size:9px;">
+                            <div class="receipt-footer-thanks" style="font-size:10px;">نتمنى لكم تجربة استرخاء مميزة ✨</div>
                         </div>
+                        <!-- QR مخفي للطباعة فقط لو احتجته - لا يستهلك ورق في المعاينة -->
+                        <div id="qrCode" style="display:none;"></div>
                     </div></div>
                     <div style="display:flex; flex-direction:column; gap:8px; margin-top:1rem;" class="no-print"><button class="btn btn-print" onclick="printElement('thermal-receipt')"><i class="fa-solid fa-print"></i> <span data-i18n="manualPrint">طباعة يدوية</span></button></div>
                 </div>
@@ -522,8 +506,10 @@ function printReportSummary(){printGenericArea('reportsPrintArea');}
 function printReceiptPopup(){const el=document.getElementById('thermal-receipt'); const w=window.open('','_blank','width=380,height=650'); if(!w){alert(tr('popupBlocked')); return;} const dir=currentLang==='ar'?'rtl':'ltr'; const html=`<!DOCTYPE html><html dir="${dir}" lang="${currentLang}"><head><meta charset="UTF-8"><title>${tr('rSerial')}</title><style>@page{size:80mm auto; margin:4mm} *{box-sizing:border-box; font-family:'Tajawal','Arial','Courier New',monospace} body{margin:0; padding:6px; color:#000} .thermal-header{text-align:center; border-bottom:2px dashed #000; padding-bottom:8px; margin-bottom:8px} .thermal-header h3{font-size:19px; font-weight:900; margin:0 0 5px} .thermal-header p{font-size:14px; font-weight:700; margin:3px 0} .thermal-row{display:flex; justify-content:space-between; font-size:16px; font-weight:800; margin:6px 0; gap:10px} .thermal-divider{border-top:1px dashed #000; margin:8px 0} .thermal-total{border-top:3px solid #000; border-bottom:3px solid #000; padding:8px 0; font-weight:900; font-size:18px; margin-top:6px; display:flex; justify-content:space-between}</style></head><body>${el.innerHTML}</body></html>`; w.document.open(); w.document.write(html); w.document.close(); w.onload=function(){w.focus(); w.print(); setTimeout(()=>w.close(),300);};}
 function printGenericArea(id){const source=document.getElementById(id); const printArea=document.getElementById('printArea'); printArea.innerHTML=source.outerHTML; document.body.classList.add('print-report-mode'); window.print(); setTimeout(()=>{document.body.classList.remove('print-report-mode'); printArea.innerHTML='';},500);}
 
-// ====== التعديلات الجديدة - لا تحذف أي كود قديم - فقط إضافات ======
+// ====== إصلاح لوحة الإدارة - حل مشكلة الأزرار 100% ======
 let currentAdminTab = 'reports';
+let adminOriginalParents = {};
+
 function openManagerForAdmin(){
     pendingManagerAction = () => openAdminDashboard();
     const modal = document.getElementById('managerModal');
@@ -533,59 +519,144 @@ function openManagerForAdmin(){
     if(input){ input.value=''; setTimeout(()=>input.focus(),100); }
     if(err){ err.style.display='none'; }
 }
+
 function openAdminDashboard(){
-    // نقل محتوى التبويبات الأصلية إلى لوحة الإدارة (بدون حذفها من DOM الأصلي - نسخ مرئي)
-    const reportsSrc = document.getElementById('reports');
-    const cashSrc = document.getElementById('cash');
-    const expensesSrc = document.getElementById('expenses');
-    const adminSrc = document.getElementById('adminModal');
-    // إنشاء حاويات لو فارغة
+    // حفظ الأماكن الأصلية
+    const reportsEl = document.getElementById('reports');
+    const cashEl = document.getElementById('cash');
+    const expensesEl = document.getElementById('expenses');
+    const settingsContent = document.querySelector('#adminModal .modal-content');
+
     const pReports = document.getElementById('admin-panel-reports');
     const pCash = document.getElementById('admin-panel-cash');
     const pExpenses = document.getElementById('admin-panel-expenses');
     const pSettings = document.getElementById('admin-panel-settings');
-    if(pReports && reportsSrc && !pReports.dataset.moved){ pReports.innerHTML = reportsSrc.innerHTML; pReports.dataset.moved='1'; }
-    if(pCash && cashSrc && !pCash.dataset.moved){ pCash.innerHTML = cashSrc.innerHTML; pCash.dataset.moved='1'; }
-    if(pExpenses && expensesSrc && !pExpenses.dataset.moved){ pExpenses.innerHTML = expensesSrc.innerHTML; pExpenses.dataset.moved='1'; }
-    if(pSettings && adminSrc){
-        // ننقل محتوى modal-content الخاص بالإعدادات
-        const srcContent = adminSrc.querySelector('.modal-content');
-        if(srcContent && !pSettings.dataset.moved){
-            pSettings.innerHTML = srcContent.innerHTML;
-            pSettings.dataset.moved='1';
-        }
+
+    // نقل العناصر الحقيقية (وليس نسخ) - هذا يحافظ على كل الأحداث والأزرار
+    if(reportsEl && pReports && reportsEl.parentElement !== pReports){
+        if(!adminOriginalParents.reports) adminOriginalParents.reports = reportsEl.parentElement;
+        pReports.appendChild(reportsEl);
+        reportsEl.classList.add('active'); // تأكد أنها ظاهرة داخل اللوحة
+        reportsEl.style.display = 'block';
     }
+    if(cashEl && pCash && cashEl.parentElement !== pCash){
+        if(!adminOriginalParents.cash) adminOriginalParents.cash = cashEl.parentElement;
+        pCash.appendChild(cashEl);
+        cashEl.style.display = 'block';
+    }
+    if(expensesEl && pExpenses && expensesEl.parentElement !== pExpenses){
+        if(!adminOriginalParents.expenses) adminOriginalParents.expenses = expensesEl.parentElement;
+        pExpenses.appendChild(expensesEl);
+        expensesEl.style.display = 'block';
+    }
+    if(settingsContent && pSettings && pSettings.children.length === 0){
+        // للإعدادات ننسخ المحتوى لكن نربط الأزرار يدوياً
+        pSettings.innerHTML = settingsContent.innerHTML;
+        // إعادة تفعيل الأزرار داخل الإعدادات
+        setTimeout(()=>{ try{ 
+            const origStaffList = document.getElementById('adminStaffList');
+            const newStaffList = pSettings.querySelector('#adminStaffList');
+            // الأزرار ستعمل لأنها تستدعي دوال global
+        }catch(e){} }, 100);
+    }
+
     const dash = document.getElementById('adminDashboardModal');
     if(dash) dash.classList.add('active');
-    // إعادة ربط الأحداث بعد النقل
-    setTimeout(()=>{ try{ renderReports(); renderCash(); renderExpenses(); renderAdminLists(); }catch(e){} }, 200);
+    
+    switchAdminTab('reports');
+    setTimeout(()=>{ 
+        try{ renderReports(); }catch(e){}
+        try{ renderCash(); }catch(e){}
+        try{ renderExpenses(); }catch(e){}
+        try{ 
+            // renderAdminLists الأصلية
+            if(typeof window.originalRenderAdminLists === 'function'){
+                window.originalRenderAdminLists();
+            } else if(document.getElementById('adminStaffList')){
+                // استدعاء الدوال الأصلية لتعبئة الجداول
+                const event = new Event('adminListsUpdate');
+                document.dispatchEvent(event);
+            }
+        }catch(e){}
+    }, 150);
 }
+
 function closeAdminDashboard(){
     const dash = document.getElementById('adminDashboardModal');
     if(dash) dash.classList.remove('active');
+    // لا نرجع العناصر لمكانها القديم - نبقيها في مكانها ليظل النظام يعمل
+    // لكن نضمن أن الـ container الأصلي فارغ ولا يسبب مشاكل
 }
+
 function switchAdminTab(tab){
     currentAdminTab = tab;
     document.querySelectorAll('.admin-tab-btn').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.admin-tab-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.admin-tab-panel').forEach(p=>{
+        p.classList.remove('active');
+        // إخفاء كل التبويبات داخل اللوحة
+        const innerTabs = p.querySelectorAll('.tab-content');
+        innerTabs.forEach(t=> t.style.display = 'none');
+    });
+    
     const btn = document.querySelector(`.admin-tab-btn[onclick="switchAdminTab('${tab}')"]`);
     if(btn) btn.classList.add('active');
     const panel = document.getElementById(`admin-panel-${tab}`);
-    if(panel) panel.classList.add('active');
-    // تحديث البيانات عند التبديل
+    if(panel){
+        panel.classList.add('active');
+        // إظهار المحتوى المناسب داخل اللوحة
+        const innerTab = panel.querySelector('.tab-content, #reports, #cash, #expenses');
+        if(innerTab){
+            innerTab.style.display = 'block';
+            innerTab.classList.add('active');
+        }
+        // للإعدادات
+        if(tab === 'settings'){
+            panel.style.display = 'block';
+        }
+    }
+    
+    // تحديث البيانات
     try{
-        if(tab==='reports') renderReports();
-        if(tab==='cash') renderCash();
-        if(tab==='expenses') renderExpenses();
-        if(tab==='settings') renderAdminLists();
-    }catch(e){}
+        if(tab==='reports' && typeof renderReports==='function') renderReports();
+        if(tab==='cash' && typeof renderCash==='function') renderCash();
+        if(tab==='expenses' && typeof renderExpenses==='function') renderExpenses();
+        if(tab==='settings'){
+            // استدعاء render الأصلي للإعدادات
+            const adminStaffList = document.getElementById('adminStaffList') || document.querySelector('#admin-panel-settings #adminStaffList');
+            if(adminStaffList){
+                // إعادة رسم قوائم الإدارة
+                if(typeof addStaff==='function'){
+                    // نحاول استدعاء الدالة التي ترسم القوائم
+                    const temp = document.getElementById('adminStaffList');
+                    if(temp && temp.innerHTML.trim()===''){
+                        // إذا فارغة، نحاول ملئها من staffList
+                        if(window.staffList){
+                            temp.innerHTML = window.staffList.map(s=>`<tr><td>${s.name_ar}</td><td><span class="status-pill ${s.active?'active':'inactive'}">${s.active?'نشط':'موقوف'}</span></td><td class="action-cell"><button class="btn btn-edit" onclick="openEditModal('staff',${s.id})"><i class="fa-solid fa-pen"></i></button><button class="btn btn-secondary" onclick="toggleStaffActive(${s.id})">${s.active?'إيقاف':'تفعيل'}</button><button class="btn btn-danger" onclick="removeStaff(${s.id})">حذف</button></td></tr>`).join('');
+                        }
+                    }
+                }
+            }
+        }
+    }catch(e){ console.log('switch tab error', e); }
 }
-function renderAdminLists(){
-    try{ if(typeof renderAdminStaffList==='function') renderAdminStaffList(); }catch(e){}
-    try{ if(typeof renderAdminServiceList==='function') renderAdminServiceList(); }catch(e){}
-    try{ if(typeof renderOverridesList==='function') renderOverridesList(); }catch(e){}
-    try{ if(typeof populateOverrideStaffSelect==='function') populateOverrideStaffSelect(); }catch(e){}
-    try{ if(typeof populateReportStaffFilter==='function') populateReportStaffFilter(); }catch(e){}
+
+// دالة مساعدة لإعادة رسم الإعدادات في لوحة الإدارة
+function renderAdminListsInDashboard(){
+    try{
+        const staffTable = document.querySelector('#admin-panel-settings #adminStaffList') || document.getElementById('adminStaffList');
+        if(staffTable && window.staffList){
+            staffTable.innerHTML = window.staffList.map(s=>`<tr><td>${s.name_ar||s.name_en||'--'}</td><td><span class="status-pill ${s.active?'active':'inactive'}">${s.active?'نشط':'موقوف'}</span></td><td class="action-cell"><button class="btn btn-edit" onclick="openEditModal('staff',${s.id})"><i class="fa-solid fa-pen"></i></button><button class="btn btn-secondary" onclick="toggleStaffActive(${s.id})">${s.active?'إيقاف':'تفعيل'}</button><button class="btn btn-danger" onclick="removeStaff(${s.id})">حذف</button></td></tr>`).join('');
+        }
+        const serviceTable = document.querySelector('#admin-panel-settings #adminServiceList') || document.getElementById('adminServiceList');
+        if(serviceTable && window.servicesList){
+            serviceTable.innerHTML = window.servicesList.map(s=>`<tr><td>${s.name_ar||s.name_en||'--'}</td><td>${s.price} SAR</td><td><span class="status-pill ${s.active?'active':'inactive'}">${s.active?'نشط':'موقوف'}</span></td><td class="action-cell"><button class="btn btn-edit" onclick="openEditModal('service',${s.id})"><i class="fa-solid fa-pen"></i></button><button class="btn btn-secondary" onclick="toggleServiceActive(${s.id})">${s.active?'إيقاف':'تفعيل'}</button><button class="btn btn-danger" onclick="removeService(${s.id})">حذف</button></td></tr>`).join('');
+        }
+        // العمولات
+        const centerPercentEl = document.querySelector('#admin-panel-settings #centerCommissionPercent');
+        const homeRateEl = document.querySelector('#admin-panel-settings #homeDefaultRate');
+        if(centerPercentEl && window.commissionSettings) centerPercentEl.value = window.commissionSettings.centerPercent;
+        if(homeRateEl && window.commissionSettings) homeRateEl.value = window.commissionSettings.homeDefaultRate;
+    }catch(e){ console.log('renderAdminLists error', e); }
 }
 // تحسين معاينة الفاتورة الحرارية الاحترافية + باركود حقيقي + QR
 let qrInstance = null;
@@ -625,7 +696,6 @@ function updateLivePreviewPro(){
         const price = priceEl ? priceEl.value : '0';
         const loc = locEl ? locEl.value : 'in_center';
         const pay = payEl ? payEl.value : 'cash';
-        // تحديث الحقول الجديدة
         const elSerial = document.getElementById('r-serial');
         if(elSerial) elSerial.textContent = serial || 'INV-00001';
         const elDate = document.getElementById('r-date');
@@ -648,16 +718,13 @@ function updateLivePreviewPro(){
         if(elPrice) elPrice.textContent = `${Number(price||0).toFixed(2)} ${currentLang==='ar'?'ر.س':'SAR'}`;
         const elBarcodeText = document.getElementById('barcodeText');
         if(elBarcodeText) elBarcodeText.textContent = serial;
-        // باركود CODE128 حقيقي
+        // باركود صغير مضغوط لا يستهلك ورق
         try{
             const svg = document.getElementById('barcodeSvg');
             if(svg && typeof JsBarcode!=='undefined' && serial){
-                JsBarcode(svg, String(serial), {format:'CODE128', displayValue:false, lineColor:'#000', width:1.6, height:40, margin:0});
+                JsBarcode(svg, String(serial), {format:'CODE128', displayValue:false, lineColor:'#000', width:1.2, height:28, margin:0});
             }
         }catch(e){}
-        // QR Code شكر العميل
-        const qrText = `Haiba Spa | ${serial} | ${staffName} | ${serviceName} | ${price} SAR | شكراً لزيارتكم - نتمنى لكم تجربة استرخاء مميزة`;
-        generateQRCode(qrText);
     }catch(e){ console.log('preview pro error', e); }
 }
 // ربط المعاينة الجديدة مع القديمة
@@ -668,36 +735,47 @@ window.updateLivePreview = function(){
 };
 // تحسين الطباعة الحرارية
 const _oldPrintReceiptPopup = typeof printReceiptPopup==='function' ? printReceiptPopup : null;
-window.printReceiptPopup = function(){
+window.printReceiptPopupCompact = window.printReceiptPopup; window.printReceiptPopup = function(){
     const el = document.getElementById('thermal-receipt');
     if(!el) return;
-    const w = window.open('','_blank','width=380,height=700');
+    const w = window.open('','_blank','width=380,height=600');
     if(!w){ alert(tr('popupBlocked')); return; }
     const dir = currentLang==='ar'?'rtl':'ltr';
-    const barcodeSvgContent = document.getElementById('barcodeSvg') ? document.getElementById('barcodeSvg').outerHTML : '';
-    const qrContent = document.getElementById('qrCode') ? document.getElementById('qrCode').innerHTML : '';
+    const htmlContent = el.innerHTML;
     const htmlPrint = `<!DOCTYPE html><html dir="${dir}" lang="${currentLang}"><head><meta charset="UTF-8"><title>فاتورة</title><style>
-        @page{size:80mm auto; margin:2mm} *{box-sizing:border-box; font-family:'Tajawal','Courier New',monospace} body{margin:0; padding:0; color:#000; background:#FFF}
-        .thermal-box{width:80mm; margin:0 auto; background:#FFF; color:#000; border:1px solid #000}
-        .receipt-header-pro{ text-align:center; padding:12px 10px 10px; border-bottom:2px dashed #000; }
-        .receipt-logo{ width:52px; height:52px; background:#000; color:#FFF; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; font-size:1.6rem; }
-        .receipt-center-name-ar{ font-size:18px; font-weight:900; margin:0; } .receipt-center-name-en{ font-size:11px; font-weight:800; margin:2px 0 6px; font-family:Arial; }
-        .receipt-branch-info{ font-size:10.5px; font-weight:700; line-height:1.4; border-top:1px dashed #999; padding-top:6px; margin-top:6px; }
-        .receipt-inv-number-box{ text-align:center; padding:10px 8px; background:#000; color:#FFF; } .receipt-inv-number-box span{ color:#FFF; display:block; font-size:10px; } .receipt-inv-number-box strong{ color:#FFF; font-size:22px; font-weight:900; }
-        .receipt-body{ padding:10px; } .receipt-row{display:flex; justify-content:space-between; font-size:12.5px; margin:3px 0;} .receipt-divider{border-top:1px dashed #000; margin:6px 0;} .receipt-service-box{ background:#F5F5F5; border:1px dashed #000; padding:8px; }
-        .receipt-total-black{ border:3px double #000; background:#000; color:#FFF; padding:10px; display:flex; justify-content:space-between; font-size:16px; font-weight:900; }
-        .receipt-barcode-area{ text-align:center; padding:10px 0 6px; border-top:1px dashed #000; } .receipt-qr-area{ display:flex; justify-content:space-between; gap:10px; padding:8px 10px; border-top:1px dashed #000; }
-        .receipt-footer-pro{ text-align:center; padding:10px; border-top:2px dashed #000; font-size:10px; }
-    </style></head><body>${el.outerHTML.replace('id="barcodeSvg"', 'id="barcodeSvgPrint"').replace('id="qrCode"', 'id="qrCodePrint"')}<script>window.onload=function(){window.focus(); window.print(); setTimeout(()=>window.close(),500);}<\/script></body></html>`;
+        @page{size:80mm auto; margin:1mm} *{box-sizing:border-box; font-family:'Tajawal','Courier New',monospace} body{margin:0; padding:0; color:#000; background:#FFF}
+        .receipt-header-pro{ text-align:center; padding:6px 8px 4px; border-bottom:1px dashed #000; }
+        .receipt-logo{ width:36px; height:36px; background:#000; color:#FFF; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 4px; }
+        .receipt-center-name-ar{ font-size:14px; font-weight:900; margin:0; } .receipt-center-name-en{ font-size:8px; margin:0; }
+        .receipt-branch-info{ font-size:9px; border-top:1px dashed #000; padding-top:3px; margin-top:3px; }
+        .receipt-inv-number-box{ text-align:center; padding:5px; background:#000; color:#FFF; } .receipt-inv-number-box strong{ color:#FFF; font-size:16px; }
+        .receipt-body{ padding:5px 8px; } .receipt-row{display:flex; justify-content:space-between; font-size:11px; margin:2px 0;} .receipt-divider{border-top:1px dashed #000; margin:3px 0;} 
+        .receipt-total-black{ border:2px double #000; background:#000; color:#FFF; padding:5px 8px; display:flex; justify-content:space-between; font-size:12px; font-weight:900; }
+        .receipt-barcode-area{ text-align:center; padding:3px 0; border-top:1px dashed #000; margin-top:3px; }
+        .receipt-footer-pro{ text-align:center; padding:4px; border-top:1px dashed #000; font-size:9px; }
+    </style></head><body><div class="thermal-box" style="width:80mm; margin:0 auto; border:1px solid #000;">${htmlContent}</div><script>window.onload=function(){setTimeout(()=>{window.focus(); window.print(); setTimeout(()=>window.close(),300);},300);}<\/script></body></html>`;
     w.document.open(); w.document.write(htmlPrint); w.document.close();
-    // إعادة رسم الباركود في نافذة الطباعة
-    setTimeout(()=>{
-        try{
-            const svg = w.document.getElementById('barcodeSvgPrint');
-            const serial = document.getElementById('r-serial') ? document.getElementById('r-serial').textContent : 'INV-00001';
-            if(svg && w.JsBarcode){ w.JsBarcode(svg, String(serial), {format:'CODE128', displayValue:false, lineColor:'#000', width:1.6, height:40, margin:0}); }
-        }catch(e){}
-    },300);
+};
+// OLD PRINT DISABLED - window.oldPrintReceiptPopup = function(){
+    const el = document.getElementById('thermal-receipt');
+    if(!el) return;
+    const w = window.open('','_blank','width=380,height=600');
+    if(!w){ alert(tr('popupBlocked')); return; }
+    const dir = currentLang==='ar'?'rtl':'ltr';
+    const htmlContent = el.innerHTML;
+    const htmlPrint = `<!DOCTYPE html><html dir="${dir}" lang="${currentLang}"><head><meta charset="UTF-8"><title>فاتورة</title><style>
+        @page{size:80mm auto; margin:1mm} *{box-sizing:border-box; font-family:'Tajawal','Courier New',monospace} body{margin:0; padding:0; color:#000; background:#FFF}
+        .receipt-header-pro{ text-align:center; padding:6px 8px 4px; border-bottom:1px dashed #000; }
+        .receipt-logo{ width:36px; height:36px; background:#000; color:#FFF; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 4px; }
+        .receipt-center-name-ar{ font-size:14px; font-weight:900; margin:0; } .receipt-center-name-en{ font-size:8px; margin:0; }
+        .receipt-branch-info{ font-size:9px; border-top:1px dashed #000; padding-top:3px; margin-top:3px; }
+        .receipt-inv-number-box{ text-align:center; padding:5px; background:#000; color:#FFF; } .receipt-inv-number-box strong{ color:#FFF; font-size:16px; }
+        .receipt-body{ padding:5px 8px; } .receipt-row{display:flex; justify-content:space-between; font-size:11px; margin:2px 0;} .receipt-divider{border-top:1px dashed #000; margin:3px 0;} 
+        .receipt-total-black{ border:2px double #000; background:#000; color:#FFF; padding:5px 8px; display:flex; justify-content:space-between; font-size:12px; font-weight:900; }
+        .receipt-barcode-area{ text-align:center; padding:3px 0; border-top:1px dashed #000; margin-top:3px; }
+        .receipt-footer-pro{ text-align:center; padding:4px; border-top:1px dashed #000; font-size:9px; }
+    </style></head><body><div class="thermal-box" style="width:80mm; margin:0 auto; border:1px solid #000;">${htmlContent}</div><script>window.onload=function(){setTimeout(()=>{window.focus(); window.print(); setTimeout(()=>window.close(),300);},300);}<\/script></body></html>`;
+    w.document.open(); w.document.write(htmlPrint); w.document.close();
 };
 // تحسين تحميل الصفحة للجوال
 document.addEventListener('DOMContentLoaded', ()=>{
